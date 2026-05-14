@@ -1,7 +1,5 @@
-const CACHE_NAME = 'ironlog-v5';
+const CACHE_NAME = 'ironlog-v6';
 const ASSETS = [
-  './',
-  './index.html',
   './manifest.json',
   './icon.png',
   './css/styles.css',
@@ -28,12 +26,16 @@ self.addEventListener('activate', event => {
 });
 
 self.addEventListener('fetch', event => {
+  // HTML siempre desde red (nunca cacheado)
   if (event.request.mode === 'navigate') {
-    event.respondWith(
-      fetch(event.request).catch(() => caches.match(event.request))
-    );
+    event.respondWith(fetch(event.request));
     return;
   }
+  // Resto: cache primero, red como fallback
+  event.respondWith(
+    caches.match(event.request).then(cached => cached || fetch(event.request))
+  );
+});
   event.respondWith(
     caches.match(event.request).then(cached => cached || fetch(event.request))
   );
