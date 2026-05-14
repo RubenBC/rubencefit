@@ -510,35 +510,97 @@ function renderHistory() {
         </div>`).join('');
 }
 
+function getMaxKgSession() {
+    let max = 0;
+    state.historial.forEach(sesion => {
+        let kg = 0;
+        if (sesion.ejercicios) {
+            sesion.ejercicios.forEach(ex => {
+                const tipo = getEquipType(ex);
+                if ((tipo === 'dumbbell' || (tipo === 'mixed' && !ex.usaBanda)) && ex.peso && ex.series && ex.reps) {
+                    kg += (parseFloat(ex.peso) * parseInt(ex.series) * parseInt(ex.reps));
+                }
+            });
+        }
+        if (kg > max) max = kg;
+    });
+    return Math.round(max);
+}
+
 function updateStats() {
     const container = document.getElementById('statsContent');
     if (!container) return;
     if (state.historial.length === 0) {
-        container.innerHTML = "<div style='grid-column: 1 / span 2; text-align:center; color:var(--text2); font-size:11px;'>Entrena para ver estadísticas</div>";
+        container.innerHTML = "<div style='grid-column: 1 / span 2; text-align:center; color:var(--text2); font-size:11px; padding: 16px 0;'>Entrena para ver estadísticas</div>";
         return;
     }
 
+    // --- Cálculos base ---
     let totalKg = 0;
     let totalSesiones = state.historial.length;
     let gruposContador = {};
+    let ejerciciosContador = {};
+    let typeContador = { [T_B]: 0, [T_A]: 0, [T_S]: 0 };
 
     state.historial.forEach(sesion => {
         if (sesion.ejercicios) {
             sesion.ejercicios.forEach(ex => {
-                // Solo suma kg si el ejercicio usa mancuernas (peso numérico)
                 const tipo = getEquipType(ex);
                 if ((tipo === 'dumbbell' || (tipo === 'mixed' && !ex.usaBanda)) && ex.peso && ex.series && ex.reps) {
                     totalKg += (parseFloat(ex.peso) * parseInt(ex.series) * parseInt(ex.reps));
                 }
                 gruposContador[ex.group] = (gruposContador[ex.group] || 0) + 1;
+                ejerciciosContador[ex.name] = (ejerciciosContador[ex.name] || 0) + 1;
+                if (ex.t) typeContador[ex.t] = (typeContador[ex.t] || 0) + 1;
             });
         }
     });
 
+    // --- Top grupo ---
     let topGrupo = "N/A";
     if (Object.keys(gruposContador).length > 0) {
         topGrupo = Object.keys(gruposContador).reduce((a, b) => gruposContador[a] > gruposContador[b] ? a : b);
     }
+
+    // --- Top ejercicio ---
+    let topEjercicio = "N/A";
+    if (Object.keys(ejerciciosContador).length > 0) {
+        const topKey = Object.keys(ejerciciosContador).reduce((a, b) => ejerciciosContador[a] > ejerciciosContador[b] ? a : b);
+        topEjercicio = topKey.length > 22 ? topKey.substring(0, 20) + '…' : topKey;
+    }
+
+    // --- Sesiones esta semana (últimos 7 días) ---
+    const today = new Date();
+    const last7 = [];
+    for (let i = 0; i < 7; i++) {
+        const d = new Date(today);
+        d.setDate(today.getDate() - i);
+        last7.push(d.toLocaleDateString());
+    }
+    const sesSemana = state.historial.filter(h => last7.includes(h.fecha)).length;
+
+    // --- Racha de días consecutivos ---
+    const uniqueDatesSet = new Set(state.historial.map(h => h.fecha));
+    let racha = 0;
+    let checkDate = new Date(today);
+    if (!uniqueDatesSet.has(today.toLocaleDateString())) {
+        checkDate.setDate(checkDate.getDate() - 1);
+    }
+    while (uniqueDatesSet.has(checkDate.toLocaleDateString())) {
+        racha++;
+        checkDate.setDate(checkDate.getDate() - 1);
+    }
+
+    // --- Distribución por tipo ---
+    const totalTypes = (typeContador[T_B] || 0) + (typeContador[T_A] || 0) + (typeContador[T_S] || 0);
+    const pctB = totalTypes > 0 ? Math.round((typeContador[T_B] || 0) / totalTypes * 100) : 0;
+    const pctA = totalTypes > 0 ? Math.round((typeContador[T_A] || 0) / totalTypes * 100) : 0;
+    const pctS = totalTypes > 0 ? Math.round((typeContador[T_S] || 0) / totalTypes * 100) : 0;
+
+    // --- Última sesión ---
+    const ultima = state.historial[0];
+    const ultimaFecha = ultima ? `${ultima.fecha}${ultima.hora ? ' · ' + ultima.hora : ''}` : 'N/A';
+    const ultimaResumen = ultima.resumen.length > 80 ? ultima.resumen.substring(0, 78) + '…' : ultima.resumen;
 
     container.innerHTML = `
         <div class="stat-box">
@@ -550,12 +612,53 @@ function updateStats() {
             <span class="stat-val">${Math.round(totalKg)}<small>kg</small></span>
         </div>
         <div class="stat-box">
+            <span class="stat-label">🔥 Racha</span>
+            <span class="stat-val">${racha}<small>días</small></span>
+        </div>
+        <div class="stat-box">
+            <span class="stat-label">📅 Esta semana</span>
+            <span class="stat-val">${sesSemana}<small>ses.</small></span>
+        </div>
+        <div class="stat-box stat-full">
+            <span class="stat-label">Distribución por tipo</span>
+            <div class="stat-type-bars">
+                <div class="stat-type-row">
+                    <span class="stat-type-chip tag tag-basico">B</span>
+                    <div class="stat-bar-bg"><div class="stat-bar-fill stat-bar-b" style="width:${pctB}%"></div></div>
+                    <span class="stat-type-pct">${pctB}%</span>
+                </div>
+                <div class="stat-type-row">
+                    <span class="stat-type-chip tag tag-aisla">A</span>
+                    <div class="stat-bar-bg"><div class="stat-bar-fill stat-bar-a" style="width:${pctA}%"></div></div>
+                    <span class="stat-type-pct">${pctA}%</span>
+                </div>
+                <div class="stat-type-row">
+                    <span class="stat-type-chip tag tag-salud">S</span>
+                    <div class="stat-bar-bg"><div class="stat-bar-fill stat-bar-s" style="width:${pctS}%"></div></div>
+                    <span class="stat-type-pct">${pctS}%</span>
+                </div>
+            </div>
+        </div>
+        <div class="stat-box">
             <span class="stat-label">Top Grupo</span>
             <span class="stat-val" style="font-size:13px">${topGrupo}</span>
         </div>
         <div class="stat-box">
-            <span class="stat-label">Promedio Kg</span>
-            <span class="stat-val">${totalSesiones > 0 ? Math.round(totalKg/totalSesiones) : 0}<small>/ses</small></span>
+            <span class="stat-label">Top Ejercicio</span>
+            <span class="stat-val" style="font-size:11px; line-height:1.3">${topEjercicio}</span>
+        </div>
+        <div class="stat-box">
+            <span class="stat-label">Kg promedio/ses.</span>
+            <span class="stat-val">${totalSesiones > 0 ? Math.round(totalKg / totalSesiones) : 0}<small>kg</small></span>
+        </div>
+        <div class="stat-box">
+            <span class="stat-label">Récord sesión</span>
+            <span class="stat-val">${getMaxKgSession()}<small>kg</small></span>
+        </div>
+        <div class="stat-box stat-full stat-last">
+            <span class="stat-label">Última sesión</span>
+            <span class="stat-last-fecha">${ultimaFecha}</span>
+            <span class="stat-last-resumen">${ultimaResumen}</span>
         </div>
     `;
 }
