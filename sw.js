@@ -1,4 +1,4 @@
-const CACHE_NAME = 'ironlog-v2';
+const CACHE_NAME = 'ironlog-v5';
 const ASSETS = [
   './',
   './index.html',
@@ -34,6 +34,10 @@ self.addEventListener('fetch', event => {
     );
     return;
   }
+  event.respondWith(
+    caches.match(event.request).then(cached => cached || fetch(event.request))
+  );
+});
 
   event.respondWith(
     caches.match(event.request).then(cached => cached || fetch(event.request))
