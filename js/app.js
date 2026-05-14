@@ -545,6 +545,14 @@ function finalizarSesion() {
 
 function borrarHistorialItem(index) { if(confirm("¿Borrar sesión?")) { state.historial.splice(index, 1); save(); renderHistory(); } }
 
+function borrarTodoHistorial() {
+    if (!confirm("¿Borrar todo el historial de sesiones?\n\nEsta acción no se puede deshacer.")) return;
+    if (!confirm("¿Seguro? Se perderán todos los registros permanentemente.")) return;
+    state.historial = [];
+    save();
+    renderHistory();
+}
+
 function renderHistory() {
     updateStats();
     renderCalendar();
