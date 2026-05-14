@@ -91,7 +91,16 @@
                 </div>
         </div>
 
-        <div id="calendarContainer" style="margin: 16px 0;"></div>
+        <div id="calendarContainer"></div>
+        <div id="dayModal" class="day-modal" style="display:none;" onclick="closeDayModal(this,event)">
+            <div class="day-modal-sheet">
+                <div class="day-modal-header">
+                    <span id="dayModalTitle" class="day-modal-title"></span>
+                    <button class="day-modal-close" onclick="closeDayModal()">✕</button>
+                </div>
+                <div id="dayModalBody"></div>
+            </div>
+        </div>
         <div id="historyList"></div>
     </div>
 </div>
