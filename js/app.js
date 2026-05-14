@@ -92,7 +92,7 @@ const db = {
         {n:"Seated Shadow Boxing (boxeo sentado cardio suave)",        t:T_S, tip:"Sin equipamiento"},
         {n:"Arm Circles (circulos de brazos calentamiento)",           t:T_S, tip:"Sin equipamiento"},
         {n:"Seated March (marcha sentado activacion circulatoria)",    t:T_S, tip:"Sin equipamiento"},
-        {n:"Paseo intenso",    t:T_S, tip:"Sin equipamiento"}
+        {n:"Paseo Intenso (caminata activa de alta intensidad)",              t:T_S, tip:"Sin equipamiento"}
     ] }
 };
 
@@ -631,11 +631,47 @@ function updateStats() {
     }
     const sesSemana = state.historial.filter(h => last7.includes(h.fecha)).length;
 
+    // Días del mes actual
+    const thisMonth = [];
+    const tempDate = new Date(today.getFullYear(), today.getMonth(), 1);
+    while (tempDate <= today) { thisMonth.push(tempDate.toLocaleDateString()); tempDate.setDate(tempDate.getDate() + 1); }
+    const sesMes = state.historial.filter(h => thisMonth.includes(h.fecha)).length;
+
+    // Cardio: suma del campo 'series' (minutos) de ejercicios del grupo Cardio
+    const getCardioMin = (fechas) => {
+        let min = 0;
+        state.historial.filter(h => fechas.includes(h.fecha)).forEach(sesion => {
+            if (sesion.ejercicios) sesion.ejercicios.forEach(ex => {
+                if (ex.group === 'Cardio' && ex.series) min += parseFloat(ex.series) || 0;
+            });
+        });
+        return Math.round(min);
+    };
+    const cardioSemana = getCardioMin(last7);
+    const cardioMes = getCardioMin(thisMonth);
+
     const uniqueDatesSet = new Set(state.historial.map(h => h.fecha));
+
+    // Racha actual: se permite hasta 2 días de descanso consecutivos por semana
     let racha = 0;
     let checkDate = new Date(today);
-    if (!uniqueDatesSet.has(today.toLocaleDateString())) checkDate.setDate(checkDate.getDate() - 1);
-    while (uniqueDatesSet.has(checkDate.toLocaleDateString())) { racha++; checkDate.setDate(checkDate.getDate() - 1); }
+    let descConsec = 0;
+    for (let i = 0; i <= 365; i++) {
+        const ds = checkDate.toLocaleDateString();
+        if (uniqueDatesSet.has(ds)) { racha++; descConsec = 0; }
+        else { descConsec++; if (descConsec > 2) break; }
+        checkDate.setDate(checkDate.getDate() - 1);
+    }
+
+    // Racha máxima histórica (mismo criterio)
+    const startHist = new Date(today); startHist.setDate(startHist.getDate() - 730);
+    let maxRacha = 0, tempRacha = 0, tempDesc = 0;
+    const histCheck = new Date(startHist);
+    while (histCheck <= today) {
+        if (uniqueDatesSet.has(histCheck.toLocaleDateString())) { tempRacha++; tempDesc = 0; if (tempRacha > maxRacha) maxRacha = tempRacha; }
+        else { tempDesc++; if (tempDesc > 2) { tempRacha = 0; tempDesc = 0; } }
+        histCheck.setDate(histCheck.getDate() + 1);
+    }
 
     const totalTypes = (typeContador[T_B] || 0) + (typeContador[T_A] || 0) + (typeContador[T_S] || 0);
     const pctB = totalTypes > 0 ? Math.round((typeContador[T_B] || 0) / totalTypes * 100) : 0;
@@ -646,11 +682,43 @@ function updateStats() {
     const ultimaFecha = ultima ? `${ultima.fecha}${ultima.hora ? ' · ' + ultima.hora : ''}` : 'N/A';
     const ultimaResumen = ultima.resumen.length > 80 ? ultima.resumen.substring(0, 78) + '…' : ultima.resumen;
 
+    // Días de descanso esta semana
+    const descSemana = 7 - sesSemana;
+
+    // Semanas activas este mes
+    const semanasActivas = (() => {
+        const weeks = new Set();
+        thisMonth.forEach((ds, idx) => { if (uniqueDatesSet.has(ds)) weeks.add(Math.floor(idx / 7)); });
+        return weeks.size;
+    })();
+
+    // Grupo más descuidado (últimos 30 días, excluye Cardio)
+    const last30 = [];
+    for (let i = 0; i < 30; i++) { const d = new Date(today); d.setDate(today.getDate() - i); last30.push(d.toLocaleDateString()); }
+    const recentGrupos = {};
+    GRUPOS.filter(g => g !== 'Cardio').forEach(g => recentGrupos[g] = 0);
+    state.historial.filter(h => last30.includes(h.fecha)).forEach(s => {
+        if (s.ejercicios) s.ejercicios.forEach(ex => { if (recentGrupos[ex.group] !== undefined) recentGrupos[ex.group]++; });
+    });
+    const grupoDesc = Object.keys(recentGrupos).reduce((a, b) => recentGrupos[a] <= recentGrupos[b] ? a : b);
+
+    // Media de ejercicios Salud por sesión (últimas 10 sesiones)
+    const ultimas10 = state.historial.slice(0, 10);
+    const saludMedia = ultimas10.length > 0
+        ? (ultimas10.reduce((acc, s) => acc + (s.ejercicios ? s.ejercicios.filter(e => e.t === T_S).length : 0), 0) / ultimas10.length).toFixed(1)
+        : 0;
+
     container.innerHTML = `
         <div class="stat-box"><span class="stat-label">Sesiones</span><span class="stat-val">${totalSesiones}</span></div>
         <div class="stat-box"><span class="stat-label">Volumen Total</span><span class="stat-val">${Math.round(totalKg)}<small>kg</small></span></div>
-        <div class="stat-box"><span class="stat-label">🔥 Racha</span><span class="stat-val">${racha}<small>días</small></span></div>
+        <div class="stat-box"><span class="stat-label">🔥 Racha actual</span><span class="stat-val">${racha}<small>días</small></span></div>
+        <div class="stat-box"><span class="stat-label">🏆 Racha máxima</span><span class="stat-val">${maxRacha}<small>días</small></span></div>
         <div class="stat-box"><span class="stat-label">📅 Esta semana</span><span class="stat-val">${sesSemana}<small>ses.</small></span></div>
+        <div class="stat-box"><span class="stat-label">😴 Descansos semana</span><span class="stat-val">${descSemana}<small>días</small></span></div>
+        <div class="stat-box"><span class="stat-label">🚴 Cardio semana</span><span class="stat-val">${cardioSemana}<small>min</small></span></div>
+        <div class="stat-box"><span class="stat-label">🚴 Cardio mes</span><span class="stat-val">${cardioMes}<small>min</small></span></div>
+        <div class="stat-box"><span class="stat-label">📆 Sesiones mes</span><span class="stat-val">${sesMes}</span></div>
+        <div class="stat-box"><span class="stat-label">📆 Semanas activas</span><span class="stat-val">${semanasActivas}</span></div>
         <div class="stat-box stat-full">
             <span class="stat-label">Distribución por tipo</span>
             <div class="stat-type-bars">
@@ -661,7 +729,8 @@ function updateStats() {
         </div>
         <div class="stat-box"><span class="stat-label">Top Grupo</span><span class="stat-val" style="font-size:13px">${topGrupo}</span></div>
         <div class="stat-box"><span class="stat-label">Top Ejercicio</span><span class="stat-val" style="font-size:11px; line-height:1.3">${topEjercicio}</span></div>
-        <div class="stat-box"><span class="stat-label">Kg promedio/ses.</span><span class="stat-val">${totalSesiones > 0 ? Math.round(totalKg / totalSesiones) : 0}<small>kg</small></span></div>
+        <div class="stat-box"><span class="stat-label">🛡️ Salud/sesión</span><span class="stat-val">${saludMedia}<small>ejs.</small></span></div>
+        <div class="stat-box"><span class="stat-label">⚠️ Más descuidado</span><span class="stat-val" style="font-size:11px">${grupoDesc}</span></div>
         <div class="stat-box"><span class="stat-label">Récord sesión</span><span class="stat-val">${getMaxKgSession()}<small>kg</small></span></div>
         <div class="stat-box stat-full stat-last">
             <span class="stat-label">Última sesión</span>
