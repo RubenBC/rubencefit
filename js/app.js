@@ -592,25 +592,41 @@ function renderCalendar() {
     const today = new Date();
     const nowMonth = today.getMonth(), nowYear = today.getFullYear();
     const isFuture = calYear > nowYear || (calYear === nowYear && calMonth > nowMonth);
+    const todayDay = today.getDay() === 0 ? 6 : today.getDay() - 1;
+    const isCurrentMonth = calYear === nowYear && calMonth === nowMonth;
 
-    // Build dayData: map day → intensity score
+    // Build dayData: day → intensity score + points
     const dayData = {};
+    let totalPuntos = 0;
     for (let d = 1; d <= daysInMonth; d++) {
         const ds = new Date(calYear, calMonth, d).toLocaleDateString();
         state.historial.forEach(s => {
-            if (s.fecha === ds) dayData[d] = (dayData[d] || 0) + getSessionIntensity(s);
+            if (s.fecha === ds) {
+                const score = getSessionIntensity(s);
+                dayData[d] = (dayData[d] || 0) + score;
+                // Points: B=30, A=20, S=10, cardio=min*2
+                if (s.ejercicios) s.ejercicios.forEach(ex => {
+                    if (ex.group === 'Cardio') totalPuntos += (parseFloat(ex.series)||0)*2;
+                    else if (ex.t === T_B) totalPuntos += 30;
+                    else if (ex.t === T_A) totalPuntos += 20;
+                    else if (ex.t === T_S) totalPuntos += 10;
+                });
+            }
         });
     }
     const maxInt = Math.max(...Object.values(dayData), 1);
 
-    const dias = ['L','M','X','J','V','S','D'];
+    const diasHdr = ['lun','mar','mié','jue','vie','sáb','dom'];
+
     let g = `<div class="cal-nav">
         <button class="cal-btn" onclick="calPrev()">&#8249;</button>
-        <span class="cal-title">${MESES[calMonth]} ${calYear}</span>
+        <div class="cal-nav-center">
+            <span class="cal-title">${MESES[calMonth].toLowerCase()} de ${calYear}</span>
+            <span class="cal-puntos">&#129293; ${Math.round(totalPuntos)} puntos</span>
+        </div>
         <button class="cal-btn" onclick="calNext()" ${isFuture ? 'disabled' : ''}>&#8250;</button>
     </div>
-    <div class="cal-grid">
-        ${dias.map(d => `<div class="cal-hdr">${d}</div>`).join('')}`;
+    <div class="cal-grid">`;
 
     for (let i = 0; i < firstDay; i++) g += `<div class="cal-cell"></div>`;
 
@@ -619,19 +635,24 @@ function renderCalendar() {
         const isToday = ds === today.toLocaleDateString();
         const isFutureDay = new Date(calYear, calMonth, d) > today;
         const intensity = dayData[d] || 0;
-        let dot = '';
         if (intensity > 0) {
             const ratio = intensity / maxInt;
-            const size = Math.round(10 + ratio * 22);
-            const opacity = (0.35 + ratio * 0.65).toFixed(2);
-            dot = `<div class="cal-dot" style="width:${size}px;height:${size}px;opacity:${opacity}"></div>`;
+            const size = Math.round(32 + ratio * 32); // 32px – 64px
+            const lightness = Math.round(28 + ratio * 22); // darker→lighter teal
+            const bg = `hsl(171, 68%, ${lightness}%)`;
+            const fs = Math.round(11 + ratio * 7);
+            g += `<div class="cal-cell">
+                <div class="cal-circle${isToday ? ' cal-circle-today' : ''}" style="width:${size}px;height:${size}px;background:${bg};font-size:${fs}px;">${d}</div>
+            </div>`;
+        } else {
+            g += `<div class="cal-cell${isFutureDay ? ' cal-future' : ''}">
+                <span class="cal-dnum${isToday ? ' cal-dnum-today' : ''}">${d}</span>
+            </div>`;
         }
-        g += `<div class="cal-cell${isFutureDay ? ' cal-future' : ''}">
-            <span class="cal-dnum${isToday ? ' cal-today' : ''}">${d}</span>
-            <div class="cal-dot-wrap">${dot}</div>
-        </div>`;
     }
-    g += `</div>`;
+
+    // Day labels at bottom
+    g += `</div><div class="cal-footer">${diasHdr.map((d, i) => `<div class="cal-foot-d${isCurrentMonth && i === todayDay ? ' cal-foot-today' : ''}">${d}</div>`).join('')}</div>`;
     container.innerHTML = g;
 }
 
