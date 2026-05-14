@@ -92,6 +92,7 @@ const db = {
         {n:"Seated Shadow Boxing (boxeo sentado cardio suave)",        t:T_S, tip:"Sin equipamiento"},
         {n:"Arm Circles (circulos de brazos calentamiento)",           t:T_S, tip:"Sin equipamiento"},
         {n:"Seated March (marcha sentado activacion circulatoria)",    t:T_S, tip:"Sin equipamiento"}
+        {n:"Paseo intenso",    t:T_S, tip:"Sin equipamiento"}
     ] }
 };
 
