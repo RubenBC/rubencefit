@@ -743,3 +743,80 @@ h2 {
     white-space: nowrap;
     animation: fadeInOut 1.2s ease forwards;
 }
+
+/* =========================================================
+   ESTADÍSTICAS — MEJORAS
+========================================================= */
+
+.stat-full {
+    grid-column: 1 / span 2;
+}
+
+.stat-type-bars {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    margin-top: 8px;
+}
+
+.stat-type-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.stat-type-chip {
+    font-size: 9px;
+    font-weight: bold;
+    min-width: 22px;
+    text-align: center;
+    padding: 2px 5px;
+    border-radius: 6px;
+}
+
+.stat-bar-bg {
+    flex: 1;
+    height: 8px;
+    background: rgba(0,0,0,0.07);
+    border-radius: 99px;
+    overflow: hidden;
+}
+
+.stat-bar-fill {
+    height: 100%;
+    border-radius: 99px;
+    transition: width 0.6s ease;
+    min-width: 4px;
+}
+
+.stat-bar-b { background: #e74c3c; }
+.stat-bar-a { background: #9b59b6; }
+.stat-bar-s { background: #27ae60; }
+
+.stat-type-pct {
+    font-size: 10px;
+    font-weight: bold;
+    color: var(--text2);
+    min-width: 28px;
+    text-align: right;
+}
+
+.stat-last {
+    text-align: left;
+}
+
+.stat-last-fecha {
+    display: block;
+    font-size: 12px;
+    font-weight: bold;
+    color: var(--primary);
+    margin-top: 4px;
+}
+
+.stat-last-resumen {
+    display: block;
+    font-size: 11px;
+    color: var(--text2);
+    margin-top: 3px;
+    line-height: 1.4;
+}
