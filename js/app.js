@@ -531,11 +531,13 @@ function limpiarPlantillas() { if(confirm("¿Borrar rutinas guardadas?")) { stat
 function finalizarSesion() {
     if(state.hoy.length === 0) return;
     if(confirm("¿Guardar en el Log?")) {
+        const durSec = state.sesionStartTime ? Math.floor((Date.now() - state.sesionStartTime) / 1000) : null;
         state.historial.unshift({ 
             fecha: new Date().toLocaleDateString(), 
             hora: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
             resumen: state.hoy.map(e => `${getIcon(e.t)}${e.name}`).join('; '),
-            ejercicios: JSON.parse(JSON.stringify(state.hoy)) 
+            ejercicios: JSON.parse(JSON.stringify(state.hoy)),
+            duracion: durSec
         });
         state.hoy = []; resetSesionStopwatch(); save(); showPage('historialPage');
     }
@@ -547,29 +549,8 @@ function renderHistory() {
     updateStats();
     renderCalendar();
     const hList = document.getElementById('historyList');
-    if(!hList) return;
-    if(state.historial.length === 0) { hList.innerHTML = "<p style='text-align:center; padding:40px;'>Sin registros.</p>"; return; }
-    hList.innerHTML = state.historial.map((h, i) => `
-        <div class="routine-card history-item">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 8px;">
-                <b style="color:var(--primary); font-size: 15px;">${h.fecha} <span style="font-size:12px; color:var(--text2)">${h.hora || ''}</span></b>
-                <button onclick="borrarHistorialItem(${i})" style="color:var(--danger); background:none; border:none;" class="material-symbols-outlined">delete</button>
-            </div>
-            <small style="color:var(--text2); display:block;">${h.resumen}</small>
-            <div style="margin-top: 12px; padding-top: 12px; border-top: 1px dashed var(--outline); font-size: 13px;">
-                ${h.ejercicios ? h.ejercicios.map(ex => {
-                    const tipo = getEquipType(ex);
-                    let pesoLabel = '';
-                    if (tipo === 'band') pesoLabel = ex.peso ? '|' + ex.peso : '';
-                    else if (tipo === 'bodyweight') pesoLabel = '';
-                    else if (tipo === 'mixed') pesoLabel = ex.peso ? (ex.usaBanda ? '|' + ex.peso : '|' + ex.peso + 'kg') : '';
-                    else pesoLabel = ex.peso ? '|' + ex.peso + 'kg' : '';
-                    return `<div style="display:flex; justify-content:space-between;"><span>${ex.name}</span><span style="font-family:monospace; font-size:11px;">${ex.series}${ex.reps?'|'+ex.reps:''}${pesoLabel}</span></div>`;
-                }).join('') : ''}
-            </div>
-        </div>`).join('');
+    if (hList) hList.innerHTML = '';
 }
-
 function getSessionIntensity(sesion) {
     if (!sesion.ejercicios || sesion.ejercicios.length === 0) return 1;
     let score = 0;
@@ -639,10 +620,12 @@ function renderCalendar() {
             const ratio = intensity / maxInt;
             const size = Math.round(32 + ratio * 32); // 32px – 64px
             const lightness = Math.round(28 + ratio * 22); // darker→lighter teal
-            const bg = `hsl(171, 68%, ${lightness}%)`;
+            const lightL = Math.round(75 - ratio * 38);
+            const bg = `hsl(261, 42%, ${lightL}%)`;
+            const textColor = lightL < 55 ? 'white' : '#3a2d6e';
             const fs = Math.round(11 + ratio * 7);
             g += `<div class="cal-cell">
-                <div class="cal-circle${isToday ? ' cal-circle-today' : ''}" style="width:${size}px;height:${size}px;background:${bg};font-size:${fs}px;">${d}</div>
+                <div class="cal-circle${isToday ? ' cal-circle-today' : ''}" style="width:${size}px;height:${size}px;background:${bg};font-size:${fs}px;color:${textColor};" onclick="openDayModal('${ds}',${d},${calMonth},${calYear})">${d}</div>
             </div>`;
         } else {
             g += `<div class="cal-cell${isFutureDay ? ' cal-future' : ''}">
@@ -666,6 +649,50 @@ function calNext() {
         calMonth++; if (calMonth > 11) { calMonth = 0; calYear++; }
         renderCalendar();
     }
+}
+
+function formatDuracion(sec) {
+    if (!sec) return null;
+    const h = Math.floor(sec/3600), m = Math.floor((sec%3600)/60), s = sec%60;
+    if (h > 0) return `${h}h ${m}m`;
+    return `${m}m ${s < 10?'0':''}${s}s`;
+}
+
+function openDayModal(ds, d, month, year) {
+    const sessions = state.historial.filter(h => h.fecha === ds);
+    if (!sessions.length) return;
+    const MESES = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+    document.getElementById('dayModalTitle').innerText = `${d} de ${MESES[month]} de ${year}`;
+    let cardioMin = 0, allEx = [];
+    sessions.forEach(s => {
+        if (s.ejercicios) s.ejercicios.forEach(ex => {
+            allEx.push(ex);
+            if (ex.group === 'Cardio' && ex.series) cardioMin += parseFloat(ex.series)||0;
+        });
+    });
+    const durStr = formatDuracion(sessions[0].duracion);
+    let body = `<div class="modal-times">`;
+    if (durStr) body += `<div class="modal-time-pill">⏱ ${durStr}</div>`;
+    if (cardioMin > 0) body += `<div class="modal-time-pill">🚴 ${Math.round(cardioMin)} min cardio</div>`;
+    body += `</div><div class="modal-ex-list">`;
+    allEx.forEach(ex => {
+        const tipo = getEquipType(ex);
+        let meta = '';
+        if (tipo === 'cardio') { meta = ex.series ? `${ex.series} min` : ''; if (ex.reps) meta += ` · ${ex.reps}`; }
+        else {
+            if (ex.series && ex.reps) meta = `${ex.series}×${ex.reps}`;
+            else if (ex.series) meta = `${ex.series} series`;
+            if (ex.peso) meta += ` · ${ex.peso}${tipo==='band'?'':' kg'}`;
+        }
+        body += `<div class="modal-ex-item"><span class="modal-ex-name">${getIcon(ex.t)}${ex.name}</span>${meta?`<span class="modal-ex-meta">${meta}</span>`:''}</div>`;
+    });
+    body += '</div>';
+    document.getElementById('dayModalBody').innerHTML = body;
+    document.getElementById('dayModal').style.display = 'flex';
+}
+
+function closeDayModal(el, e) {
+    if (!e || e.target === el) document.getElementById('dayModal').style.display = 'none';
 }
 
 function getMaxKgSession() {
@@ -779,10 +806,6 @@ function updateStats() {
     const pctA = totalTypes > 0 ? Math.round((typeContador[T_A] || 0) / totalTypes * 100) : 0;
     const pctS = totalTypes > 0 ? Math.round((typeContador[T_S] || 0) / totalTypes * 100) : 0;
 
-    const ultima = state.historial[0];
-    const ultimaFecha = ultima ? `${ultima.fecha}${ultima.hora ? ' · ' + ultima.hora : ''}` : 'N/A';
-    const ultimaResumen = ultima.resumen.length > 80 ? ultima.resumen.substring(0, 78) + '…' : ultima.resumen;
-
     // Días de descanso esta semana
     const descSemana = 7 - sesSemana;
 
@@ -831,11 +854,6 @@ function updateStats() {
         <div class="stat-box"><span class="stat-label">Top Ejercicio</span><span class="stat-val" style="font-size:11px; line-height:1.3">${topEjercicio}</span></div>
         <div class="stat-box"><span class="stat-label">🛡️ Salud/sesión</span><span class="stat-val">${saludMedia}<small>ejs.</small></span></div>
         <div class="stat-box"><span class="stat-label">⚠️ Más descuidado</span><span class="stat-val" style="font-size:11px">${grupoDesc}</span></div>
-        <div class="stat-box stat-full stat-last">
-            <span class="stat-label">Última sesión</span>
-            <span class="stat-last-fecha">${ultimaFecha}</span>
-            <span class="stat-last-resumen">${ultimaResumen}</span>
-        </div>
     `;
 }
 
