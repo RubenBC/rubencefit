@@ -114,6 +114,8 @@ let state = JSON.parse(localStorage.getItem('iron_log_v8.6')) || {
 if (state.sesionStartTime === undefined) state.sesionStartTime = null;
 
 let swInterval = null;
+let calYear = new Date().getFullYear();
+let calMonth = new Date().getMonth();
 
 function tickStopwatch() {
     if (!state.sesionStartTime) return;
@@ -543,6 +545,7 @@ function borrarHistorialItem(index) { if(confirm("¿Borrar sesión?")) { state.h
 
 function renderHistory() {
     updateStats();
+    renderCalendar();
     const hList = document.getElementById('historyList');
     if(!hList) return;
     if(state.historial.length === 0) { hList.innerHTML = "<p style='text-align:center; padding:40px;'>Sin registros.</p>"; return; }
@@ -565,6 +568,83 @@ function renderHistory() {
                 }).join('') : ''}
             </div>
         </div>`).join('');
+}
+
+function getSessionIntensity(sesion) {
+    if (!sesion.ejercicios || sesion.ejercicios.length === 0) return 1;
+    let score = 0;
+    sesion.ejercicios.forEach(ex => {
+        if (ex.group === 'Cardio') score += Math.max((parseFloat(ex.series) || 0) / 5, 0.5);
+        else if (ex.t === T_B) score += 3;
+        else if (ex.t === T_A) score += 2;
+        else if (ex.t === T_S) score += 1;
+    });
+    return Math.max(score, 1);
+}
+
+function renderCalendar() {
+    const container = document.getElementById('calendarContainer');
+    if (!container) return;
+    const MESES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+    const daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
+    let firstDay = new Date(calYear, calMonth, 1).getDay();
+    firstDay = firstDay === 0 ? 6 : firstDay - 1;
+    const today = new Date();
+    const nowMonth = today.getMonth(), nowYear = today.getFullYear();
+    const isFuture = calYear > nowYear || (calYear === nowYear && calMonth > nowMonth);
+
+    // Build dayData: map day → intensity score
+    const dayData = {};
+    for (let d = 1; d <= daysInMonth; d++) {
+        const ds = new Date(calYear, calMonth, d).toLocaleDateString();
+        state.historial.forEach(s => {
+            if (s.fecha === ds) dayData[d] = (dayData[d] || 0) + getSessionIntensity(s);
+        });
+    }
+    const maxInt = Math.max(...Object.values(dayData), 1);
+
+    const dias = ['L','M','X','J','V','S','D'];
+    let g = `<div class="cal-nav">
+        <button class="cal-btn" onclick="calPrev()">&#8249;</button>
+        <span class="cal-title">${MESES[calMonth]} ${calYear}</span>
+        <button class="cal-btn" onclick="calNext()" ${isFuture ? 'disabled' : ''}>&#8250;</button>
+    </div>
+    <div class="cal-grid">
+        ${dias.map(d => `<div class="cal-hdr">${d}</div>`).join('')}`;
+
+    for (let i = 0; i < firstDay; i++) g += `<div class="cal-cell"></div>`;
+
+    for (let d = 1; d <= daysInMonth; d++) {
+        const ds = new Date(calYear, calMonth, d).toLocaleDateString();
+        const isToday = ds === today.toLocaleDateString();
+        const isFutureDay = new Date(calYear, calMonth, d) > today;
+        const intensity = dayData[d] || 0;
+        let dot = '';
+        if (intensity > 0) {
+            const ratio = intensity / maxInt;
+            const size = Math.round(10 + ratio * 22);
+            const opacity = (0.35 + ratio * 0.65).toFixed(2);
+            dot = `<div class="cal-dot" style="width:${size}px;height:${size}px;opacity:${opacity}"></div>`;
+        }
+        g += `<div class="cal-cell${isFutureDay ? ' cal-future' : ''}">
+            <span class="cal-dnum${isToday ? ' cal-today' : ''}">${d}</span>
+            <div class="cal-dot-wrap">${dot}</div>
+        </div>`;
+    }
+    g += `</div>`;
+    container.innerHTML = g;
+}
+
+function calPrev() {
+    calMonth--; if (calMonth < 0) { calMonth = 11; calYear--; }
+    renderCalendar();
+}
+function calNext() {
+    const now = new Date();
+    if (calYear < now.getFullYear() || (calYear === now.getFullYear() && calMonth < now.getMonth())) {
+        calMonth++; if (calMonth > 11) { calMonth = 0; calYear++; }
+        renderCalendar();
+    }
 }
 
 function getMaxKgSession() {
