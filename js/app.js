@@ -710,7 +710,6 @@ function updateStats() {
 
     container.innerHTML = `
         <div class="stat-box"><span class="stat-label">Sesiones</span><span class="stat-val">${totalSesiones}</span></div>
-        <div class="stat-box"><span class="stat-label">Volumen Total</span><span class="stat-val">${Math.round(totalKg)}<small>kg</small></span></div>
         <div class="stat-box"><span class="stat-label">🔥 Racha actual</span><span class="stat-val">${racha}<small>días</small></span></div>
         <div class="stat-box"><span class="stat-label">🏆 Racha máxima</span><span class="stat-val">${maxRacha}<small>días</small></span></div>
         <div class="stat-box"><span class="stat-label">📅 Esta semana</span><span class="stat-val">${sesSemana}<small>ses.</small></span></div>
@@ -731,7 +730,6 @@ function updateStats() {
         <div class="stat-box"><span class="stat-label">Top Ejercicio</span><span class="stat-val" style="font-size:11px; line-height:1.3">${topEjercicio}</span></div>
         <div class="stat-box"><span class="stat-label">🛡️ Salud/sesión</span><span class="stat-val">${saludMedia}<small>ejs.</small></span></div>
         <div class="stat-box"><span class="stat-label">⚠️ Más descuidado</span><span class="stat-val" style="font-size:11px">${grupoDesc}</span></div>
-        <div class="stat-box"><span class="stat-label">Récord sesión</span><span class="stat-val">${getMaxKgSession()}<small>kg</small></span></div>
         <div class="stat-box stat-full stat-last">
             <span class="stat-label">Última sesión</span>
             <span class="stat-last-fecha">${ultimaFecha}</span>
