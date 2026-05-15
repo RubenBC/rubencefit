@@ -583,7 +583,7 @@ h2 {
 
 .mini-tag.template {
     background: var(--primary);
-    color: white;
+    color: var(--primary);
 }
 
 .btn-preview {
@@ -852,7 +852,7 @@ h2 {
 ========================================================= */
 
 #calendarContainer {
-    background: #1a2332;
+    background: white;
     border-radius: 20px;
     padding: 20px 14px 14px;
     margin: 16px 0;
@@ -876,7 +876,7 @@ h2 {
     background: none;
     border: none;
     font-size: 26px;
-    color: rgba(255,255,255,0.5);
+    color: var(--primary);
     cursor: pointer;
     padding: 0 8px;
     line-height: 1;
@@ -892,7 +892,7 @@ h2 {
 
 .cal-puntos {
     font-size: 13px;
-    color: hsl(171, 68%, 50%);
+    color: var(--primary); opacity:0.75;
     font-weight: 500;
 }
 
@@ -913,7 +913,7 @@ h2 {
 
 .cal-dnum {
     font-size: 15px;
-    color: rgba(255,255,255,0.45);
+    color: var(--text2);
     font-weight: 400;
 }
 
@@ -934,7 +934,7 @@ h2 {
 }
 
 .cal-circle-today {
-    box-shadow: 0 0 0 2px white;
+    box-shadow: 0 0 0 2.5px var(--primary);
 }
 
 .cal-footer {
@@ -948,10 +948,82 @@ h2 {
 .cal-foot-d {
     text-align: center;
     font-size: 11px;
-    color: rgba(255,255,255,0.35);
+    color: var(--text2); opacity:0.65;
 }
 
 .cal-foot-today {
-    color: white;
+    color: var(--primary);
     font-weight: bold;
+}
+
+/* =========================================================
+   MODAL DÍA
+========================================================= */
+.day-modal { position:fixed; inset:0; background:rgba(0,0,0,0.35); z-index:500; display:flex; align-items:flex-end; justify-content:center; }
+.day-modal-sheet { background:white; border-radius:24px 24px 0 0; padding:20px 20px 36px; width:100%; max-width:600px; max-height:75vh; overflow-y:auto; animation:slideUp 0.22s ease; }
+@keyframes slideUp { from{transform:translateY(100%);opacity:0} to{transform:translateY(0);opacity:1} }
+.day-modal-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; }
+.day-modal-title { font-size:16px; font-weight:bold; color:var(--primary); text-transform:capitalize; }
+.day-modal-close { background:none; border:none; font-size:18px; color:var(--text2); cursor:pointer; padding:4px 8px; }
+.modal-times { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:14px; }
+.modal-time-pill { background:var(--primary-light); color:var(--primary); border-radius:20px; padding:5px 12px; font-size:12px; font-weight:500; }
+.modal-ex-list { display:flex; flex-direction:column; gap:0; }
+.modal-ex-item { display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:1px solid var(--outline); font-size:13px; }
+.modal-ex-item:last-child { border-bottom:none; }
+.modal-ex-name { color:var(--text1); flex:1; }
+.modal-ex-meta { font-family:monospace; font-size:12px; color:var(--primary); font-weight:500; margin-left:8px; flex-shrink:0; }
+
+/* =========================================================
+   MODAL DE SELECCIÓN DE INTENSIDAD
+========================================================= */
+.intensity-options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 8px;
+}
+
+.intensity-btn {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: var(--primary-light);
+    border: 2px solid transparent;
+    border-radius: 14px;
+    padding: 14px 16px;
+    cursor: pointer;
+    text-align: left;
+    transition: border-color 0.15s, transform 0.1s;
+    width: 100%;
+}
+
+.intensity-btn:active {
+    transform: scale(0.98);
+}
+
+.intensity-suave { border-color: #a8d8b9; }
+.intensity-normal { border-color: var(--primary); }
+.intensity-intensa { border-color: #e8a87c; }
+
+.intensity-emoji {
+    font-size: 26px;
+    flex-shrink: 0;
+}
+
+.intensity-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.intensity-title {
+    font-weight: bold;
+    font-size: 15px;
+    color: var(--primary);
+}
+
+.intensity-desc {
+    font-size: 11px;
+    color: var(--text2);
+    margin-top: 2px;
+    line-height: 1.3;
 }
