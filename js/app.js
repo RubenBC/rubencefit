@@ -651,10 +651,20 @@ function getSessionIntensity(sesion) {
     if (!sesion.ejercicios || sesion.ejercicios.length === 0) return 1;
     let score = 0;
     sesion.ejercicios.forEach(ex => {
-        if (ex.group === 'Cardio') score += Math.max((parseFloat(ex.series) || 0) / 5, 0.5);
-        else if (ex.t === T_B) score += 3;
-        else if (ex.t === T_A) score += 2;
-        else if (ex.t === T_S) score += 1;
+        const tipo = getEquipType(ex);
+        if (tipo === 'cardio') {
+            score += Math.max((parseFloat(ex.series) || 0) / 5, 0.5);
+        } else if (ex.t === T_B) {
+            if (tipo === 'dumbbell' || tipo === 'mixed') score += 4;
+            else if (tipo === 'band') score += 3;
+            else score += 2; // bodyweight
+        } else if (ex.t === T_A) {
+            if (tipo === 'dumbbell' || tipo === 'mixed') score += 3;
+            else if (tipo === 'band') score += 2;
+            else score += 1.5;
+        } else if (ex.t === T_S) {
+            score += 1;
+        }
     });
     return Math.max(score, 1);
 }
@@ -684,9 +694,13 @@ function renderCalendar() {
                 // Points: B=30, A=20, S=10, cardio=min*2
                 if (s.ejercicios) s.ejercicios.forEach(ex => {
                     if (ex.group === 'Cardio') totalPuntos += (parseFloat(ex.series)||0)*2;
-                    else if (ex.t === T_B) totalPuntos += 30;
-                    else if (ex.t === T_A) totalPuntos += 20;
                     else if (ex.t === T_S) totalPuntos += 10;
+                    else {
+                        const tipo = getEquipType(ex);
+                        const base = ex.t === T_B ? 40 : 30; // B=40, A=30
+                        const mult = (tipo==='dumbbell'||tipo==='mixed') ? 1 : tipo==='band' ? 0.75 : 0.5;
+                        totalPuntos += base * mult;
+                    }
                 });
             }
         });
