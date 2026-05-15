@@ -1,4 +1,4 @@
-const CACHE_NAME = 'ironlog-v17';
+const CACHE_NAME = 'ironlog-v20';
 const ASSETS = [
   './manifest.json',
   './icon.png',
@@ -32,15 +32,6 @@ self.addEventListener('fetch', event => {
     return;
   }
   // Resto: cache primero, red como fallback
-  event.respondWith(
-    caches.match(event.request).then(cached => cached || fetch(event.request))
-  );
-});
-  event.respondWith(
-    caches.match(event.request).then(cached => cached || fetch(event.request))
-  );
-});
-
   event.respondWith(
     caches.match(event.request).then(cached => cached || fetch(event.request))
   );
