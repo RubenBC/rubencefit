@@ -766,12 +766,6 @@ h2 {
 
 .stat-type-pct { font-size:10px; font-weight:bold; color:var(--text2); min-width:28px; text-align:right; }
 
-.stat-last { text-align:left; }
-
-.stat-last-fecha { display:block; font-size:12px; font-weight:bold; color:var(--primary); margin-top:4px; }
-
-.stat-last-resumen { display:block; font-size:11px; color:var(--text2); margin-top:3px; line-height:1.4; }
-
 /* =========================================================
    CRONÓMETRO DE SESIÓN
 ========================================================= */
