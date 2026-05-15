@@ -88,9 +88,11 @@ const db = {
     ] },
     "Cardio": { icon: "directions_run", advice: "Bajo impacto linfático.", data: [
         {n:"Bicicleta Estática",       t:T_S, tip:"Bicicleta"},
-        {n:"Caminata Activa",              t:T_S, tip:"Sin equipamiento"},
+        {n:"Caminata Activa con Braceo",              t:T_S, tip:"Sin equipamiento"},
         {n:"Boxeo Sentado",        t:T_S, tip:"Sin equipamiento"},
-        {n:"Círculos de Brazos",           t:T_S, tip:"Sin equipamiento"}
+        {n:"Círculos de Brazos",           t:T_S, tip:"Sin equipamiento"},
+        {n:"Marcha Sentado",    t:T_S, tip:"Sin equipamiento"},
+        {n:"Paseo Intenso",              t:T_S, tip:"Sin equipamiento"}
     ] }
 };
 
@@ -543,6 +545,94 @@ function finalizarSesion() {
 
 function borrarHistorialItem(index) { if(confirm("¿Borrar sesión?")) { state.historial.splice(index, 1); save(); renderHistory(); } }
 
+// ── Versión del esquema de backup ───────────────────────────────────────────
+// Incrementar cada vez que se añadan/quiten campos en state o se renombren ejercicios
+const BACKUP_VERSION = 1;
+
+// ── Migraciones: de versión N a N+1 ─────────────────────────────────────────
+// Añadir aquí una función por cada salto de versión futuro
+const MIGRATIONS = {
+    // Ejemplo de cómo añadir migraciones en el futuro:
+    // 1: (s) => { s.nuevocampo = s.nuevocamp || 'valor_default'; return s; },
+    // 2: (s) => { s.historial.forEach(h => { h.nuevoCampo = h.nuevoCampo || null; }); return s; },
+};
+
+function aplicarMigraciones(datos) {
+    let s = datos.state;
+    let v = datos.backupVersion || 0; // 0 = backups muy antiguos sin versión
+    while (v < BACKUP_VERSION) {
+        if (MIGRATIONS[v]) s = MIGRATIONS[v](s);
+        v++;
+    }
+    // Garantizar campos obligatorios que podrían faltar en backups antiguos
+    if (s.sesionStartTime === undefined) s.sesionStartTime = null;
+    if (s.openMenu === undefined) s.openMenu = null;
+    if (s.plantillaSemanal === undefined) s.plantillaSemanal = {};
+    if (!s.semana) s.semana = { "Lunes":[], "Martes":[], "Miercoles":[], "Jueves":[], "Viernes":[], "Sabado":[], "Domingo":[] };
+    if (!s.historial) s.historial = [];
+    if (!s.hoy) s.hoy = [];
+    // Garantizar campos en cada sesión del historial
+    s.historial.forEach(h => {
+        if (h.duracion === undefined) h.duracion = null;
+        if (h.ejercicios) h.ejercicios.forEach(ex => {
+            if (ex.done === undefined) ex.done = false;
+            if (ex.usaBanda === undefined) ex.usaBanda = false;
+        });
+    });
+    return s;
+}
+
+function exportarDatos() {
+    const datos = {
+        backupVersion: BACKUP_VERSION,
+        appVersion: 'IronLog',
+        fecha: new Date().toLocaleDateString(),
+        hora: new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}),
+        state: state
+    };
+    const blob = new Blob([JSON.stringify(datos, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `ironlog-backup-${new Date().toLocaleDateString().replace(/\//g,'-')}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+    showToast('✓ Backup exportado');
+}
+
+function importarDatos(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        try {
+            const datos = JSON.parse(e.target.result);
+            // Aceptar tanto backups nuevos (con backupVersion) como muy antiguos (con version:'ironlog-v1')
+            const esValido = datos.state && (datos.backupVersion !== undefined || datos.version);
+            if (!esValido) throw new Error('Formato inválido');
+            const fechaInfo = datos.fecha ? `del ${datos.fecha}${datos.hora ? ' a las ' + datos.hora : ''}` : 'sin fecha';
+            const sesiones = datos.state.historial ? datos.state.historial.length : 0;
+            if (!confirm(`¿Restaurar backup ${fechaInfo}?
+
+· ${sesiones} sesiones guardadas
+
+Se reemplazarán todos los datos actuales.`)) {
+                event.target.value = '';
+                return;
+            }
+            const stateRestaurado = aplicarMigraciones(datos);
+            Object.assign(state, stateRestaurado);
+            save();
+            showPage('historialPage');
+            showToast(`✓ Restauradas ${sesiones} sesiones`);
+        } catch(err) {
+            alert('Error al leer el archivo. Asegúrate de que es un backup válido de IronLog (.json).');
+        }
+        event.target.value = '';
+    };
+    reader.readAsText(file);
+}
+
 function borrarTodoHistorial() {
     if (!confirm("¿Borrar todo el historial de sesiones?\n\nEsta acción no se puede deshacer.")) return;
     if (!confirm("¿Seguro? Se perderán todos los registros permanentemente.")) return;
@@ -625,7 +715,6 @@ function renderCalendar() {
         if (intensity > 0) {
             const ratio = intensity / maxInt;
             const size = Math.round(32 + ratio * 32); // 32px – 64px
-            const lightness = Math.round(28 + ratio * 22); // darker→lighter teal
             const lightL = Math.round(75 - ratio * 38);
             const bg = `hsl(261, 42%, ${lightL}%)`;
             const textColor = lightL < 55 ? 'white' : '#3a2d6e';
