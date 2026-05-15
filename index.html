@@ -72,7 +72,7 @@
             <h2><span class="material-symbols-outlined">calendar_view_week</span> Semana</h2>
             <div style="display:flex; gap:8px;">
                 <button onclick="limpiarPlantillas()" style="color:var(--danger); border:none; background:none; font-size:11px; font-weight:bold;">RESETEAR</button>
-                <button onclick="generarRutinaInteligente()" style="background:var(--primary); color:white; border:none; padding:8px 12px; border-radius:10px; font-size:11px; font-weight:bold;">CARGAR HOY</button>
+                <button onclick="abrirSelectorIntensidad()" style="background:var(--primary); color:white; border:none; padding:8px 12px; border-radius:10px; font-size:11px; font-weight:bold;">CARGAR HOY</button>
             </div>
         </div>
         <div id="weekPlanner"></div>
@@ -97,6 +97,38 @@
         </div>
 
         <div id="calendarContainer"></div>
+        <div id="intensityModal" class="day-modal" style="display:none;" onclick="cerrarSelectorIntensidad(this,event)">
+            <div class="day-modal-sheet">
+                <div class="day-modal-header">
+                    <span class="day-modal-title">¿Cómo te encuentras hoy?</span>
+                    <button class="day-modal-close" onclick="cerrarSelectorIntensidad()">✕</button>
+                </div>
+                <div class="intensity-options">
+                    <button class="intensity-btn intensity-suave" onclick="generarRutinaInteligente('suave')">
+                        <span class="intensity-emoji">🌿</span>
+                        <div class="intensity-info">
+                            <div class="intensity-title">Suave</div>
+                            <div class="intensity-desc">Pocos ejercicios, baja carga · ~20 min</div>
+                        </div>
+                    </button>
+                    <button class="intensity-btn intensity-normal" onclick="generarRutinaInteligente('normal')">
+                        <span class="intensity-emoji">💪</span>
+                        <div class="intensity-info">
+                            <div class="intensity-title">Normal</div>
+                            <div class="intensity-desc">Rutina equilibrada · ~30 min</div>
+                        </div>
+                    </button>
+                    <button class="intensity-btn intensity-intensa" onclick="generarRutinaInteligente('intensa')">
+                        <span class="intensity-emoji">🔥</span>
+                        <div class="intensity-info">
+                            <div class="intensity-title">Intensa</div>
+                            <div class="intensity-desc">Más volumen, doble básico · ~45 min</div>
+                        </div>
+                    </button>
+                </div>
+            </div>
+        </div>
+
         <div id="dayModal" class="day-modal" style="display:none;" onclick="closeDayModal(this,event)">
             <div class="day-modal-sheet">
                 <div class="day-modal-header">
