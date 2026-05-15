@@ -31,7 +31,8 @@ const db = {
         {n:"Tiro Facial Posterior con Goma",           t:T_A, tip:"Solo Gomas"},
         {n:"Extensión Lumbar en Suelo",  t:T_S, tip:"Sin equipamiento"},
         {n:"Remo Inclinado con Mancuernas",        t:T_B, tip:"Solo Mancuernas"},
-        {n:"Bisagra de Cadera con Goma",            t:T_B, tip:"Solo Gomas"}
+        {n:"Bisagra de Cadera con Goma",            t:T_B, tip:"Solo Gomas"},
+        {n:"Renegade Row",                          t:T_B, tip:"Solo Mancuernas"}
     ] },
     "Piernas": { icon: "directions_walk", advice: "Sin impacto y retorno venoso.", data: [
         {n:"Puente de Glúteos",              t:T_B, tip:"Mancuernas / Gomas"},
@@ -43,7 +44,11 @@ const db = {
         {n:"Empuje de Cadera con Goma",        t:T_B, tip:"Mancuernas / Gomas"},
         {n:"Apertura Lateral de Cadera con Goma",  t:T_A, tip:"Solo Gomas"},
         {n:"Patada Trasera en Cuadrupedia",    t:T_A, tip:"Mancuernas / Gomas"},
-        {n:"Elevación de Piernas Tumbado",t:T_S, tip:"Sin equipamiento"}
+        {n:"Elevación de Piernas Tumbado",t:T_S, tip:"Sin equipamiento"},
+        {n:"Pumping de Gemelos Sentado",  t:T_S, tip:"Sin equipamiento"},
+        {n:"Drenaje con Piernas Elevadas",t:T_S, tip:"Sin equipamiento"},
+        {n:"Marcha Sentado Rodillas Altas",t:T_S, tip:"Sin equipamiento"},
+        {n:"Sentadilla Goblet",            t:T_B, tip:"Solo Mancuernas"}
     ] },
     "Hombros": { icon: "accessibility_new", advice: "Cuidado del manguito rotador.", data: [
         {n:"Press Militar con Mancuernas",     t:T_B, tip:"Mancuernas / Gomas"},
@@ -53,7 +58,9 @@ const db = {
         {n:"Press Arnold con Mancuernas",        t:T_B, tip:"Solo Mancuernas"},
         {n:"Elevación Frontal con Mancuernas",    t:T_A, tip:"Mancuernas / Gomas"},
         {n:"Separación Posterior con Goma",   t:T_S, tip:"Solo Gomas"},
-        {n:"Remo al Cuello con Goma",             t:T_B, tip:"Solo Gomas"}
+        {n:"Remo al Cuello con Goma",             t:T_B, tip:"Solo Gomas"},
+        {n:"Wall Slide",                          t:T_S, tip:"Sin equipamiento"},
+        {n:"Y-T-W Escapular",                     t:T_S, tip:"Sin equipamiento"}
     ] },
     "Bíceps": { icon: "fitness_center", advice: "Flexión de codo técnica.", data: [
         {n:"Curl Martillo",            t:T_B, tip:"Solo Mancuernas"},
@@ -447,75 +454,121 @@ function toggleWeek(dia, g) {
     save(); renderWeek();
 }
 
-function generarRutinaInteligente() {
-    const d = new Date(); 
+function abrirSelectorIntensidad() {
+    const d = new Date();
+    const diaIdx = d.getDay() === 0 ? 6 : d.getDay() - 1;
+    const nombreDia = DIAS_LOGICA[diaIdx];
+    const gruposSeleccionados = state.semana[nombreDia];
+    if (!gruposSeleccionados || gruposSeleccionados.length === 0) {
+        alert("Hoy toca descanso según tu programación.");
+        return;
+    }
+    if (state.hoy.length > 0 && !confirm("¿Generar nueva rutina? Se borrará la actual.")) return;
+    document.getElementById('intensityModal').style.display = 'flex';
+}
+
+function cerrarSelectorIntensidad(el, e) {
+    if (!e || e.target === el) document.getElementById('intensityModal').style.display = 'none';
+}
+
+function getEjerciciosRecientesPorGrupo(numSesiones) {
+    const result = {};
+    GRUPOS.forEach(g => result[g] = []);
+    let porGrupo = {};
+    GRUPOS.forEach(g => porGrupo[g] = 0);
+    for (const sess of state.historial) {
+        if (!sess.ejercicios) continue;
+        const gruposEnSesion = new Set();
+        sess.ejercicios.forEach(ex => {
+            if (porGrupo[ex.group] < numSesiones) {
+                result[ex.group].push(ex.name);
+                gruposEnSesion.add(ex.group);
+            }
+        });
+        gruposEnSesion.forEach(g => porGrupo[g]++);
+    }
+    return result;
+}
+
+function generarRutinaInteligente(intensidad) {
+    cerrarSelectorIntensidad();
+    const d = new Date();
     const diaIdx = d.getDay() === 0 ? 6 : d.getDay() - 1;
     const nombreDia = DIAS_LOGICA[diaIdx];
     const gruposSeleccionados = state.semana[nombreDia];
 
-    if(!gruposSeleccionados || gruposSeleccionados.length === 0) { 
-        alert("Hoy toca descanso según tu programación."); 
-        return; 
-    }
-    
-    if(state.hoy.length > 0 && !confirm("¿Generar nueva rutina? Se borrará la actual.")) return;
+    const config = {
+        suave:   { dosBasicos: false, aislaPorGrupo: 0, totalAisla: 1, salud: 2, incluirCardio: true },
+        normal:  { dosBasicos: false, aislaPorGrupo: 1, totalAisla: null, salud: 2, incluirCardio: true },
+        intensa: { dosBasicos: true,  aislaPorGrupo: 1, totalAisla: null, salud: 1, incluirCardio: true }
+    }[intensidad];
 
-    if (state.plantillaSemanal && state.plantillaSemanal[nombreDia]) {
-        state.hoy = state.plantillaSemanal[nombreDia].map(ex => ({...ex}));
-        save(); showPage('hoyPage'); return;
-    }
-
-    let finalPool = [];
-    let basicosPool = [];
-    let aislaPool = [];
-    let saludPool = [];
-    let cardioPool = [];
-
+    const recent = getEjerciciosRecientesPorGrupo(2);
     const getRandom = (arr) => arr[Math.floor(Math.random() * arr.length)];
+    const gruposSinCardio = gruposSeleccionados.filter(g => g !== 'Cardio');
+    let finalPool = [];
 
-    gruposSeleccionados.forEach(g => {
-        const ejer = [...db[g].data];
-        ejer.forEach(e => {
-            const item = { ...e, group: g };
-            if (g === "Cardio") cardioPool.push(item);
-            else if (e.t === T_B) basicosPool.push(item);
-            else if (e.t === T_A) aislaPool.push(item);
-            else if (e.t === T_S) saludPool.push(item);
+    // 1. Básicos (1 por grupo, evitando repetir últimos 2)
+    gruposSinCardio.forEach(g => {
+        const sinRepetir = db[g].data.filter(e => e.t === T_B && !recent[g].includes(e.n));
+        const pool = sinRepetir.length > 0 ? sinRepetir : db[g].data.filter(e => e.t === T_B);
+        if (pool.length > 0) finalPool.push({...getRandom(pool), group: g});
+    });
+
+    // 2. Segundo básico por grupo (solo modo intensa)
+    if (config.dosBasicos) {
+        gruposSinCardio.forEach(g => {
+            const yaIncluido = finalPool.filter(f => f.group === g).map(f => f.n);
+            const pool = db[g].data.filter(e => e.t === T_B && !yaIncluido.includes(e.n) && !recent[g].includes(e.n));
+            const fallback = db[g].data.filter(e => e.t === T_B && !yaIncluido.includes(e.n));
+            const eleccion = pool.length > 0 ? pool : fallback;
+            if (eleccion.length > 0) finalPool.push({...getRandom(eleccion), group: g});
         });
-    });
-
-    gruposSeleccionados.forEach(g => {
-        if (g !== "Cardio") {
-            const basicosDelGrupo = basicosPool.filter(b => b.group === g);
-            if (basicosDelGrupo.length > 0) finalPool.push(getRandom(basicosDelGrupo));
-        }
-    });
-
-    let tempAisla = [...aislaPool];
-    let selAisla = 0;
-    while(selAisla < 2 && tempAisla.length > 0){
-        let pick = tempAisla.splice(Math.floor(Math.random()*tempAisla.length), 1)[0];
-        if(!finalPool.find(f => f.n === pick.n)){ finalPool.push(pick); selAisla++; }
     }
 
-    let tempSalud = [...saludPool];
-    let selSalud = 0;
-    while(selSalud < 2 && tempSalud.length > 0){
-        let pick = tempSalud.splice(Math.floor(Math.random()*tempSalud.length), 1)[0];
-        if(!finalPool.find(f => f.n === pick.n)){ finalPool.push(pick); selSalud++; }
+    // 3. Aislamientos
+    if (config.totalAisla === 1) {
+        // Suave: 1 total
+        const todos = gruposSinCardio.flatMap(g => 
+            db[g].data.filter(e => e.t === T_A && !recent[g].includes(e.n)).map(e => ({...e, group: g}))
+        );
+        if (todos.length > 0) finalPool.push(getRandom(todos));
+    } else {
+        // Normal/Intensa: 1 por grupo
+        gruposSinCardio.forEach(g => {
+            const sinRepetir = db[g].data.filter(e => e.t === T_A && !recent[g].includes(e.n));
+            const pool = sinRepetir.length > 0 ? sinRepetir : db[g].data.filter(e => e.t === T_A);
+            if (pool.length > 0) finalPool.push({...getRandom(pool), group: g});
+        });
     }
 
-    if (cardioPool.length > 0) finalPool.push(getRandom(cardioPool));
+    // 4. Salud (priorizando mismo grupo trabajado)
+    const saludDelGrupo = gruposSinCardio.flatMap(g =>
+        db[g].data.filter(e => e.t === T_S).map(e => ({...e, group: g}))
+    );
+    const saludShuffled = [...saludDelGrupo].sort(() => Math.random() - 0.5);
+    let saludSel = 0;
+    for (const ex of saludShuffled) {
+        if (saludSel >= config.salud) break;
+        if (!finalPool.find(f => f.n === ex.n)) { finalPool.push(ex); saludSel++; }
+    }
 
-    state.hoy = finalPool.map(ex => ({ 
+    // 5. Cardio (si está en el día programado)
+    if (config.incluirCardio && gruposSeleccionados.includes('Cardio')) {
+        const cardios = db.Cardio.data.map(e => ({...e, group: 'Cardio'}));
+        if (cardios.length > 0) finalPool.push(getRandom(cardios));
+    }
+
+    state.hoy = finalPool.map(ex => ({
         name: ex.n, group: ex.group, t: ex.t, tip: ex.tip,
-        series: '', reps: '', peso: '', nota: '', usaBanda: false
+        series: '', reps: '', peso: '', nota: '', usaBanda: false, done: false
     }));
 
-    if(!state.plantillaSemanal) state.plantillaSemanal = {};
+    if (!state.plantillaSemanal) state.plantillaSemanal = {};
     state.plantillaSemanal[nombreDia] = JSON.parse(JSON.stringify(state.hoy));
-    
-    save(); showPage('hoyPage');
+
+    save();
+    showPage('hoyPage');
 }
 
 function cargarPlantillaEnHoy(dia) {
