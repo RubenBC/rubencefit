@@ -857,6 +857,109 @@ function closeDayModal(el, e) {
     if (!e || e.target === el) document.getElementById('dayModal').style.display = 'none';
 }
 
+function getMaxKgSession() {
+    let max = 0;
+    state.historial.forEach(sesion => {
+        let kg = 0;
+        if (sesion.ejercicios) {
+            sesion.ejercicios.forEach(ex => {
+                const tipo = getEquipType(ex);
+                if ((tipo === 'dumbbell' || (tipo === 'mixed' && !ex.usaBanda)) && ex.peso && ex.series && ex.reps) {
+                    kg += (parseFloat(ex.peso) * parseInt(ex.series) * parseInt(ex.reps));
+                }
+            });
+        }
+        if (kg > max) max = kg;
+    });
+    return Math.round(max);
+}
+
+const STAT_INFO = {
+    sesiones: {
+        titulo: "Total de Sesiones",
+        desc: "Número total de entrenamientos guardados en tu historial.",
+        consejo: "Un buen indicador de constancia a largo plazo. Lo importante no es el número absoluto sino que crezca de forma sostenida."
+    },
+    racha: {
+        titulo: "Racha Actual 🔥",
+        desc: "Días entrenados en tu racha activa. Se permiten hasta 2 días de descanso consecutivos sin romperla, adaptado a tu rutina con martes y jueves libres.",
+        consejo: "Con tu programación de 5 días semanales, una racha saludable es de 10-20 días. No la fuerces si el cuerpo pide descanso."
+    },
+    racha_max: {
+        titulo: "Racha Máxima 🏆",
+        desc: "La racha más larga que has alcanzado en todo tu historial, con el mismo criterio de 2 días de descanso permitidos.",
+        consejo: "Tu récord personal de constancia. Úsalo como motivación, no como obligación."
+    },
+    ses_semana: {
+        titulo: "Sesiones Esta Semana 📅",
+        desc: "Entrenamientos registrados en los últimos 7 días.",
+        consejo: "Con tu rutina habitual el ideal son 5 sesiones. 3-4 es un buen resultado si la semana laboral fue intensa."
+    },
+    descansos: {
+        titulo: "Días de Descanso Esta Semana 😴",
+        desc: "Días sin entreno en los últimos 7 días (7 menos las sesiones de la semana).",
+        consejo: "2 días es lo planificado. Si ves 3 o más, se perdió algún día de entrenamiento. Si ves 0-1, valora si estás descansando suficiente para tu recuperación linfática."
+    },
+    cardio_semana: {
+        titulo: "Cardio Esta Semana 🚴",
+        desc: "Minutos registrados en ejercicios de Cardio durante los últimos 7 días.",
+        consejo: "Para tu condición linfática el cardio de bajo impacto es especialmente beneficioso. Se recomiendan al menos 30-60 min semanales para favorecer el retorno venoso."
+    },
+    cardio_mes: {
+        titulo: "Cardio Este Mes 🚴",
+        desc: "Total de minutos de cardio acumulados desde el día 1 del mes en curso.",
+        consejo: "Un objetivo razonable para tu perfil es 120-180 min mensuales. Más tiempo a baja intensidad siempre es mejor que poco tiempo a alta intensidad."
+    },
+    ses_mes: {
+        titulo: "Sesiones Este Mes 📆",
+        desc: "Entrenamientos completados desde el día 1 del mes actual.",
+        consejo: "Entrenando 5 días por semana, un mes completo debería sumar unas 20-22 sesiones. Entre 15 y 20 es un resultado muy sólido."
+    },
+    semanas_activas: {
+        titulo: "Semanas Activas 📆",
+        desc: "Semanas del mes en las que has entrenado al menos un día.",
+        consejo: "Si el mes tiene 4 semanas y ves 4, la constancia es perfecta. Una semana en cero es señal de que algo interrumpió la rutina."
+    },
+    distribucion: {
+        titulo: "Distribución por Tipo",
+        desc: "Porcentaje de ejercicios Básicos (B), Aislamiento (A) y Salud (S) sobre el total de tu historial.",
+        consejo: "Para tu perfil, un reparto equilibrado sería B 40% · A 30% · S 30%. Un porcentaje de Salud bajo indica que estás priorizando músculo sobre movilidad y circulación, lo cual puede afectar tu condición linfática."
+    },
+    top_grupo: {
+        titulo: "Grupo Muscular Top",
+        desc: "El grupo muscular con más ejercicios acumulados en todo tu historial.",
+        consejo: "Si siempre sale el mismo, puede indicar un desequilibrio. Asegúrate de que los grupos antagonistas (Empuje/Tirón, Bíceps/Tríceps) tienen una presencia similar."
+    },
+    top_ejercicio: {
+        titulo: "Ejercicio Más Repetido",
+        desc: "El ejercicio individual que más veces aparece en tu historial.",
+        consejo: "Cierta repetición es buena para la técnica y el progreso, pero si siempre es el mismo el generador de rutinas debería estar variando. Revisa si la biblioteca tiene opciones suficientes para ese grupo."
+    },
+    salud_sesion: {
+        titulo: "Salud por Sesión 🛡️",
+        desc: "Media de ejercicios de tipo Salud en tus últimas 10 sesiones.",
+        consejo: "Para tu condición linfática y hormonal se recomiendan al menos 2 ejercicios de Salud por sesión: uno de movilidad y uno de activación circulatoria. Si este número es inferior a 2, añade más ejercicios tipo S a tu rutina."
+    },
+    mas_descuidado: {
+        titulo: "Grupo Más Descuidado ⚠️",
+        desc: "El grupo muscular con menos ejercicios registrados en los últimos 30 días (excluye Cardio).",
+        consejo: "Si aparece el mismo grupo semana tras semana, considera añadirlo a un día más de tu planificación. Un desequilibrio sostenido puede generar compensaciones posturales o debilidades asimétricas."
+    }
+};
+
+function abrirInfoStat(key) {
+    const info = STAT_INFO[key];
+    if (!info) return;
+    document.getElementById('statInfoTitle').innerText = info.titulo;
+    document.getElementById('statInfoDesc').innerText = info.desc;
+    document.getElementById('statInfoConsejo').innerText = info.consejo;
+    document.getElementById('statInfoModal').style.display = 'flex';
+}
+
+function cerrarInfoStat(el, e) {
+    if (!e || e.target === el) document.getElementById('statInfoModal').style.display = 'none';
+}
+
 function updateStats() {
     const container = document.getElementById('statsContent');
     if (!container) return;
@@ -865,6 +968,7 @@ function updateStats() {
         return;
     }
 
+    let totalKg = 0;
     let totalSesiones = state.historial.length;
     let gruposContador = {};
     let ejerciciosContador = {};
@@ -873,6 +977,10 @@ function updateStats() {
     state.historial.forEach(sesion => {
         if (sesion.ejercicios) {
             sesion.ejercicios.forEach(ex => {
+                const tipo = getEquipType(ex);
+                if ((tipo === 'dumbbell' || (tipo === 'mixed' && !ex.usaBanda)) && ex.peso && ex.series && ex.reps) {
+                    totalKg += (parseFloat(ex.peso) * parseInt(ex.series) * parseInt(ex.reps));
+                }
                 gruposContador[ex.group] = (gruposContador[ex.group] || 0) + 1;
                 ejerciciosContador[ex.name] = (ejerciciosContador[ex.name] || 0) + 1;
                 if (ex.t) typeContador[ex.t] = (typeContador[ex.t] || 0) + 1;
@@ -973,27 +1081,27 @@ function updateStats() {
         : 0;
 
     container.innerHTML = `
-        <div class="stat-box"><span class="stat-label">Sesiones</span><span class="stat-val">${totalSesiones}</span></div>
-        <div class="stat-box"><span class="stat-label">🔥 Racha actual</span><span class="stat-val">${racha}<small>días</small></span></div>
-        <div class="stat-box"><span class="stat-label">🏆 Racha máxima</span><span class="stat-val">${maxRacha}<small>días</small></span></div>
-        <div class="stat-box"><span class="stat-label">📅 Esta semana</span><span class="stat-val">${sesSemana}<small>ses.</small></span></div>
-        <div class="stat-box"><span class="stat-label">😴 Descansos semana</span><span class="stat-val">${descSemana}<small>días</small></span></div>
-        <div class="stat-box"><span class="stat-label">🚴 Cardio semana</span><span class="stat-val">${cardioSemana}<small>min</small></span></div>
-        <div class="stat-box"><span class="stat-label">🚴 Cardio mes</span><span class="stat-val">${cardioMes}<small>min</small></span></div>
-        <div class="stat-box"><span class="stat-label">📆 Sesiones mes</span><span class="stat-val">${sesMes}</span></div>
-        <div class="stat-box"><span class="stat-label">📆 Semanas activas</span><span class="stat-val">${semanasActivas}</span></div>
-        <div class="stat-box stat-full">
-            <span class="stat-label">Distribución por tipo</span>
+        <div class="stat-box stat-tappable" onclick="abrirInfoStat('sesiones')"><span class="stat-label">Sesiones</span><span class="stat-val">${totalSesiones}</span></div>
+        <div class="stat-box stat-tappable" onclick="abrirInfoStat('racha')"><span class="stat-label">🔥 Racha actual</span><span class="stat-val">${racha}<small>días</small></span></div>
+        <div class="stat-box stat-tappable" onclick="abrirInfoStat('racha_max')"><span class="stat-label">🏆 Racha máxima</span><span class="stat-val">${maxRacha}<small>días</small></span></div>
+        <div class="stat-box stat-tappable" onclick="abrirInfoStat('ses_semana')"><span class="stat-label">📅 Esta semana</span><span class="stat-val">${sesSemana}<small>ses.</small></span></div>
+        <div class="stat-box stat-tappable" onclick="abrirInfoStat('descansos')"><span class="stat-label">😴 Descansos semana</span><span class="stat-val">${descSemana}<small>días</small></span></div>
+        <div class="stat-box stat-tappable" onclick="abrirInfoStat('cardio_semana')"><span class="stat-label">🚴 Cardio semana</span><span class="stat-val">${cardioSemana}<small>min</small></span></div>
+        <div class="stat-box stat-tappable" onclick="abrirInfoStat('cardio_mes')"><span class="stat-label">🚴 Cardio mes</span><span class="stat-val">${cardioMes}<small>min</small></span></div>
+        <div class="stat-box stat-tappable" onclick="abrirInfoStat('ses_mes')"><span class="stat-label">📆 Sesiones mes</span><span class="stat-val">${sesMes}</span></div>
+        <div class="stat-box stat-tappable" onclick="abrirInfoStat('semanas_activas')"><span class="stat-label">📆 Semanas activas</span><span class="stat-val">${semanasActivas}</span></div>
+        <div class="stat-box stat-full stat-tappable" onclick="abrirInfoStat('distribucion')">
+            <span class="stat-label">Distribución por tipo <span class="stat-info-hint">· toca para más info</span></span>
             <div class="stat-type-bars">
                 <div class="stat-type-row"><span class="stat-type-chip tag tag-basico">B</span><div class="stat-bar-bg"><div class="stat-bar-fill stat-bar-b" style="width:${pctB}%"></div></div><span class="stat-type-pct">${pctB}%</span></div>
                 <div class="stat-type-row"><span class="stat-type-chip tag tag-aisla">A</span><div class="stat-bar-bg"><div class="stat-bar-fill stat-bar-a" style="width:${pctA}%"></div></div><span class="stat-type-pct">${pctA}%</span></div>
                 <div class="stat-type-row"><span class="stat-type-chip tag tag-salud">S</span><div class="stat-bar-bg"><div class="stat-bar-fill stat-bar-s" style="width:${pctS}%"></div></div><span class="stat-type-pct">${pctS}%</span></div>
             </div>
         </div>
-        <div class="stat-box"><span class="stat-label">Top Grupo</span><span class="stat-val" style="font-size:13px">${topGrupo}</span></div>
-        <div class="stat-box"><span class="stat-label">Top Ejercicio</span><span class="stat-val" style="font-size:11px; line-height:1.3">${topEjercicio}</span></div>
-        <div class="stat-box"><span class="stat-label">🛡️ Salud/sesión</span><span class="stat-val">${saludMedia}<small>ejs.</small></span></div>
-        <div class="stat-box"><span class="stat-label">⚠️ Más descuidado</span><span class="stat-val" style="font-size:11px">${grupoDesc}</span></div>
+        <div class="stat-box stat-tappable" onclick="abrirInfoStat('top_grupo')"><span class="stat-label">Top Grupo</span><span class="stat-val" style="font-size:13px">${topGrupo}</span></div>
+        <div class="stat-box stat-tappable" onclick="abrirInfoStat('top_ejercicio')"><span class="stat-label">Top Ejercicio</span><span class="stat-val" style="font-size:11px; line-height:1.3">${topEjercicio}</span></div>
+        <div class="stat-box stat-tappable" onclick="abrirInfoStat('salud_sesion')"><span class="stat-label">🛡️ Salud/sesión</span><span class="stat-val">${saludMedia}<small>ejs.</small></span></div>
+        <div class="stat-box stat-tappable" onclick="abrirInfoStat('mas_descuidado')"><span class="stat-label">⚠️ Más descuidado</span><span class="stat-val" style="font-size:11px">${grupoDesc}</span></div>
     `;
 }
 
