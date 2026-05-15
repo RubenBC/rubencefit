@@ -162,6 +162,34 @@ function updateStopwatchVisibility() {
     if (visible) tickStopwatch();
 }
 
+function updateSessionProgress() {
+    const el = document.getElementById('sessionProgress');
+    if (!el) return;
+    if (state.hoy.length === 0) { el.innerHTML = ''; return; }
+    const done = state.hoy.filter(e => e.done).length;
+    const total = state.hoy.length;
+    const pct = Math.round((done / total) * 100);
+    if (done === total) {
+        el.innerHTML = `
+        <div class="session-complete">
+            <span class="session-complete-emoji">💪</span>
+            <div class="session-complete-info">
+                <div class="session-complete-title">¡Sesión completada!</div>
+                <div class="session-complete-sub">${total} ejercicios · Guarda tu entreno</div>
+            </div>
+            <button class="session-complete-btn" onclick="finalizarSesion()">Guardar →</button>
+        </div>`;
+    } else {
+        el.innerHTML = `
+        <div class="session-progress-wrap">
+            <div class="session-progress-bar-bg">
+                <div class="session-progress-bar-fill" style="width:${pct}%"></div>
+            </div>
+            <span class="session-progress-text">${done} / ${total}</span>
+        </div>`;
+    }
+}
+
 function toggleDone(i) {
     state.hoy[i].done = !state.hoy[i].done;
     if (state.hoy[i].done && !state.sesionStartTime) startSesionStopwatch();
