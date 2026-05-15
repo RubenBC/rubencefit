@@ -127,6 +127,20 @@
 
 <script src="js/app.js"></script>
 
+<div id="statInfoModal" class="day-modal" style="display:none;" onclick="cerrarInfoStat(this,event)">
+    <div class="day-modal-sheet">
+        <div class="day-modal-header">
+            <span id="statInfoTitle" class="day-modal-title"></span>
+            <button class="day-modal-close" onclick="cerrarInfoStat()">✕</button>
+        </div>
+        <p id="statInfoDesc" class="stat-info-desc"></p>
+        <div class="stat-info-consejo">
+            <span class="stat-info-consejo-label">💡 Consejo</span>
+            <p id="statInfoConsejo" class="stat-info-consejo-text"></p>
+        </div>
+    </div>
+</div>
+
 <div id="intensityModal" class="day-modal" style="display:none;" onclick="cerrarSelectorIntensidad(this,event)">
         <div class="day-modal-sheet">
             <div class="day-modal-header">
