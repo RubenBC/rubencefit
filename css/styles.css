@@ -1074,3 +1074,55 @@ h2 {
     margin-top: 2px;
     line-height: 1.3;
 }
+
+/* =========================================================
+   STAT INFO MODAL
+========================================================= */
+.stat-tappable {
+    cursor: pointer;
+    transition: transform 0.1s, opacity 0.1s;
+    user-select: none;
+}
+
+.stat-tappable:active {
+    transform: scale(0.95);
+    opacity: 0.85;
+}
+
+.stat-info-hint {
+    font-size: 8px;
+    opacity: 0.5;
+    font-weight: 400;
+    text-transform: none;
+    letter-spacing: 0;
+}
+
+.stat-info-desc {
+    font-size: 14px;
+    color: var(--text);
+    line-height: 1.6;
+    margin: 0 0 16px;
+}
+
+.stat-info-consejo {
+    background: var(--primary-light);
+    border-radius: 14px;
+    padding: 14px 16px;
+}
+
+.stat-info-consejo-label {
+    font-size: 11px;
+    font-weight: bold;
+    color: var(--primary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: block;
+    margin-bottom: 6px;
+}
+
+.stat-info-consejo-text {
+    font-size: 13px;
+    color: var(--text);
+    line-height: 1.6;
+    margin: 0;
+}
