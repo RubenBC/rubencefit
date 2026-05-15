@@ -322,7 +322,7 @@ function toggleBandaMode(i) {
 function renderToday() {
     const list = document.getElementById('todayList');
     if(!list) return;
-    if(state.hoy.length === 0) { list.innerHTML = "<p style='text-align:center; padding:40px; color:var(--text2)'>No hay ejercicios para hoy.</p>"; return; }
+    if(state.hoy.length === 0) { list.innerHTML = "<p style='text-align:center; padding:40px; color:var(--text2)'>No hay ejercicios para hoy.</p>"; updateSessionProgress(); return; }
     
     list.innerHTML = state.hoy.map((ex, i) => {
         const tagClass = ex.t === T_B ? 'tag-basico' : ex.t === T_A ? 'tag-aisla' : 'tag-salud';
@@ -355,6 +355,7 @@ function renderToday() {
             </div>
         </div>
     `}).join('');
+    updateSessionProgress();
 }
 
 function swapExercise(index) {
@@ -553,10 +554,32 @@ function generarRutinaInteligente(intensidad) {
         if (!finalPool.find(f => f.n === ex.n)) { finalPool.push(ex); saludSel++; }
     }
 
-    // 5. Cardio (si está en el día programado)
+    // 5. Garantizar ejercicio linfático si hay Piernas
+    const LINFATICOS = ['Bombeo de Tobillos', 'Pumping de Gemelos Sentado', 'Drenaje con Piernas Elevadas'];
+    if (gruposSeleccionados.includes('Piernas')) {
+        const yaLinfatico = finalPool.some(f => LINFATICOS.includes(f.n));
+        if (!yaLinfatico) {
+            const linfPool = db['Piernas'].data.filter(e => LINFATICOS.includes(e.n));
+            if (linfPool.length > 0) finalPool.push({...getRandom(linfPool), group: 'Piernas'});
+        }
+    }
+
+    // 6. Cardio adaptado a la intensidad + siempre al inicio
     if (config.incluirCardio && gruposSeleccionados.includes('Cardio')) {
-        const cardios = db.Cardio.data.map(e => ({...e, group: 'Cardio'}));
-        if (cardios.length > 0) finalPool.push(getRandom(cardios));
+        let cardioPool;
+        if (intensidad === 'suave') {
+            cardioPool = db.Cardio.data.filter(e =>
+                ['Bicicleta Estática','Marcha Sentado','Marcha Sentado Rodillas Altas','Círculos de Brazos'].includes(e.n)
+            );
+        } else if (intensidad === 'intensa') {
+            cardioPool = db.Cardio.data.filter(e =>
+                !['Paseo Intenso','Boxeo Sentado'].includes(e.n)
+            );
+        } else {
+            cardioPool = [...db.Cardio.data];
+        }
+        if (!cardioPool.length) cardioPool = [...db.Cardio.data];
+        finalPool.unshift({...getRandom(cardioPool), group: 'Cardio'});
     }
 
     state.hoy = finalPool.map(ex => ({
