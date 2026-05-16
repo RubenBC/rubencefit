@@ -748,6 +748,22 @@ function buildRutina(gruposSeleccionados, intensidad, recentExternal) {
         if (!cp.length) cp = [...db.Cardio.data];
         finalPool.unshift({...getRandom(cp), group: 'Cardio'});
     }
+    // Ordenar ejercicios en el orden óptimo de ejecución
+    const gruposPrincipales = gruposSeleccionados.filter(g => g !== 'Cardio' && g !== 'Core');
+
+    const getScore = (ex) => {
+        if (ex.group === 'Cardio') return 0;                          // 1. Cardio siempre primero
+        if (['Gemelos de pie','Gemelo unilateral','Gemelo escalón'].includes(ex.n || ex.name)) return 999;
+        if (ex.t === T_S) return ex.group === 'Core' ? 980 : 960;    // 3. Salud casi al final
+        if (ex.group === 'Core') return ex.t === T_B ? 800 : 840;    // 4. Core después de grupos principales
+        const gIdx = gruposPrincipales.indexOf(ex.group);
+        return ex.t === T_B
+            ? 100 + gIdx * 10   // 5. Básicos de grupos principales por orden del día
+            : 500 + gIdx * 10;  // 6. Aislamientos de grupos principales por orden del día
+    };
+
+    finalPool.sort((a, b) => getScore(a) - getScore(b));
+
     return finalPool.map(ex => ({ name: ex.n||ex.name, group: ex.group, t: ex.t, tip: ex.tip, series: '', reps: '', peso: '', nota: '', usaBanda: false, done: false }));
 }
 
