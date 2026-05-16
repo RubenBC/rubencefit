@@ -121,6 +121,7 @@ let state = JSON.parse(localStorage.getItem('iron_log_v8.6')) || {
 if (state.sesionStartTime === undefined) state.sesionStartTime = null;
 
 let swInterval = null;
+let bibliotecaDia = 'hoy'; // 'hoy' o nombre de día
 let calYear = new Date().getFullYear();
 let calMonth = new Date().getMonth();
 
@@ -221,31 +222,84 @@ function showPage(id, btn) {
     if (id === 'hoyPage' && state.sesionStartTime) startSesionStopwatch();
     else if (id !== 'hoyPage') stopSesionStopwatch();
     updateStopwatchVisibility();
-    if(id === 'rutinaPage') renderGroups();
+    if(id === 'rutinaPage') { if(bibliotecaDia === 'hoy') {} renderGroups(); }
     if(id === 'hoyPage') renderToday();
     if(id === 'semanaPage') renderWeek();
     if(id === 'historialPage') renderHistory();
 }
 
-function renderGroups() { document.getElementById('groupGrid').innerHTML = GRUPOS.map(g => `<div class="group-card" onclick="showExercises('${g}')"><span class="material-symbols-outlined">${db[g].icon}</span><div style="font-weight:bold;">${g}</div></div>`).join(''); }
+function renderDiaSelector() {
+    const row = document.getElementById('diaSelectorRow');
+    if (!row) return;
+    const hoy = new Date();
+    const hoyIdx = hoy.getDay() === 0 ? 6 : hoy.getDay() - 1;
+    const chips = [
+        { key: 'hoy', label: 'Hoy', sub: DIAS_DISPLAY[hoyIdx] },
+        ...DIAS_LOGICA.map((d, i) => ({ key: d, label: DIAS_DISPLAY[i].slice(0,3), sub: d }))
+    ];
+    row.innerHTML = chips.map(c => {
+        const grupos = c.key === 'hoy' ? (state.semana[DIAS_LOGICA[hoyIdx]]||[]) : (state.semana[c.key]||[]);
+        const tieneGrupos = grupos.length > 0;
+        const activo = bibliotecaDia === c.key;
+        return `<div class="dia-chip${activo ? ' dia-chip-active' : ''}${!tieneGrupos && c.key !== 'hoy' ? ' dia-chip-rest' : ''}" onclick="setDia('${c.key}')">
+            <span class="dia-chip-label">${c.label}</span>
+        </div>`;
+    }).join('');
+}
+
+function setDia(dia) {
+    bibliotecaDia = dia;
+    renderDiaSelector();
+    // Refresh exercise list if open
+    const ev = document.getElementById('exerciseView');
+    const gn = document.getElementById('selectedGroupName');
+    if (ev && ev.style.display !== 'none' && gn.innerText) showExercises(gn.innerText);
+}
+
+function getDiaLabel() {
+    if (bibliotecaDia === 'hoy') return 'HOY';
+    return bibliotecaDia.toUpperCase();
+}
+
+function getGruposParaDia() {
+    if (bibliotecaDia === 'hoy') return null; // null = mostrar todos
+    return state.semana[bibliotecaDia] || [];
+}
+
+function renderGroups() {
+    renderDiaSelector();
+    const grupos = getGruposParaDia();
+    document.getElementById('groupGrid').innerHTML = GRUPOS.map(g => {
+        const enDia = !grupos || grupos.includes(g);
+        return `<div class="group-card${!enDia ? ' group-card-dim' : ''}" onclick="showExercises('${g}')">
+            <span class="material-symbols-outlined">${db[g].icon}</span>
+            <div style="font-weight:bold;">${g}</div>
+            ${!enDia ? '<div style="font-size:9px; opacity:0.5;">no en este día</div>' : ''}
+        </div>`;
+    }).join('');
+}
 
 function showExercises(group) {
     document.getElementById('groupsView').style.display = 'none';
     document.getElementById('exerciseView').style.display = 'block';
     document.getElementById('selectedGroupName').innerText = group;
     document.getElementById('groupAdvice').innerText = db[group].advice;
+    const label = getDiaLabel();
     document.getElementById('exerciseList').innerHTML = db[group].data.map(ex => `
         <div class="routine-card">
             <div style="display:flex; justify-content:space-between; align-items:center;">
                 <div><b>${getIcon(ex.t)}${ex.n}</b><br><small>${ex.tip}</small></div>
                 <span class="tag ${ex.t === T_B ? 'tag-basico' : ex.t === T_A ? 'tag-aisla' : 'tag-salud'}">${ex.t}</span>
             </div>
-            <button onclick="addToToday('${ex.n}', '${group}', '${ex.t}', '${ex.tip}')" style="background:var(--primary); color:white; border:none; padding:10px; border-radius:8px; margin-top:12px; width:100%;">AÑADIR A HOY</button>
+            <button onclick="addToDay('${ex.n}', '${group}', '${ex.t}', '${ex.tip}')" style="background:var(--primary); color:white; border:none; padding:10px; border-radius:8px; margin-top:12px; width:100%;">AÑADIR A ${label}</button>
         </div>
     `).join('');
 }
 
-function backToGroups() { document.getElementById('groupsView').style.display = 'block'; document.getElementById('exerciseView').style.display = 'none'; }
+function backToGroups() {
+    document.getElementById('groupsView').style.display = 'block';
+    document.getElementById('exerciseView').style.display = 'none';
+}
 
 function showToast(msg, color) {
     const existing = document.getElementById('toastMsg');
@@ -258,11 +312,22 @@ function showToast(msg, color) {
     setTimeout(() => toast.remove(), 1200);
 }
 
-function addToToday(name, group, type, tip) {
-    if(state.hoy.find(ex => ex.name === name)) { showToast("Ya está en la lista.", "#e74c3c"); return; }
-    state.hoy.push({ name, group, t: type, tip: tip, series: '', reps: '', peso: '', nota: '', done: false });
-    save(); showToast("¡Añadido! ✓");
+function addToDay(name, group, type, tip) {
+    const dia = bibliotecaDia;
+    if (dia === 'hoy') {
+        if (state.hoy.find(ex => ex.name === name)) { showToast("Ya está en la lista.", "#e74c3c"); return; }
+        state.hoy.push({ name, group, t: type, tip, series: '', reps: '', peso: '', nota: '', done: false });
+        save(); showToast("¡Añadido a Hoy! ✓");
+    } else {
+        if (!state.plantillaSemanal) state.plantillaSemanal = {};
+        if (!state.plantillaSemanal[dia]) state.plantillaSemanal[dia] = [];
+        if (state.plantillaSemanal[dia].find(e => e.name === name)) { showToast("Ya está en ese día.", "#e74c3c"); return; }
+        state.plantillaSemanal[dia].push({ name, group, t: type, tip, series: '', reps: '', peso: '', nota: '', done: false });
+        save(); showToast(`✓ Añadido al ${dia}`);
+    }
 }
+
+function addToToday(name, group, type, tip) { addToDay(name, group, type, tip); }
 
 // ── Lógica de tipo de equipamiento ──────────────────────────────────────────
 // Devuelve: 'cardio' | 'bodyweight' | 'band' | 'dumbbell' | 'mixed'
@@ -370,6 +435,8 @@ function renderToday() {
                 <div style="display:flex; flex-direction:column; align-items:flex-end; gap:8px;">
                     <span class="tag ${tagClass}">${ex.t}</span>
                     <div class="ex-actions">
+                        <button class="btn-icon" onclick="moverEjercicio(${i},-1)" ${i===0?'disabled':''}><span class="material-symbols-outlined">arrow_upward</span></button>
+                        <button class="btn-icon" onclick="moverEjercicio(${i},1)" ${i===state.hoy.length-1?'disabled':''}><span class="material-symbols-outlined">arrow_downward</span></button>
                         <button class="btn-icon btn-swap" onclick="swapExercise(${i})" title="Cambiar"><span class="material-symbols-outlined">cached</span></button>
                         <button class="btn-icon btn-delete" onclick="quitarDeHoy(${i})"><span class="material-symbols-outlined">delete</span></button>
                     </div>
@@ -384,6 +451,34 @@ function renderToday() {
         </div>
     `}).join('');
     updateSessionProgress();
+}
+
+function moverEjercicio(i, dir) {
+    const j = i + dir;
+    if (j < 0 || j >= state.hoy.length) return;
+    [state.hoy[i], state.hoy[j]] = [state.hoy[j], state.hoy[i]];
+    save(); renderToday();
+}
+
+function moverEjercicioDia(dia, i, dir) {
+    const r = state.plantillaSemanal && state.plantillaSemanal[dia];
+    if (!r) return;
+    const j = i + dir;
+    if (j < 0 || j >= r.length) return;
+    [r[i], r[j]] = [r[j], r[i]];
+    save(); renderWeek();
+}
+
+function quitarDeDia(dia, i) {
+    if (!state.plantillaSemanal || !state.plantillaSemanal[dia]) return;
+    state.plantillaSemanal[dia].splice(i, 1);
+    if (state.plantillaSemanal[dia].length === 0) delete state.plantillaSemanal[dia];
+    save(); renderWeek();
+}
+
+function planificarDia(dia) {
+    bibliotecaDia = dia;
+    showPage('rutinaPage');
 }
 
 function swapExercise(index) {
@@ -423,29 +518,44 @@ function getDayColor(selected) {
 
 function renderWeek() {
     const planner = document.getElementById('weekPlanner');
-    if(!planner) return;
+    if (!planner) return;
     planner.innerHTML = DIAS_LOGICA.map((dia, idx) => {
         const sel = state.semana[dia] || [];
         const info = getDayColor(sel);
         const plantilla = state.plantillaSemanal ? state.plantillaSemanal[dia] : null;
         const isOpen = state.openMenu === dia;
-        const labelsHtml = sel.length > 0 ? sel.map(g => `<span class="mini-tag">${g}</span>`).join('') : '<span style="font-size:10px; color:var(--text2)">Descanso</span>';
+        const tieneRutina = plantilla && plantilla.length > 0;
+        const labelsHtml = sel.length > 0
+            ? sel.map(g => `<span class="mini-tag">${g}</span>`).join('')
+            : '<span style="font-size:10px; color:var(--text2)">Descanso</span>';
 
-        let previewHtml = '';
-        if (plantilla && plantilla.length > 0) {
-            previewHtml = `
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-top:8px;">
-                    <button class="btn-preview" onclick="togglePreview('${dia}')" style="margin-top:0;">
-                        <span class="material-symbols-outlined" style="font-size:16px;">visibility</span> VER RUTINA
-                    </button>
-                    <button class="btn-preview" onclick="cargarPlantillaEnHoy('${dia}')" style="margin-top:0; color:white; background:var(--primary); padding:6px 12px; border-radius:8px;">
-                        <span class="material-symbols-outlined" style="font-size:16px;">file_download</span> RECUPERAR
-                    </button>
+        let bodyHtml = '';
+        if (tieneRutina) {
+            bodyHtml = `
+                <div class="week-ex-list">
+                    ${plantilla.map((ex, i) => `
+                    <div class="week-ex-item">
+                        <span class="week-ex-name">${getIcon(ex.t)}${ex.name}</span>
+                        <div class="week-ex-actions">
+                            <button class="btn-icon btn-sm" onclick="moverEjercicioDia('${dia}',${i},-1)" ${i===0?'disabled':''}><span class="material-symbols-outlined">arrow_upward</span></button>
+                            <button class="btn-icon btn-sm" onclick="moverEjercicioDia('${dia}',${i},1)" ${i===plantilla.length-1?'disabled':''}><span class="material-symbols-outlined">arrow_downward</span></button>
+                            <button class="btn-icon btn-delete btn-sm" onclick="quitarDeDia('${dia}',${i})"><span class="material-symbols-outlined">delete</span></button>
+                        </div>
+                    </div>`).join('')}
                 </div>
-                <div id="preview-${dia}" class="preview-list" style="display:none;">
-                    ${plantilla.map(ex => `<div class="preview-item">${getIcon(ex.t)} ${ex.name}</div>`).join('')}
-                </div>
-            `;
+                <div class="week-day-actions">
+                    <button class="week-btn-secondary" onclick="planificarDia('${dia}')">+ Añadir</button>
+                    <button class="week-btn-secondary" onclick="abrirSelectorParaDia('${dia}')">⚡ Generar</button>
+                    <button class="week-btn-primary" onclick="cargarPlantillaEnHoy('${dia}')">Cargar en Hoy →</button>
+                </div>`;
+        } else if (sel.length > 0) {
+            bodyHtml = `
+                <div class="week-plan-empty">
+                    <button class="week-btn-plan" onclick="planificarDia('${dia}')">
+                        <span class="material-symbols-outlined">edit_note</span> Planificar este día
+                    </button>
+                    <button class="week-btn-secondary" onclick="abrirSelectorParaDia('${dia}')">⚡ Generar automáticamente</button>
+                </div>`;
         }
 
         return `
@@ -454,13 +564,12 @@ function renderWeek() {
                 <div class="day-name">${DIAS_DISPLAY[idx]}</div>
                 <div class="day-status">${info.s}</div>
             </div>
-            <div class="selected-labels">
+            <div class="selected-labels" style="margin-bottom:${tieneRutina?'8':'4'}px;">
                 ${labelsHtml}
-                ${plantilla ? '<span class="mini-tag template">📋 CARGADA</span>' : ''}
             </div>
-            ${previewHtml}
-            <button onclick="toggleDayMenu('${dia}')" style="background:rgba(0,0,0,0.05); border:none; width:100%; padding:8px; border-radius:10px; font-size:11px; font-weight:bold; display:flex; align-items:center; justify-content:center; gap:5px; margin-top:8px;">
-                CONFIGURAR GRUPOS <span class="material-symbols-outlined" style="font-size:16px;">${isOpen ? 'expand_less' : 'expand_more'}</span>
+            ${bodyHtml}
+            <button onclick="toggleDayMenu('${dia}')" style="background:rgba(0,0,0,0.05); border:none; width:100%; padding:6px; border-radius:10px; font-size:10px; color:var(--text2); display:flex; align-items:center; justify-content:center; gap:4px; margin-top:10px;">
+                CONFIGURAR GRUPOS <span class="material-symbols-outlined" style="font-size:14px;">${isOpen ? 'expand_less' : 'expand_more'}</span>
             </button>
             <div class="group-selector ${isOpen ? 'open' : ''}">
                 ${GRUPOS.map(g => `
