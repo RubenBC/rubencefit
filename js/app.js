@@ -659,10 +659,19 @@ function generarConIntensidad(intensidad) {
     const dia = intensityCtx.dia;
     const grupos = state.semana[dia] || [];
     const rutina = buildRutina(grupos, intensidad, {});
-    state.hoy = rutina;
     if (!state.plantillaSemanal) state.plantillaSemanal = {};
     state.plantillaSemanal[dia] = JSON.parse(JSON.stringify(rutina));
-    save(); showPage('hoyPage');
+
+    // Solo carga en Hoy si el día generado ES hoy
+    const d = new Date();
+    const hoyNombre = DIAS_LOGICA[d.getDay() === 0 ? 6 : d.getDay() - 1];
+    if (dia === hoyNombre) {
+        state.hoy = rutina;
+        save(); showPage('hoyPage');
+    } else {
+        save(); renderWeek();
+        showToast(`✓ Rutina del ${dia} guardada`);
+    }
 }
 
 function getEjerciciosRecientesPorGrupo(numSesiones) {
