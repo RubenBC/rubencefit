@@ -1192,3 +1192,150 @@ h2 {
     flex-shrink: 0;
     white-space: nowrap;
 }
+
+/* =========================================================
+   DÍA SELECTOR EN BIBLIOTECA
+========================================================= */
+.dia-selector-row {
+    display: flex;
+    gap: 6px;
+    overflow-x: auto;
+    padding: 0 0 12px;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+}
+.dia-selector-row::-webkit-scrollbar { display: none; }
+
+.dia-chip {
+    flex-shrink: 0;
+    padding: 6px 14px;
+    border-radius: var(--shape-full);
+    background: var(--surface2);
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text2);
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+    border: 1.5px solid transparent;
+}
+
+.dia-chip-active {
+    background: var(--primary-light);
+    color: var(--primary);
+    font-weight: bold;
+    border-color: var(--primary);
+}
+
+.dia-chip-rest {
+    opacity: 0.45;
+}
+
+.group-card-dim {
+    opacity: 0.45;
+}
+
+/* =========================================================
+   SEMANA — NUEVA VISTA CON EJERCICIOS
+========================================================= */
+.week-ex-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    margin: 6px 0;
+    background: rgba(255,255,255,0.55);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.week-ex-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 10px;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+    gap: 6px;
+}
+
+.week-ex-item:last-child { border-bottom: none; }
+
+.week-ex-name {
+    font-size: 12px;
+    color: var(--text);
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.week-ex-actions {
+    display: flex;
+    gap: 2px;
+    flex-shrink: 0;
+}
+
+.btn-sm {
+    width: 28px !important;
+    height: 28px !important;
+    font-size: 14px !important;
+}
+
+.btn-sm .material-symbols-outlined {
+    font-size: 14px !important;
+}
+
+.week-day-actions {
+    display: flex;
+    gap: 6px;
+    margin-top: 8px;
+    flex-wrap: wrap;
+}
+
+.week-plan-empty {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin: 8px 0;
+}
+
+.week-btn-plan {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    padding: 12px;
+    font-size: 13px;
+    font-weight: bold;
+    cursor: pointer;
+    width: 100%;
+}
+
+.week-btn-primary {
+    flex: 1;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 10px;
+    font-size: 11px;
+    font-weight: bold;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.week-btn-secondary {
+    flex: 1;
+    background: rgba(255,255,255,0.6);
+    color: var(--primary);
+    border: 1px solid var(--primary);
+    border-radius: 8px;
+    padding: 8px 10px;
+    font-size: 11px;
+    font-weight: bold;
+    cursor: pointer;
+    white-space: nowrap;
+}
