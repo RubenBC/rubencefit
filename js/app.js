@@ -141,7 +141,8 @@ let state = JSON.parse(localStorage.getItem('iron_log_v8.6')) || {
 if (state.sesionStartTime === undefined) state.sesionStartTime = null;
 
 let swInterval = null;
-let bibliotecaDia = 'hoy'; // 'hoy' o nombre de día
+let bibliotecaDia = 'hoy';
+let diasEditando = new Set();
 let calYear = new Date().getFullYear();
 let calMonth = new Date().getMonth();
 
@@ -536,6 +537,9 @@ function getDayColor(selected) {
     return { c: "var(--color-amarillo)", s: "Mezcla Híbrida" };
 }
 
+function editarDia(dia) { diasEditando.add(dia); renderWeek(); }
+function guardarDia(dia) { diasEditando.delete(dia); renderWeek(); }
+
 function renderWeek() {
     const planner = document.getElementById('weekPlanner');
     if (!planner) return;
@@ -549,6 +553,8 @@ function renderWeek() {
             ? sel.map(g => `<span class="mini-tag">${g}</span>`).join('')
             : '<span style="font-size:10px; color:var(--text2)">Descanso</span>';
 
+        const editando = diasEditando.has(dia);
+
         let bodyHtml = '';
         if (tieneRutina) {
             bodyHtml = `
@@ -556,17 +562,23 @@ function renderWeek() {
                     ${plantilla.map((ex, i) => `
                     <div class="week-ex-item">
                         <span class="week-ex-name">${getIcon(ex.t)}${ex.name}</span>
+                        ${editando ? `
                         <div class="week-ex-actions">
                             <button class="btn-icon btn-sm" onclick="moverEjercicioDia('${dia}',${i},-1)" ${i===0?'disabled':''}><span class="material-symbols-outlined">arrow_upward</span></button>
                             <button class="btn-icon btn-sm" onclick="moverEjercicioDia('${dia}',${i},1)" ${i===plantilla.length-1?'disabled':''}><span class="material-symbols-outlined">arrow_downward</span></button>
                             <button class="btn-icon btn-delete btn-sm" onclick="quitarDeDia('${dia}',${i})"><span class="material-symbols-outlined">delete</span></button>
-                        </div>
+                        </div>` : ''}
                     </div>`).join('')}
                 </div>
                 <div class="week-day-actions">
-                    <button class="week-btn-secondary" onclick="planificarDia('${dia}')">+ Añadir</button>
-                    <button class="week-btn-secondary" onclick="abrirSelectorParaDia('${dia}')">⚡ Generar</button>
-                    <button class="week-btn-primary" onclick="cargarPlantillaEnHoy('${dia}')">Cargar en Hoy →</button>
+                    ${editando ? `
+                        <button class="week-btn-secondary" onclick="planificarDia('${dia}')">+ Añadir</button>
+                        <button class="week-btn-secondary" onclick="abrirSelectorParaDia('${dia}')">⚡ Generar</button>
+                        <button class="week-btn-primary" style="background:var(--color-verde); color:#2d5a27; border:1px solid #a8d8a8;" onclick="guardarDia('${dia}')">✓ Guardar</button>
+                    ` : `
+                        <button class="week-btn-secondary" onclick="editarDia('${dia}')"><span class="material-symbols-outlined" style="font-size:14px;">edit</span> Editar</button>
+                        <button class="week-btn-primary" onclick="cargarPlantillaEnHoy('${dia}')">Cargar en Hoy →</button>
+                    `}
                 </div>`;
         } else if (sel.length > 0) {
             bodyHtml = `
