@@ -1361,40 +1361,53 @@ h2 {
     pointer-events: none;
 }
 
-.splash-logo-wrap {
-    position: relative;
-    width: min(260px, 70vw);
-    isolation: isolate;
+/* splash styles now inline */
+
+/* =========================================================
+   SPLASH CREDITS
+========================================================= */
+.splash-credits {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
 }
 
-.splash-img {
-    width: 100%;
-    height: auto;
-    display: block;
+.splash-app-name {
+    font-family: 'Roboto', sans-serif;
+    font-size: 22px;
+    font-weight: 300;
+    letter-spacing: 6px;
+    text-transform: uppercase;
+    color: var(--primary);
+    margin: 0 0 12px;
 }
 
-/* Capa de color que cubre solo el zorro (57% superior) */
-/* mix-blend-mode: screen colorea píxeles oscuros, deja el blanco intacto */
-.splash-color-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 57%;
-    mix-blend-mode: screen;
-    animation: rainbowOverlay 1.5s ease-in-out forwards;
-    pointer-events: none;
-    border-radius: 0;
+.splash-by {
+    font-family: 'Roboto', sans-serif;
+    font-size: 11px;
+    font-weight: 400;
+    color: var(--text2);
+    letter-spacing: 0.5px;
+    margin: 0;
+    text-transform: uppercase;
 }
 
-@keyframes rainbowOverlay {
-    0%   { background: #ff0000; opacity: 1; }
-    14%  { background: #ff8000; opacity: 1; }
-    28%  { background: #ffee00; opacity: 1; }
-    42%  { background: #00cc00; opacity: 1; }
-    56%  { background: #00ccff; opacity: 1; }
-    70%  { background: #0044ff; opacity: 1; }
-    84%  { background: #8800ff; opacity: 1; }
-    93%  { background: #ff00cc; opacity: 1; }
-    100% { background: #ff00cc; opacity: 0; }
+.splash-author {
+    font-family: 'Roboto', sans-serif;
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--text);
+    letter-spacing: 1px;
+    margin: 0 0 10px;
+}
+
+.splash-ai {
+    font-family: 'Roboto', sans-serif;
+    font-size: 10px;
+    font-weight: 400;
+    color: var(--outline);
+    letter-spacing: 0.3px;
+    margin: 0;
+    font-style: italic;
 }
