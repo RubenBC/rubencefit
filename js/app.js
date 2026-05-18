@@ -1373,11 +1373,11 @@ function startTimer(s) {
 
 window.onload = () => {
     showPage(state.activeTab || 'rutinaPage');
-    setTimeout(() => {
-        const splash = document.getElementById('splashScreen');
-        if (splash) {
-            splash.classList.add('fade-out');
-            setTimeout(() => splash.remove(), 500);
-        }
-    }, 2000);
+    const splash = document.getElementById('splashScreen');
+    if (splash) {
+        setTimeout(() => {
+            splash.style.opacity = '0';
+            setTimeout(() => splash.remove(), 600);
+        }, 2500);
+    }
 };
