@@ -824,6 +824,36 @@ function cargarPlantillaEnHoy(dia) {
 
 function limpiarPlantillas() { if(confirm("¿Borrar rutinas guardadas?")) { state.plantillaSemanal = {}; save(); renderWeek(); } }
 
+function compartirBackup() {
+    const datos = {
+        backupVersion: BACKUP_VERSION,
+        appVersion: 'IronLog',
+        fecha: new Date().toLocaleDateString(),
+        hora: new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}),
+        state: state
+    };
+    const json = JSON.stringify(datos, null, 2);
+    const blob = new Blob([json], { type: 'application/json' });
+    const fecha = new Date().toLocaleDateString().replace(/\//g, '-');
+    const file = new File([blob], `ironlog-backup-${fecha}.json`, { type: 'application/json' });
+
+    if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+        navigator.share({
+            title: 'IronLog Backup',
+            text: `Backup IronLog — ${new Date().toLocaleDateString()}`,
+            files: [file]
+        }).catch(() => {});
+    } else {
+        // Fallback: descarga directa si el navegador no soporta share
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = file.name;
+        a.click();
+        URL.revokeObjectURL(url);
+    }
+}
+
 function finalizarSesion() {
     if(state.hoy.length === 0) return;
     if(confirm("¿Guardar en el Log?")) {
@@ -836,6 +866,8 @@ function finalizarSesion() {
             duracion: durSec
         });
         state.hoy = []; resetSesionStopwatch(); save(); showPage('historialPage');
+        // Compartir backup automáticamente
+        setTimeout(() => compartirBackup(), 600);
     }
 }
 
