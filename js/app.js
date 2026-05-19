@@ -866,9 +866,32 @@ function finalizarSesion() {
             duracion: durSec
         });
         state.hoy = []; resetSesionStopwatch(); save(); showPage('historialPage');
-        // Compartir backup automáticamente
-        setTimeout(() => compartirBackup(), 600);
+        mostrarToastBackup();
     }
+}
+
+function mostrarToastBackup() {
+    const existing = document.getElementById('toastBackup');
+    if (existing) existing.remove();
+    const toast = document.createElement('div');
+    toast.id = 'toastBackup';
+    toast.innerHTML = `
+        <span>✓ Sesión guardada</span>
+        <button onclick="compartirBackup(); document.getElementById('toastBackup')?.remove()">
+            📤 Guardar backup
+        </button>`;
+    toast.style.cssText = `
+        position:fixed; bottom:90px; left:50%; transform:translateX(-50%);
+        background:var(--primary); color:white; border-radius:12px;
+        padding:12px 16px; display:flex; align-items:center; gap:12px;
+        font-size:13px; font-weight:500; z-index:9998; white-space:nowrap;
+        box-shadow:0 4px 12px rgba(0,0,0,0.2);`;
+    toast.querySelector('button').style.cssText = `
+        background:white; color:var(--primary); border:none;
+        border-radius:8px; padding:6px 12px; font-size:12px;
+        font-weight:bold; cursor:pointer;`;
+    document.body.appendChild(toast);
+    setTimeout(() => toast?.remove(), 8000);
 }
 
 function borrarHistorialItem(index) { if(confirm("¿Borrar sesión?")) { state.historial.splice(index, 1); save(); renderHistory(); } }
