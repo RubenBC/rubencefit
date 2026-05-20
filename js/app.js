@@ -105,6 +105,7 @@ const db = {
         {n:"Copenhagen plank suave",             t:T_A, tip:"Sin equipamiento"},
         {n:"Plancha lateral rodilla",            t:T_A, tip:"Sin equipamiento"},
         {n:"Giro controlado goma",               t:T_A, tip:"Solo Gomas"},
+        {n:"caminata lateral con goma",          t:T_A, tip:"Solo Gomas"},
         {n:"Dead bug",                           t:T_S, tip:"Sin equipamiento"},
         {n:"Marcha supina",                      t:T_S, tip:"Sin equipamiento"},
         {n:"Pallof press con goma",              t:T_S, tip:"Solo Gomas"},
