@@ -1142,23 +1142,6 @@ function closeDayModal(el, e) {
     if (!e || e.target === el) document.getElementById('dayModal').style.display = 'none';
 }
 
-function getMaxKgSession() {
-    let max = 0;
-    state.historial.forEach(sesion => {
-        let kg = 0;
-        if (sesion.ejercicios) {
-            sesion.ejercicios.forEach(ex => {
-                const tipo = getEquipType(ex);
-                if ((tipo === 'dumbbell' || (tipo === 'mixed' && !ex.usaBanda)) && ex.peso && ex.series && ex.reps) {
-                    kg += (parseFloat(ex.peso) * parseInt(ex.series) * parseInt(ex.reps));
-                }
-            });
-        }
-        if (kg > max) max = kg;
-    });
-    return Math.round(max);
-}
-
 const STAT_INFO = {
     sesiones: {
         titulo: "Total de Sesiones",
@@ -1253,7 +1236,6 @@ function updateStats() {
         return;
     }
 
-    let totalKg = 0;
     let totalSesiones = state.historial.length;
     let gruposContador = {};
     let ejerciciosContador = {};
@@ -1262,10 +1244,6 @@ function updateStats() {
     state.historial.forEach(sesion => {
         if (sesion.ejercicios) {
             sesion.ejercicios.forEach(ex => {
-                const tipo = getEquipType(ex);
-                if ((tipo === 'dumbbell' || (tipo === 'mixed' && !ex.usaBanda)) && ex.peso && ex.series && ex.reps) {
-                    totalKg += (parseFloat(ex.peso) * parseInt(ex.series) * parseInt(ex.reps));
-                }
                 gruposContador[ex.group] = (gruposContador[ex.group] || 0) + 1;
                 ejerciciosContador[ex.name] = (ejerciciosContador[ex.name] || 0) + 1;
                 if (ex.t) typeContador[ex.t] = (typeContador[ex.t] || 0) + 1;
