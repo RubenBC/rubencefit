@@ -1,9 +1,10 @@
-const CACHE_NAME = 'ironlog-v36';
+const CACHE_NAME = 'ironlog-v30';
 const ASSETS = [
   './manifest.json',
   './icon.png',
   './css/styles.css',
-  './js/app.js'
+  './js/app.js',
+  './ch3ca-logo.png'
 ];
 
 self.addEventListener('install', event => {
@@ -26,12 +27,10 @@ self.addEventListener('activate', event => {
 });
 
 self.addEventListener('fetch', event => {
-  // HTML siempre desde red (nunca cacheado)
   if (event.request.mode === 'navigate') {
     event.respondWith(fetch(event.request));
     return;
   }
-  // Resto: cache primero, red como fallback
   event.respondWith(
     caches.match(event.request).then(cached => cached || fetch(event.request))
   );
