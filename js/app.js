@@ -1,1354 +1,1425 @@
-// ═══════════════════════════════════════
-//   SUPABASE
-// ═══════════════════════════════════════
-const { createClient } = supabase;
-const sb = createClient(
-  'https://rswzirygkeyainerfzjx.supabase.co',
-  'sb_publishable_Uno7xmeQJLmvtcyZvtZfQw_IkpEth_y'
-);
+const T_B = "Básico"; const T_A = "Aislamiento"; const T_S = "Salud"; 
+    
+function getIcon(t) {
+    if(t === T_B) return '🔥 ';
+    if(t === T_A) return '🎯 ';
+    if(t === T_S) return '🛡️ ';
+    return '';
+}
 
-// ═══════════════════════════════════════
-//   CONSTANTES
-// ═══════════════════════════════════════
-const ADMIN_PASSWORD = 'chef2024';
-
-const RECIPE_CATEGORIES = ['Todas', 'Carnes', 'Pescados', 'Postres', 'Salsas y fondos', 'Ensaladas', 'Guarniciones', 'Plato del día'];
-
-const CAT_TAG = {
-  'Carnes':          'tag-carnes',
-  'Pescados':        'tag-pescados',
-  'Postres':         'tag-postres',
-  'Salsas y fondos': 'tag-salsas',
-  'Ensaladas':       'tag-ensaladas',
-  'Guarniciones':    'tag-guarniciones',
-  'Plato del día':   'tag-plato',
-  'Sopas y salsas':  'tag-salsas',
-  'Carnes':          'tag-carnes',
-  'Vegetariano':     'tag-vegetariano',
-  'Coulis':          'tag-coulis',
-  'Vinagreta':       'tag-vinagreta',
+const db = {
+    "Pecho": { icon: "expand_less", advice: "Control de hombros y apertura.", data: [
+        {n:"Flexiones",                          t:T_B, tip:"Sin equipamiento"},
+        {n:"Flexiones inclinadas",               t:T_B, tip:"Sin equipamiento"},
+        {n:"Flexiones rodillas",                 t:T_B, tip:"Sin equipamiento"},
+        {n:"Press suelo con mancuernas",         t:T_B, tip:"Solo Mancuernas"},
+        {n:"Press unilateral suelo",             t:T_B, tip:"Solo Mancuernas"},
+        {n:"Press con goma",                     t:T_B, tip:"Solo Gomas"},
+        {n:"Press unilateral goma",              t:T_B, tip:"Solo Gomas"},
+        {n:"Flexiones con goma",                 t:T_B, tip:"Solo Gomas"},
+        {n:"Aperturas en suelo con mancuernas",  t:T_A, tip:"Solo Mancuernas"},
+        {n:"Aperturas con goma",                 t:T_A, tip:"Solo Gomas"},
+        {n:"Fly unilateral",                     t:T_A, tip:"Solo Mancuernas"},
+        {n:"Flexiones abiertas",                 t:T_A, tip:"Sin equipamiento"},
+        {n:"Flexiones lentas",                   t:T_A, tip:"Sin equipamiento"},
+        {n:"Flexiones suaves",                   t:T_S, tip:"Sin equipamiento"}
+    ] },
+    "Espalda": { icon: "format_align_justify", advice: "Tracción vertical y horizontal.", data: [
+        {n:"Remo mancuerna unilateral",          t:T_B, tip:"Solo Mancuernas"},
+        {n:"Remo inclinado con mancuernas",      t:T_B, tip:"Solo Mancuernas"},
+        {n:"Remo renegado",                      t:T_B, tip:"Solo Mancuernas"},
+        {n:"Remo bilateral mancuernas",          t:T_B, tip:"Solo Mancuernas"},
+        {n:"Remo con goma a una mano",           t:T_B, tip:"Solo Gomas"},
+        {n:"Remo con goma sentado",              t:T_B, tip:"Solo Gomas"},
+        {n:"Jalón recto con goma",               t:T_B, tip:"Solo Gomas"},
+        {n:"Remo alto con goma",                 t:T_B, tip:"Solo Gomas"},
+        {n:"Remo goma",                          t:T_B, tip:"Solo Gomas"},
+        {n:"Remo bajo con toalla",               t:T_B, tip:"Sin equipamiento"},
+        {n:"Remo invertido improvisado",         t:T_B, tip:"Sin equipamiento"},
+        {n:"Pullover con mancuerna en suelo",    t:T_A, tip:"Solo Mancuernas"},
+        {n:"Pullover con goma",                  t:T_A, tip:"Solo Gomas"},
+        {n:"Face pull con goma",                 t:T_A, tip:"Solo Gomas"},
+        {n:"Pájaros con goma",                   t:T_A, tip:"Solo Gomas"}
+    ] },
+    "Piernas": { icon: "directions_walk", advice: "Sin impacto y retorno venoso.", data: [
+        {n:"Sentadilla goblet",                  t:T_B, tip:"Solo Mancuernas"},
+        {n:"Sentadilla sumo",                    t:T_B, tip:"Mancuernas / Gomas"},
+        {n:"Sentadilla búlgara",                 t:T_B, tip:"Mancuernas / Gomas"},
+        {n:"Peso muerto rumano con mancuernas",  t:T_B, tip:"Solo Mancuernas"},
+        {n:"Peso muerto unilateral",             t:T_B, tip:"Solo Mancuernas"},
+        {n:"Buenos días con goma",               t:T_B, tip:"Solo Gomas"},
+        {n:"Zancadas",                           t:T_B, tip:"Mancuernas / Gomas"},
+        {n:"Step up",                            t:T_B, tip:"Mancuernas / Gomas"},
+        {n:"Split squat",                        t:T_B, tip:"Mancuernas / Gomas"},
+        {n:"Puente glúteo",                      t:T_B, tip:"Mancuernas / Gomas"},
+        {n:"Hip thrust suelo",                   t:T_B, tip:"Mancuernas / Gomas"},
+        {n:"Puente unilateral",                  t:T_A, tip:"Sin equipamiento"},
+        {n:"Gemelos de pie",                     t:T_S, tip:"Sin equipamiento"},
+        {n:"Gemelo unilateral",                  t:T_S, tip:"Sin equipamiento"},
+        {n:"Gemelo escalón",                     t:T_S, tip:"Sin equipamiento"}
+    ] },
+    "Hombros": { icon: "accessibility_new", advice: "Cuidado del manguito rotador.", data: [
+        {n:"Press militar mancuernas",           t:T_B, tip:"Solo Mancuernas"},
+        {n:"Press Arnold",                       t:T_B, tip:"Solo Mancuernas"},
+        {n:"Press con goma",                     t:T_B, tip:"Solo Gomas"},
+        {n:"Elevaciones laterales",              t:T_A, tip:"Mancuernas / Gomas"},
+        {n:"Elevaciones parciales",              t:T_A, tip:"Mancuernas / Gomas"},
+        {n:"Elevaciones con goma",               t:T_A, tip:"Solo Gomas"},
+        {n:"Elevaciones sentado",                t:T_A, tip:"Solo Mancuernas"},
+        {n:"Elevaciones unilaterales",           t:T_A, tip:"Mancuernas / Gomas"},
+        {n:"Pájaros inclinados",                 t:T_A, tip:"Mancuernas / Gomas"},
+        {n:"Reverse fly goma",                   t:T_A, tip:"Solo Gomas"},
+        {n:"Face pull abierto",                  t:T_S, tip:"Solo Gomas"},
+        {n:"Elevaciones laterales ligeras",      t:T_S, tip:"Mancuernas / Gomas"}
+    ] },
+    "Bíceps": { icon: "fitness_center", advice: "Flexión de codo técnica.", data: [
+        {n:"Curl alterno mancuernas",            t:T_B, tip:"Solo Mancuernas"},
+        {n:"Curl martillo",                      t:T_B, tip:"Solo Mancuernas"},
+        {n:"Curl inclinado improvisado",         t:T_B, tip:"Solo Mancuernas"},
+        {n:"Curl supino con goma",               t:T_B, tip:"Solo Gomas"},
+        {n:"Curl neutro con goma",               t:T_B, tip:"Solo Gomas"},
+        {n:"Curl concentración",                 t:T_A, tip:"Solo Mancuernas"},
+        {n:"Curl cruzado martillo",              t:T_A, tip:"Solo Mancuernas"},
+        {n:"Curl unilateral lento",              t:T_A, tip:"Solo Mancuernas"},
+        {n:"Curl 21",                            t:T_A, tip:"Solo Mancuernas"},
+        {n:"Curl sentado pared",                 t:T_A, tip:"Sin equipamiento"},
+        {n:"Curl ligero",                        t:T_S, tip:"Solo Gomas"},
+        {n:"Curl isométrico",                    t:T_S, tip:"Sin equipamiento"}
+    ] },
+    "Tríceps": { icon: "rebase_edit", advice: "Extensión de codo técnica.", data: [
+        {n:"Extensión sobre cabeza con mancuerna",t:T_B, tip:"Solo Mancuernas"},
+        {n:"Extensión unilateral",               t:T_B, tip:"Solo Mancuernas"},
+        {n:"Jalón tríceps con goma",             t:T_B, tip:"Solo Gomas"},
+        {n:"Fondos entre sillas suaves",         t:T_B, tip:"Sin equipamiento"},
+        {n:"Press francés suelo",                t:T_A, tip:"Solo Mancuernas"},
+        {n:"Patada tríceps mancuerna",           t:T_A, tip:"Solo Mancuernas"},
+        {n:"Patada tríceps goma",                t:T_A, tip:"Solo Gomas"},
+        {n:"Extensión inversa goma",             t:T_A, tip:"Solo Gomas"}
+    ] },
+    "Core": { icon: "self_improvement", advice: "Estabilidad abdominal.", data: [
+        {n:"Plancha",                            t:T_B, tip:"Sin equipamiento"},
+        {n:"Plancha con toque hombro",           t:T_B, tip:"Sin equipamiento"},
+        {n:"Plancha extendida",                  t:T_B, tip:"Sin equipamiento"},
+        {n:"Hollow hold",                        t:T_B, tip:"Sin equipamiento"},
+        {n:"Plancha lateral",                    t:T_B, tip:"Sin equipamiento"},
+        {n:"Copenhagen plank suave",             t:T_A, tip:"Sin equipamiento"},
+        {n:"Plancha lateral rodilla",            t:T_A, tip:"Sin equipamiento"},
+        {n:"Giro controlado goma",               t:T_A, tip:"Solo Gomas"},
+        {n:"Dead bug",                           t:T_S, tip:"Sin equipamiento"},
+        {n:"Marcha supina",                      t:T_S, tip:"Sin equipamiento"},
+        {n:"Pallof press con goma",              t:T_S, tip:"Solo Gomas"},
+        {n:"Pallof isométrico",                  t:T_S, tip:"Solo Gomas"},
+        {n:"Bird dog",                           t:T_S, tip:"Sin equipamiento"},
+        {n:"Superman suave",                     t:T_S, tip:"Sin equipamiento"},
+        {n:"Bird dog isométrico",                t:T_S, tip:"Sin equipamiento"}
+    ] },
+    "Cardio": { icon: "directions_run", advice: "Bajo impacto linfático.", data: [
+        {n:"Bicicleta Estática",       t:T_S, tip:"Bicicleta"},
+        {n:"Caminata Activa con Braceo",              t:T_S, tip:"Sin equipamiento"},
+        {n:"Boxeo Sentado",        t:T_S, tip:"Sin equipamiento"},
+        {n:"Círculos de Brazos",           t:T_S, tip:"Sin equipamiento"},
+        {n:"Marcha Sentado",    t:T_S, tip:"Sin equipamiento"},
+        {n:"Paseo Intenso",              t:T_S, tip:"Sin equipamiento"}
+    ] }
 };
 
-const ALLERGENS = [
-  { id: 'gluten',     label: 'Gluten',           emoji: '🌾' },
-  { id: 'crustaceos', label: 'Crustáceos',        emoji: '🦐' },
-  { id: 'huevo',      label: 'Huevo',             emoji: '🥚' },
-  { id: 'pescado',    label: 'Pescado',            emoji: '🐟' },
-  { id: 'cacahuetes', label: 'Cacahuetes',         emoji: '🥜' },
-  { id: 'soja',       label: 'Soja',              emoji: '🫘' },
-  { id: 'lacteos',    label: 'Lácteos',           emoji: '🥛' },
-  { id: 'frutoscas',  label: 'Frutos de cáscara', emoji: '🌰' },
-  { id: 'apio',       label: 'Apio',              emoji: '🌿' },
-  { id: 'mostaza',    label: 'Mostaza',           emoji: '🟡' },
-  { id: 'sesamo',     label: 'Sésamo',            emoji: '🌱' },
-  { id: 'sulfitos',   label: 'Sulfitos',          emoji: '🍷' },
-  { id: 'altramuces', label: 'Altramuces',        emoji: '🫛' },
-  { id: 'moluscos',   label: 'Moluscos',          emoji: '🐚' },
-];
-let recipes              = [];
-let productions          = [];
-let recipeProductions    = [];
-let comments             = [];
-let weights              = [];
-let brines               = [];
-let productionCategories = [];
-let isAdmin     = false;
-let currentPage = 'recipes';
-
-// Recetas
-let recipeFilter       = 'Todas';
-let currentRecipeId    = null;
-let recipeEditorMode   = null;
-let recipeEditorData   = null;
-
-// Producciones
-let prodFilter         = 'Todas';
-let currentProdId      = null;
-let prodEditorMode     = null;
-let prodEditorData     = null;
-let currentMultiplier  = 1;
-
-// Comentarios
-let commentContext     = { name: '', section: '', id: null };
-
-// Fichas
-let editingWeightId    = null;
-let editingBrineId     = null;
-
-// Link producciones
-let linkingRecipeId    = null;
-let selectedProdIds    = [];
-
-// ═══════════════════════════════════════
-//   CARGA INICIAL
-// ═══════════════════════════════════════
-async function loadData() {
-  try {
-    const [
-      { data: rData },
-      { data: pData },
-      { data: rpData },
-      { data: cData },
-      { data: wData },
-      { data: bData },
-      { data: pcData },
-    ] = await Promise.all([
-      sb.from('recipes').select('*').order('name'),
-      sb.from('productions').select('*').order('name'),
-      sb.from('recipe_productions').select('*'),
-      sb.from('comments').select('*').order('created_at', { ascending: false }),
-      sb.from('weights').select('*').order('name'),
-      sb.from('brines').select('*').order('category'),
-      sb.from('production_categories').select('*').order('sort_order'),
-    ]);
-
-    recipes              = rData  || [];
-    productions          = pData  || [];
-    recipeProductions    = rpData || [];
-    comments             = cData  || [];
-    weights              = wData  || [];
-    brines               = bData  || [];
-    productionCategories = pcData || [];
-
-    renderRecipes();
-    updateBadges();
-
-  } catch (err) {
-    console.error('Error cargando datos:', err);
-    document.getElementById('recipeList').innerHTML = `
-      <div class="empty-state">
-        <span class="material-symbols-outlined">wifi_off</span>
-        Error al conectar con la base de datos
-      </div>`;
-  }
-}
-
-// ═══════════════════════════════════════
-//   NAVEGACIÓN
-// ═══════════════════════════════════════
-function showPage(page, btn) {
-  exitInnerView();
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-  document.getElementById(page + 'Page').classList.add('active');
-  if (btn) btn.classList.add('active');
-  else document.getElementById('nav-' + page)?.classList.add('active');
-  currentPage = page;
-
-  const isRecipes = page === 'recipes';
-  const isProd    = page === 'productions';
-  document.getElementById('searchSection').style.display = (isRecipes || isProd) ? '' : 'none';
-  document.getElementById('adminAddRecipeRow').style.display    = (isRecipes && isAdmin) ? '' : 'none';
-  document.getElementById('adminAddProductionRow').style.display = (isProd    && isAdmin) ? '' : 'none';
-
-  if (isRecipes) { initChips(RECIPE_CATEGORIES, recipeFilter, setRecipeFilter); renderRecipes(); }
-  if (isProd)    { const cats = ['Todas', ...productionCategories.map(c => c.name)]; initChips(cats, prodFilter, setProdFilter); renderProductions(); }
-  if (page === 'fichas')    renderFichas();
-  if (page === 'converter') initConverter();
-  if (page === 'admin')     renderAdmin();
-}
-
-function exitInnerView() {
-  document.getElementById('mainNav').style.display       = '';
-  document.getElementById('searchSection').style.display = '';
-}
-
-// ═══════════════════════════════════════
-//   SEARCH
-// ═══════════════════════════════════════
-function onSearch() {
-  if (currentPage === 'recipes')     renderRecipes();
-  if (currentPage === 'productions') renderProductions();
-}
-
-// ═══════════════════════════════════════
-//   CHIPS
-// ═══════════════════════════════════════
-function initChips(cats, active, setter) {
-  document.getElementById('chipsRow').innerHTML = cats.map(c =>
-    `<button class="chip ${c === active ? 'active' : ''}" onclick="${setter.name}('${c}')">${c}</button>`
-  ).join('');
-}
-
-function setRecipeFilter(cat) { recipeFilter = cat; initChips(RECIPE_CATEGORIES, recipeFilter, setRecipeFilter); renderRecipes(); }
-function setProdFilter(cat)   { prodFilter = cat; const cats = ['Todas', ...productionCategories.map(c => c.name)]; initChips(cats, prodFilter, setProdFilter); renderProductions(); }
-
-// ═══════════════════════════════════════
-//   ALÉRGENOS HELPERS
-// ═══════════════════════════════════════
-function renderAllergenBadges(allergens) {
-  if (!allergens || allergens.length === 0)
-    return '<p style="font-size:13px; color:var(--text2);">Sin alérgenos declarados</p>';
-  return `<div class="allergen-grid">${allergens.map(id => {
-    const a = ALLERGENS.find(x => x.id === id);
-    return a ? `<div class="allergen-badge"><span class="allergen-emoji">${a.emoji}</span><span class="allergen-label">${a.label}</span></div>` : '';
-  }).join('')}</div>`;
-}
-
-function renderAllergenSelector(selectedIds, onToggleFn) {
-  return `<div class="allergen-selector">${ALLERGENS.map(a => `
-    <div class="allergen-option ${selectedIds.includes(a.id) ? 'selected' : ''}" onclick="${onToggleFn}('${a.id}')">
-      <span class="allergen-emoji">${a.emoji}</span>
-      <span class="allergen-label">${a.label}</span>
-    </div>`).join('')}</div>`;
-}
-
-function toggleRecipeAllergen(id) {
-  const arr = recipeEditorData.allergens || [];
-  recipeEditorData.allergens = arr.includes(id) ? arr.filter(x => x !== id) : [...arr, id];
-  renderRecipeEditor();
-}
-
-function toggleProdAllergen(id) {
-  const arr = prodEditorData.allergens || [];
-  prodEditorData.allergens = arr.includes(id) ? arr.filter(x => x !== id) : [...arr, id];
-  renderProdEditor();
-}
-
-// ═══════════════════════════════════════
-//   FORMATO CANTIDADES
-// ═══════════════════════════════════════
-function formatAmount(amount) {
-  const fractions = {
-    0.25: '¼', 0.5: '½', 0.75: '¾',
-    0.33: '⅓', 0.333: '⅓', 0.66: '⅔', 0.667: '⅔',
-    1.25: '1¼', 1.5: '1½', 1.75: '1¾',
-    2.5: '2½', 3.5: '3½',
-  };
-  if (Number.isInteger(amount)) return amount;
-  const rounded = parseFloat(amount.toFixed(3));
-  return fractions[rounded] !== undefined ? fractions[rounded] : parseFloat(amount.toFixed(2));
-}
-
-// ═══════════════════════════════════════
-//   RECETAS — LISTA
-// ═══════════════════════════════════════
-function renderRecipes() {
-  const q = (document.getElementById('searchInput')?.value || '').toLowerCase();
-  const filtered = recipes.filter(r =>
-    (recipeFilter === 'Todas' || r.category === recipeFilter) &&
-    r.name.toLowerCase().includes(q)
-  );
-
-  const list = document.getElementById('recipeList');
-  if (!list) return;
-
-  if (filtered.length === 0) {
-    list.innerHTML = `<div class="empty-state"><span class="material-symbols-outlined">search_off</span>No se encontraron recetas</div>`;
-    return;
-  }
-
-  list.innerHTML = filtered.map(r => `
-    <div class="recipe-card" onclick="showRecipeDetail('${r.id}')">
-      ${r.photo
-        ? `<img class="recipe-card-img" src="${r.photo}" alt="${r.name}" loading="lazy">`
-        : `<div class="recipe-card-img-placeholder"><span class="material-symbols-outlined">restaurant</span></div>`}
-      <div class="recipe-card-body">
-        <div class="recipe-card-meta">
-          <span class="tag ${CAT_TAG[r.category] || ''}">${r.category}</span>
-        </div>
-        <h3>${r.name}</h3>
-        <p>${r.description}</p>
-      </div>
-    </div>`).join('');
-}
-
-// ═══════════════════════════════════════
-//   RECETAS — DETALLE
-// ═══════════════════════════════════════
-function showRecipeDetail(id) {
-  currentRecipeId = id;
-  history.pushState({ view: 'recipeDetail', id }, '');
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.getElementById('detailPage').classList.add('active');
-  document.getElementById('searchSection').style.display = 'none';
-  document.getElementById('adminAddRecipeRow').style.display = 'none';
-  document.getElementById('mainNav').style.display = 'none';
-  renderRecipeDetail();
-}
-
-function renderRecipeDetail() {
-  const r = recipes.find(x => x.id === currentRecipeId);
-  if (!r) return;
-
-  // Producciones vinculadas
-  const linkedIds = recipeProductions.filter(rp => rp.recipe_id === r.id).map(rp => rp.production_id);
-  const linkedProds = productions.filter(p => linkedIds.includes(p.id));
-
-  const prodsHtml = linkedProds.length > 0
-    ? linkedProds.map(p => `
-        <div class="prod-link-row" onclick="showProdDetail('${p.id}')">
-          <div>
-            <div class="prod-link-name">${p.name}</div>
-            <span class="tag ${CAT_TAG[p.category] || ''}" style="font-size:10px;">${p.category}</span>
-          </div>
-          <span class="material-symbols-outlined" style="color:var(--outline);">chevron_right</span>
-        </div>`).join('')
-    : `<p style="font-size:13px; color:var(--text2); padding:8px 0;">Sin producciones vinculadas</p>`;
-
-  const ings = r.ingredients.map(ing =>
-    `<div class="ing-row">
-      <span class="ing-name">${ing.name}</span>
-      <span class="ing-amount">${formatAmount(ing.amount)} ${ing.unit}</span>
-    </div>`).join('');
-
-  const steps = r.steps.map((s, i) =>
-    `<div class="step-row">
-      <div class="step-num">${i + 1}</div>
-      <div class="step-text">${s}</div>
-    </div>`).join('');
-
-  const photoHtml = r.photo
-    ? `<img class="detail-img" src="${r.photo}" alt="Foto del plato" data-src="${r.photo}" onclick="openLightbox(this.dataset.src)" style="cursor:zoom-in;">`
-    : `<div class="detail-img-placeholder"><span class="material-symbols-outlined">restaurant</span></div>`;
-
-  const adminBtns = isAdmin ? `
-    <button class="btn-pill" onclick="openEditRecipe()">
-      <span class="material-symbols-outlined" style="font-size:16px;">edit</span> Editar
-    </button>
-    <button class="btn-pill" onclick="openLinkModal('${r.id}')">
-      <span class="material-symbols-outlined" style="font-size:16px;">link</span> Vincular
-    </button>
-    <button class="btn-pill danger" onclick="deleteRecipe('${r.id}')">
-      <span class="material-symbols-outlined" style="font-size:16px;">delete</span>
-    </button>` : '';
-
-  document.getElementById('detailPage').innerHTML = `
-    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; flex-wrap:wrap; gap:8px;">
-      <button class="back-btn" onclick="backTo('recipes')">
-        <span class="material-symbols-outlined">arrow_back</span> Volver
-      </button>
-      <div style="display:flex; gap:6px; flex-wrap:wrap;">
-        <button class="btn-pill ghost" onclick="openCommentModal('${r.name}','recipe','${r.id}')">
-          <span class="material-symbols-outlined" style="font-size:16px;">report</span> Error
-        </button>
-        ${adminBtns}
-      </div>
-    </div>
-    ${photoHtml}
-    <div class="card">
-      <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px;">
-        <span class="tag ${CAT_TAG[r.category] || ''}">${r.category}</span>
-      </div>
-      <h2 style="font-size:22px; margin-bottom:6px;">${r.name}</h2>
-      <p style="font-size:14px; color:var(--text2); line-height:1.5;">${r.description}</p>
-    </div>
-    ${r.ingredients.length > 0 ? `
-    <div class="card">
-      <div class="section-title"><span class="material-symbols-outlined">grocery</span> Ingredientes</div>
-      ${ings}
-    </div>` : ''}
-    ${r.steps.length > 0 ? `
-    <div class="card">
-      <div class="section-title"><span class="material-symbols-outlined">format_list_numbered</span> Elaboración</div>
-      ${steps}
-    </div>` : ''}
-    ${r.plating ? `
-    <div class="card">
-      <div class="section-title"><span class="material-symbols-outlined">restaurant</span> Montaje</div>
-      <p style="font-size:14px; line-height:1.6;">${r.plating}</p>
-    </div>` : ''}
-    <div class="card">
-      <div class="section-title"><span class="material-symbols-outlined">blender</span> Producciones</div>
-      ${prodsHtml}
-    </div>
-    <div class="card">
-      <div class="section-title"><span class="material-symbols-outlined">warning</span> Alérgenos</div>
-      ${(() => {
-        const prodAllergens = linkedProds.flatMap(p => p.allergens || []);
-        const recipeAllergens = r.allergens || [];
-        const all = [...new Set([...prodAllergens, ...recipeAllergens])];
-        return renderAllergenBadges(all);
-      })()}
-    </div>
-  `;
-}
-
-function backTo(page) {
-  exitInnerView();
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-  document.getElementById(page + 'Page').classList.add('active');
-  document.getElementById('nav-' + page).classList.add('active');
-  currentPage = page;
-  if (page === 'recipes') {
-    document.getElementById('adminAddRecipeRow').style.display = isAdmin ? '' : 'none';
-    initChips(RECIPE_CATEGORIES, recipeFilter, setRecipeFilter);
-  }
-  if (page === 'productions') {
-    document.getElementById('adminAddProductionRow').style.display = isAdmin ? '' : 'none';
-    initChips(PROD_CATEGORIES, prodFilter, setProdFilter);
-  }
-}
-
-// ═══════════════════════════════════════
-//   RECETAS — EDITOR
-// ═══════════════════════════════════════
-function openAddRecipe() {
-  recipeEditorMode = 'add';
-  recipeEditorData = { id: Date.now().toString(), name: '', category: 'Carnes', servings: 4, description: '', photo: '', plating: '', ingredients: [], steps: [] };
-  renderRecipeEditor();
-  enterEditor('editorPage');
-}
-
-function openEditRecipe() {
-  recipeEditorMode = 'edit';
-  recipeEditorData = JSON.parse(JSON.stringify(recipes.find(r => r.id === currentRecipeId)));
-  renderRecipeEditor();
-  enterEditor('editorPage');
-}
-
-function enterEditor(pageId) {
-  history.pushState({ view: 'editor', pageId }, '');
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.getElementById(pageId).classList.add('active');
-  document.getElementById('searchSection').style.display = 'none';
-  document.getElementById('adminAddRecipeRow').style.display = 'none';
-  document.getElementById('adminAddProductionRow').style.display = 'none';
-  document.getElementById('mainNav').style.display = 'none';
-}
-
-function renderRecipeEditor() {
-  const r = recipeEditorData;
-  const isNew = recipeEditorMode === 'add';
-
-  const photoSection = `
-    <div class="form-group">
-      <div class="form-label">Foto del plato</div>
-      ${r.photo
-        ? `<img class="photo-preview" src="${r.photo}">
-           <button class="btn-pill danger" onclick="recipeEditorData.photo=''; renderRecipeEditor();" style="margin-bottom:8px;">
-             <span class="material-symbols-outlined" style="font-size:15px;">delete</span> Quitar foto
-           </button>`
-        : `<div class="photo-upload-area" onclick="document.getElementById('recipePhotoInput').click()">
-             <span class="material-symbols-outlined">add_photo_alternate</span>
-             <p>Toca para añadir una foto</p>
-           </div>`}
-      <input type="file" id="recipePhotoInput" accept="image/*" style="display:none;" onchange="handleRecipePhoto(event)">
-      <div class="form-group" style="margin-top:8px; margin-bottom:0;">
-        <div class="form-label">O pega una URL</div>
-        <input class="form-input" placeholder="https://..." value="${r.photo}" oninput="recipeEditorData.photo=this.value">
-      </div>
-    </div>`;
-
-  const ings = r.ingredients.map((ing, i) => `
-    <div class="ing-edit-row">
-      <input class="ing-edit-name" value="${ing.name}" placeholder="Ingrediente" autocomplete="off" data-form-type="other" oninput="recipeEditorData.ingredients[${i}].name=this.value">
-      <input class="ing-edit-amount" type="number" value="${ing.amount}" autocomplete="off" data-form-type="other" oninput="recipeEditorData.ingredients[${i}].amount=parseFloat(this.value)||0">
-      <input class="ing-edit-unit" value="${ing.unit}" placeholder="ud" autocomplete="off" data-form-type="other" oninput="recipeEditorData.ingredients[${i}].unit=this.value">
-      <button class="btn-remove" onclick="recipeEditorData.ingredients.splice(${i},1); renderRecipeEditor();">
-        <span class="material-symbols-outlined" style="font-size:20px;">close</span>
-      </button>
-    </div>`).join('');
-
-  const stps = r.steps.map((s, i) => `
-    <div class="step-edit-row">
-      <div class="step-edit-num">${i + 1}</div>
-      <textarea rows="2" oninput="recipeEditorData.steps[${i}]=this.value">${s}</textarea>
-      <button class="btn-remove" onclick="recipeEditorData.steps.splice(${i},1); renderRecipeEditor();">
-        <span class="material-symbols-outlined" style="font-size:20px;">close</span>
-      </button>
-    </div>`).join('');
-
-  document.getElementById('editorPage').innerHTML = `
-    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:20px;">
-      <button class="back-btn" onclick="cancelRecipeEditor()">
-        <span class="material-symbols-outlined">close</span> Cancelar
-      </button>
-      <span style="font-size:17px; font-weight:800;">${isNew ? 'Nueva receta' : 'Editar receta'}</span>
-      <button class="btn-pill filled" id="saveRecipeBtn" onclick="saveRecipe()">Guardar</button>
-    </div>
-    <div class="card">
-      ${photoSection}
-      <div class="form-group">
-        <div class="form-label">Nombre</div>
-        <div class="form-input contenteditable-input" contenteditable="true" data-placeholder="Nombre de la receta..." oninput="recipeEditorData.name=this.innerText.trim()">${r.name}</div>
-      </div>
-      <div class="form-group">
-        <div class="form-label">Categoría</div>
-        <select class="form-select" onchange="recipeEditorData.category=this.value">
-          ${RECIPE_CATEGORIES.filter(c => c !== 'Todas').map(c =>
-            `<option ${r.category === c ? 'selected' : ''}>${c}</option>`).join('')}
-        </select>
-      </div>
-      <div class="form-group">
-        <div class="form-label">Descripción</div>
-        <textarea class="form-textarea" rows="2" oninput="recipeEditorData.description=this.value">${r.description}</textarea>
-      </div>
-      <div class="form-group">
-        <div class="form-label">Descripción del montaje</div>
-        <textarea class="form-textarea" rows="3" placeholder="Cómo emplatar el plato..." oninput="recipeEditorData.plating=this.value">${r.plating || ''}</textarea>
-      </div>
-    </div>
-    <div class="card">
-      <div class="section-title" style="margin-bottom:12px;"><span class="material-symbols-outlined">warning</span> Alérgenos</div>
-      ${renderAllergenSelector(r.allergens || [], 'toggleRecipeAllergen')}
-    </div>
-    <div class="card">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-        <div class="section-title" style="margin-bottom:0;"><span class="material-symbols-outlined">grocery</span> Ingredientes</div>
-        <button class="btn-pill" onclick="recipeEditorData.ingredients.push({id:Date.now().toString(),name:'',amount:0,unit:'g'}); renderRecipeEditor();">
-          <span class="material-symbols-outlined" style="font-size:16px;">add</span> Añadir
-        </button>
-      </div>
-      <div id="recipeIngList">${ings}</div>
-    </div>
-    <div class="card">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-        <div class="section-title" style="margin-bottom:0;"><span class="material-symbols-outlined">format_list_numbered</span> Elaboración</div>
-        <button class="btn-pill" onclick="recipeEditorData.steps.push(''); renderRecipeEditor();">
-          <span class="material-symbols-outlined" style="font-size:16px;">add</span> Añadir paso
-        </button>
-      </div>
-      <div id="recipeStepList">${stps}</div>
-    </div>`;
-}
-
-async function handleRecipePhoto(event) {
-  const file = event.target.files[0];
-  if (!file) return;
-  showToast('Subiendo foto...');
-  try {
-    const filename = `${Date.now()}.${file.name.split('.').pop()}`;
-    await sb.storage.from('recipe-photos').upload(filename, file);
-    const { data } = sb.storage.from('recipe-photos').getPublicUrl(filename);
-    recipeEditorData.photo = data.publicUrl;
-    renderRecipeEditor();
-    showToast('Foto subida ✓');
-  } catch (err) { showToast('Error al subir la foto'); }
-}
-
-async function saveRecipe() {
-  if (!recipeEditorData.name.trim()) { showToast('El nombre es obligatorio'); return; }
-  const btn = document.getElementById('saveRecipeBtn');
-  btn.textContent = 'Guardando...'; btn.disabled = true;
-  const { error } = await sb.from('recipes').upsert(recipeEditorData);
-  if (error) { showToast('Error al guardar'); btn.textContent = 'Guardar'; btn.disabled = false; return; }
-  if (recipeEditorMode === 'add') recipes.push(recipeEditorData);
-  else recipes = recipes.map(r => r.id === recipeEditorData.id ? recipeEditorData : r);
-  currentRecipeId = recipeEditorData.id;
-  showToast('Receta guardada ✓');
-  exitRecipeEditor(true);
-}
-
-function cancelRecipeEditor() { exitRecipeEditor(recipeEditorMode === 'edit'); }
-
-function exitRecipeEditor(goToDetail) {
-  exitInnerView();
-  if (goToDetail && currentRecipeId) {
-    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    document.getElementById('detailPage').classList.add('active');
-    renderRecipeDetail();
-  } else {
-    backTo('recipes');
-    renderRecipes();
-  }
-  recipeEditorMode = null; recipeEditorData = null;
-}
-
-async function deleteRecipe(id) {
-  if (!confirm('¿Eliminar esta receta?')) return;
-  await sb.from('recipes').delete().eq('id', id);
-  recipes = recipes.filter(r => r.id !== id);
-  showToast('Receta eliminada');
-  backTo('recipes'); renderRecipes();
-}
-
-// ═══════════════════════════════════════
-//   VINCULAR PRODUCCIONES
-// ═══════════════════════════════════════
-function openLinkModal(recipeId) {
-  linkingRecipeId = recipeId;
-  selectedProdIds = recipeProductions.filter(rp => rp.recipe_id === recipeId).map(rp => rp.production_id);
-  document.getElementById('linkProductionList').innerHTML = productions.length === 0
-    ? '<p style="color:var(--text2); font-size:13px;">No hay producciones creadas aún.</p>'
-    : productions.map(p => `
-        <div class="link-prod-row" onclick="toggleProdLink('${p.id}', this)">
-          <div>
-            <div style="font-size:14px; font-weight:600;">${p.name}</div>
-            <span class="tag ${CAT_TAG[p.category] || ''}" style="font-size:10px;">${p.category}</span>
-          </div>
-          <span class="material-symbols-outlined check-icon" style="color:${selectedProdIds.includes(p.id) ? 'var(--primary)' : 'var(--outline-light)'};">
-            ${selectedProdIds.includes(p.id) ? 'check_circle' : 'radio_button_unchecked'}
-          </span>
-        </div>`).join('');
-  document.getElementById('linkModal').style.display = 'flex';
-}
-
-function toggleProdLink(prodId, row) {
-  if (selectedProdIds.includes(prodId)) {
-    selectedProdIds = selectedProdIds.filter(id => id !== prodId);
-  } else {
-    selectedProdIds.push(prodId);
-  }
-  const icon = row.querySelector('.check-icon');
-  icon.textContent = selectedProdIds.includes(prodId) ? 'check_circle' : 'radio_button_unchecked';
-  icon.style.color = selectedProdIds.includes(prodId) ? 'var(--primary)' : 'var(--outline-light)';
-}
-
-async function saveLinkProductions() {
-  await sb.from('recipe_productions').delete().eq('recipe_id', linkingRecipeId);
-  if (selectedProdIds.length > 0) {
-    const rows = selectedProdIds.map((pid, i) => ({
-      id: `${linkingRecipeId}_${pid}`,
-      recipe_id: linkingRecipeId,
-      production_id: pid,
-      sort_order: i,
-    }));
-    await sb.from('recipe_productions').insert(rows);
-  }
-  recipeProductions = recipeProductions.filter(rp => rp.recipe_id !== linkingRecipeId);
-  selectedProdIds.forEach((pid, i) => recipeProductions.push({ id: `${linkingRecipeId}_${pid}`, recipe_id: linkingRecipeId, production_id: pid, sort_order: i }));
-  closeModal('linkModal');
-  showToast('Producciones vinculadas ✓');
-  renderRecipeDetail();
-}
-
-// ═══════════════════════════════════════
-//   PRODUCCIONES — LISTA
-// ═══════════════════════════════════════
-function renderProductions() {
-  const q = (document.getElementById('searchInput')?.value || '').toLowerCase();
-  const filtered = productions.filter(p =>
-    (prodFilter === 'Todas' || p.category === prodFilter) &&
-    p.name.toLowerCase().includes(q)
-  );
-
-  const list = document.getElementById('productionList');
-  if (!list) return;
-
-  if (filtered.length === 0) {
-    list.innerHTML = `<div class="empty-state"><span class="material-symbols-outlined">search_off</span>No se encontraron producciones</div>`;
-    return;
-  }
-
-  list.innerHTML = filtered.map(p => `
-    <div class="recipe-card" onclick="showProdDetail('${p.id}')">
-      <div class="recipe-card-body">
-        <div class="recipe-card-meta">
-          <span class="tag ${CAT_TAG[p.category] || ''}">${p.category}</span>
-        </div>
-        <h3>${p.name}</h3>
-        <p>${p.description || ''}</p>
-      </div>
-    </div>`).join('');
-}
-
-// ═══════════════════════════════════════
-//   PRODUCCIONES — DETALLE
-// ═══════════════════════════════════════
-function showProdDetail(id) {
-  currentProdId = id;
-  currentMultiplier = 1;
-  const fromPage = currentPage;
-  history.pushState({ view: 'prodDetail', id, fromPage }, '');
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.getElementById('productionDetailPage').classList.add('active');
-  document.getElementById('searchSection').style.display = 'none';
-  document.getElementById('adminAddProductionRow').style.display = 'none';
-  document.getElementById('adminAddRecipeRow').style.display = 'none';
-  document.getElementById('mainNav').style.display = 'none';
-  renderProdDetail(fromPage);
-}
-
-function renderProdDetail(fromPage) {
-  const p = productions.find(x => x.id === currentProdId);
-  if (!p) return;
-  const m = currentMultiplier;
-
-  const mBtns = [0.5, 1, 2, 3, 4].map(x =>
-    `<button class="chip ${m === x ? 'active' : ''}" onclick="setProdMultiplier(${x}, '${fromPage || 'productions'}')">${x === 0.5 ? '½' : '×' + x}</button>`
-  ).join('');
-
-  const ings = p.ingredients.map(ing => {
-    const v = ing.amount * m;
-    return `<div class="ing-row">
-      <span class="ing-name">${ing.name}</span>
-      <span class="ing-amount">${formatAmount(v)} ${ing.unit}</span>
-    </div>`;
-  }).join('');
-
-  const steps = p.steps.map((s, i) =>
-    `<div class="step-row">
-      <div class="step-num">${i + 1}</div>
-      <div class="step-text">${s}</div>
-    </div>`).join('');
-
-  const adminBtns = isAdmin ? `
-    <button class="btn-pill" onclick="openEditProduction()">
-      <span class="material-symbols-outlined" style="font-size:16px;">edit</span> Editar
-    </button>
-    <button class="btn-pill danger" onclick="deleteProduction('${p.id}')">
-      <span class="material-symbols-outlined" style="font-size:16px;">delete</span>
-    </button>` : '';
-
-  const backPage = fromPage || 'productions';
-
-  document.getElementById('productionDetailPage').innerHTML = `
-    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; flex-wrap:wrap; gap:8px;">
-      <button class="back-btn" onclick="backTo('${backPage}')">
-        <span class="material-symbols-outlined">arrow_back</span> Volver
-      </button>
-      <div style="display:flex; gap:6px; flex-wrap:wrap;">
-        <button class="btn-pill ghost" onclick="openCommentModal('${p.name}','production','${p.id}')">
-          <span class="material-symbols-outlined" style="font-size:16px;">report</span> Error
-        </button>
-        ${adminBtns}
-      </div>
-    </div>
-    <div class="card">
-      <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px;">
-        <span class="tag ${CAT_TAG[p.category] || ''}">${p.category}</span>
-      </div>
-      <h2 style="font-size:22px; margin-bottom:6px;">${p.name}</h2>
-      ${p.description ? `<p style="font-size:14px; color:var(--text2); line-height:1.5;">${p.description}</p>` : ''}
-    </div>
-    <div class="multiplier-card">
-      <div class="multiplier-label">
-        <span class="material-symbols-outlined">scale</span> Ajustar cantidades
-        ${m !== 1 ? `<span style="font-size:13px; color:var(--primary)">(×${m})</span>` : ''}
-      </div>
-      <div class="multiplier-row">
-        ${mBtns}
-        <input type="number" min="0.1" step="0.5" value="${m}" onchange="setProdMultiplier(parseFloat(this.value)||1,'${backPage}')">
-      </div>
-    </div>
-    <div class="card">
-      <div class="section-title"><span class="material-symbols-outlined">grocery</span> Ingredientes</div>
-      ${ings}
-    </div>
-    <div class="card">
-      <div class="section-title"><span class="material-symbols-outlined">format_list_numbered</span> Elaboración</div>
-      ${steps}
-    </div>
-    <div class="card">
-      <div class="section-title"><span class="material-symbols-outlined">warning</span> Alérgenos</div>
-      ${renderAllergenBadges(p.allergens)}
-    </div>`;
-}
-
-function setProdMultiplier(m, fromPage) {
-  currentMultiplier = m;
-  renderProdDetail(fromPage);
-}
-
-// ═══════════════════════════════════════
-//   PRODUCCIONES — EDITOR
-// ═══════════════════════════════════════
-function openAddProduction() {
-  prodEditorMode = 'add';
-  const defaultCat = productionCategories.length > 0 ? productionCategories[0].name : '';
-  prodEditorData = { id: Date.now().toString(), name: '', category: defaultCat, description: '', ingredients: [], steps: [] };
-  renderProdEditor();
-  enterEditor('productionEditorPage');
-}
-
-function openEditProduction() {
-  prodEditorMode = 'edit';
-  prodEditorData = JSON.parse(JSON.stringify(productions.find(p => p.id === currentProdId)));
-  renderProdEditor();
-  enterEditor('productionEditorPage');
-}
-
-function renderProdEditor() {
-  const p = prodEditorData;
-  const isNew = prodEditorMode === 'add';
-
-  const ings = p.ingredients.map((ing, i) => `
-    <div class="ing-edit-row">
-      <input class="ing-edit-name" value="${ing.name}" placeholder="Ingrediente" autocomplete="off" data-form-type="other" oninput="prodEditorData.ingredients[${i}].name=this.value">
-      <input class="ing-edit-amount" type="number" value="${ing.amount}" autocomplete="off" data-form-type="other" oninput="prodEditorData.ingredients[${i}].amount=parseFloat(this.value)||0">
-      <input class="ing-edit-unit" value="${ing.unit}" placeholder="ud" autocomplete="off" data-form-type="other" oninput="prodEditorData.ingredients[${i}].unit=this.value">
-      <button class="btn-remove" onclick="prodEditorData.ingredients.splice(${i},1); renderProdEditor();">
-        <span class="material-symbols-outlined" style="font-size:20px;">close</span>
-      </button>
-    </div>`).join('');
-
-  const stps = p.steps.map((s, i) => `
-    <div class="step-edit-row">
-      <div class="step-edit-num">${i + 1}</div>
-      <textarea rows="2" oninput="prodEditorData.steps[${i}]=this.value">${s}</textarea>
-      <button class="btn-remove" onclick="prodEditorData.steps.splice(${i},1); renderProdEditor();">
-        <span class="material-symbols-outlined" style="font-size:20px;">close</span>
-      </button>
-    </div>`).join('');
-
-  document.getElementById('productionEditorPage').innerHTML = `
-    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:20px;">
-      <button class="back-btn" onclick="cancelProdEditor()">
-        <span class="material-symbols-outlined">close</span> Cancelar
-      </button>
-      <span style="font-size:17px; font-weight:800;">${isNew ? 'Nueva producción' : 'Editar producción'}</span>
-      <button class="btn-pill filled" id="saveProdBtn" onclick="saveProduction()">Guardar</button>
-    </div>
-    <div class="card">
-      <div class="form-group">
-        <div class="form-label">Nombre</div>
-        <div class="form-input contenteditable-input" contenteditable="true" data-placeholder="Nombre de la producción..." oninput="prodEditorData.name=this.innerText.trim()">${p.name}</div>
-      </div>
-      <div class="form-group">
-        <div class="form-label">Categoría</div>
-        <select class="form-select" onchange="prodEditorData.category=this.value">
-          ${productionCategories.map(c =>
-            `<option ${p.category === c.name ? 'selected' : ''}>${c.name}</option>`).join('')}
-        </select>
-      </div>
-      <div class="form-group">
-        <div class="form-label">Descripción (opcional)</div>
-        <textarea class="form-textarea" rows="2" oninput="prodEditorData.description=this.value">${p.description || ''}</textarea>
-      </div>
-    </div>
-    <div class="card">
-      <div class="section-title" style="margin-bottom:12px;"><span class="material-symbols-outlined">warning</span> Alérgenos</div>
-      ${renderAllergenSelector(p.allergens || [], 'toggleProdAllergen')}
-    </div>
-    <div class="card">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-        <div class="section-title" style="margin-bottom:0;"><span class="material-symbols-outlined">grocery</span> Ingredientes</div>
-        <button class="btn-pill" onclick="prodEditorData.ingredients.push({id:Date.now().toString(),name:'',amount:0,unit:'g'}); renderProdEditor();">
-          <span class="material-symbols-outlined" style="font-size:16px;">add</span> Añadir
-        </button>
-      </div>
-      <div>${ings}</div>
-    </div>
-    <div class="card">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-        <div class="section-title" style="margin-bottom:0;"><span class="material-symbols-outlined">format_list_numbered</span> Elaboración</div>
-        <button class="btn-pill" onclick="prodEditorData.steps.push(''); renderProdEditor();">
-          <span class="material-symbols-outlined" style="font-size:16px;">add</span> Añadir paso
-        </button>
-      </div>
-      <div>${stps}</div>
-    </div>`;
-}
-
-async function saveProduction() {
-  if (!prodEditorData.name.trim()) { showToast('El nombre es obligatorio'); return; }
-  const btn = document.getElementById('saveProdBtn');
-  btn.textContent = 'Guardando...'; btn.disabled = true;
-  const { error } = await sb.from('productions').upsert(prodEditorData);
-  if (error) { showToast('Error al guardar'); btn.textContent = 'Guardar'; btn.disabled = false; return; }
-  if (prodEditorMode === 'add') productions.push(prodEditorData);
-  else productions = productions.map(p => p.id === prodEditorData.id ? prodEditorData : p);
-  currentProdId = prodEditorData.id;
-  showToast('Producción guardada ✓');
-  exitProdEditor(true);
-}
-
-function cancelProdEditor() { exitProdEditor(prodEditorMode === 'edit'); }
-
-function exitProdEditor(goToDetail) {
-  exitInnerView();
-  if (goToDetail && currentProdId) {
-    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    document.getElementById('productionDetailPage').classList.add('active');
-    renderProdDetail('productions');
-  } else {
-    backTo('productions');
-    renderProductions();
-  }
-  prodEditorMode = null; prodEditorData = null;
-}
-
-async function deleteProduction(id) {
-  if (!confirm('¿Eliminar esta producción?')) return;
-  await sb.from('productions').delete().eq('id', id);
-  productions = productions.filter(p => p.id !== id);
-  showToast('Producción eliminada');
-  backTo('productions'); renderProductions();
-}
-
-// ═══════════════════════════════════════
-//   COMENTARIOS
-// ═══════════════════════════════════════
-function openCommentModal(name, section, id) {
-  commentContext = { name, section, id };
-  document.getElementById('commentSectionName').textContent = name;
-  document.getElementById('commentInput').value = '';
-  document.getElementById('commentFormArea').style.display = '';
-  document.getElementById('commentSuccess').style.display  = 'none';
-  document.getElementById('commentModal').style.display    = 'flex';
-}
-
-async function sendComment() {
-  const text = document.getElementById('commentInput').value.trim();
-  if (!text) return;
-  const newComment = {
-    id:           Date.now().toString(),
-    section:      commentContext.section,
-    section_id:   commentContext.id,
-    section_name: commentContext.name,
-    text,
-    date:         new Date().toLocaleDateString('es-ES'),
-    resolved:     false,
-  };
-  const { error } = await sb.from('comments').insert(newComment);
-  if (error) { showToast('Error al enviar'); return; }
-  comments.unshift(newComment);
-  updateBadges();
-  document.getElementById('commentFormArea').style.display = 'none';
-  document.getElementById('commentSuccess').style.display  = '';
-  setTimeout(() => closeModal('commentModal'), 2200);
-}
-
-// ═══════════════════════════════════════
-//   ADMIN / LOGIN
-// ═══════════════════════════════════════
-function toggleAdmin() {
-  if (isAdmin) {
-    isAdmin = false;
-    document.getElementById('adminBtn').innerHTML = `<span class="material-symbols-outlined" style="font-size:16px;">lock</span> Admin`;
-    document.getElementById('adminAddRecipeRow').style.display    = 'none';
-    document.getElementById('adminAddProductionRow').style.display = 'none';
-    document.getElementById('addWeightBtn').style.display = 'none';
-    document.getElementById('addBrineBtn').style.display  = 'none';
-    showToast('Sesión cerrada');
-  } else {
-    document.getElementById('loginInput').value = '';
-    document.getElementById('loginError').style.display = 'none';
-    document.getElementById('loginModal').style.display = 'flex';
-  }
-}
-
-function doLogin() {
-  if (document.getElementById('loginInput').value === ADMIN_PASSWORD) {
-    isAdmin = true;
-    closeModal('loginModal');
-    document.getElementById('adminBtn').innerHTML =
-      `<span class="material-symbols-outlined" style="font-size:16px;">person</span> Chef
-       <span class="material-symbols-outlined" style="font-size:14px;">logout</span>`;
-    if (currentPage === 'recipes')     document.getElementById('adminAddRecipeRow').style.display    = '';
-    if (currentPage === 'productions') document.getElementById('adminAddProductionRow').style.display = '';
-    if (currentPage === 'fichas') {
-      document.getElementById('addWeightBtn').style.display = '';
-      document.getElementById('addBrineBtn').style.display  = '';
-    }
-    showToast('Bienvenido, Chef 👨‍🍳');
-    if (currentRecipeId && document.getElementById('detailPage').classList.contains('active')) renderRecipeDetail();
-    if (currentProdId   && document.getElementById('productionDetailPage').classList.contains('active')) renderProdDetail(currentPage);
-    if (currentPage === 'admin') renderAdmin();
-  } else {
-    document.getElementById('loginError').style.display = '';
-  }
-}
-
-function renderAdmin() {
-  const pending  = comments.filter(c => !c.resolved);
-  const resolved = comments.filter(c =>  c.resolved);
-
-  document.getElementById('adminStats').innerHTML = `
-    <div class="stat-card"><span class="material-symbols-outlined">menu_book</span><div class="stat-card-num">${recipes.length}</div><div class="stat-card-lbl">Recetas</div></div>
-    <div class="stat-card"><span class="material-symbols-outlined">blender</span><div class="stat-card-num">${productions.length}</div><div class="stat-card-lbl">Producciones</div></div>
-    <div class="stat-card"><span class="material-symbols-outlined">mark_chat_unread</span><div class="stat-card-num">${isAdmin ? pending.length : '—'}</div><div class="stat-card-lbl">Pendientes</div></div>`;
-
-  if (!isAdmin) {
-    document.getElementById('pendingTitle').innerHTML = '';
-    document.getElementById('commentsList').innerHTML = `
-      <div class="card" style="text-align:center; padding:32px; color:var(--text2);">
-        <span class="material-symbols-outlined" style="font-size:48px; color:var(--outline); display:block; margin-bottom:12px;">lock</span>
-        <p style="font-weight:700;">Acceso restringido</p>
-        <p style="font-size:13px; margin-top:4px;">Inicia sesión como admin para ver los comentarios.</p>
-        <button class="btn-pill filled" style="margin-top:16px;" onclick="toggleAdmin()">Iniciar sesión</button>
-      </div>`;
-    document.getElementById('resolvedSection').innerHTML = '';
-    return;
-  }
-
-  document.getElementById('pendingTitle').innerHTML =
-    `<span class="material-symbols-outlined">inbox</span> Comentarios pendientes
-     ${pending.length > 0 ? '<span class="badge">' + pending.length + '</span>' : ''}`;
-
-  document.getElementById('commentsList').innerHTML = pending.length === 0
-    ? `<div class="card" style="text-align:center; padding:24px; color:var(--text2);">
-        <span class="material-symbols-outlined" style="font-size:40px; color:var(--primary); display:block; margin-bottom:8px;">check_circle</span>
-        Sin comentarios pendientes
-       </div>`
-    : pending.map(c => `
-        <div class="comment-card">
-          <div style="flex:1;">
-            <div class="comment-recipe">${c.section_name}</div>
-            <div class="comment-text">${c.text}</div>
-            <div class="comment-date">${c.date}</div>
-          </div>
-          <button class="btn-pill" onclick="resolveComment('${c.id}')">
-            <span class="material-symbols-outlined" style="font-size:15px;">check</span> Resolver
-          </button>
-        </div>`).join('');
-
-  document.getElementById('resolvedSection').innerHTML = resolved.length === 0 ? '' : `
-    <div class="section-title" style="margin-top:8px;"><span class="material-symbols-outlined">task_alt</span> Resueltos</div>
-    ${resolved.map(c => `
-      <div class="comment-card" style="opacity:0.55;">
-        <div><div class="comment-recipe">${c.section_name} ✓</div><div class="comment-text" style="font-size:13px;">${c.text}</div></div>
-      </div>`).join('')}`;
-
-  // Categorías de producción
-  const catHtml = productionCategories.map(c => `
-    <div class="ficha-row">
-      <div class="ficha-name">${c.name}</div>
-      <div style="display:flex; gap:6px;">
-        <button class="btn-icon" onclick="renameProdCategory('${c.id}','${c.name}')">
-          <span class="material-symbols-outlined" style="font-size:18px; color:var(--primary);">edit</span>
-        </button>
-        <button class="btn-icon" onclick="deleteProdCategory('${c.id}')">
-          <span class="material-symbols-outlined" style="font-size:18px; color:var(--danger);">delete</span>
-        </button>
-      </div>
-    </div>`).join('');
-
-  document.getElementById('resolvedSection').innerHTML += `
-    <div class="section-title" style="margin-top:16px;">
-      <span class="material-symbols-outlined">label</span> Categorías de producción
-    </div>
-    <div class="card">
-      ${catHtml}
-      <div style="margin-top:12px; display:flex; gap:8px;">
-        <input class="form-input" id="newCatInput" placeholder="Nueva categoría..." style="flex:1;">
-        <button class="btn-pill filled" onclick="addProdCategory()">
-          <span class="material-symbols-outlined" style="font-size:16px;">add</span>
-        </button>
-      </div>
-    </div>`;
-}
-
-async function resolveComment(id) {
-  await sb.from('comments').update({ resolved: true }).eq('id', id);
-  comments = comments.map(c => c.id === id ? { ...c, resolved: true } : c);
-  updateBadges(); renderAdmin();
-}
-
-// ─── Categorías de producción ─────────
-async function addProdCategory() {
-  const input = document.getElementById('newCatInput');
-  const name = input?.value.trim();
-  if (!name) return;
-  const newCat = { id: Date.now().toString(), name, sort_order: productionCategories.length + 1 };
-  const { error } = await sb.from('production_categories').insert(newCat);
-  if (error) { showToast('Error al añadir'); return; }
-  productionCategories.push(newCat);
-  showToast('Categoría añadida ✓');
-  renderAdmin();
-}
-
-async function renameProdCategory(id, currentName) {
-  const newName = prompt('Nuevo nombre para la categoría:', currentName);
-  if (!newName || newName === currentName) return;
-  const { error } = await sb.from('production_categories').update({ name: newName }).eq('id', id);
-  if (error) { showToast('Error al renombrar'); return; }
-  productionCategories = productionCategories.map(c => c.id === id ? { ...c, name: newName } : c);
-  productions = productions.map(p => p.category === currentName ? { ...p, category: newName } : p);
-  showToast('Categoría renombrada ✓');
-  renderAdmin();
-}
-
-async function deleteProdCategory(id) {
-  const cat = productionCategories.find(c => c.id === id);
-  if (!cat) return;
-  if (!confirm(`¿Eliminar la categoría "${cat.name}"?`)) return;
-  const { error } = await sb.from('production_categories').delete().eq('id', id);
-  if (error) { showToast('Error al eliminar'); return; }
-  productionCategories = productionCategories.filter(c => c.id !== id);
-  showToast('Categoría eliminada');
-  renderAdmin();
-}
-
-function updateBadges() {
-  const n = comments.filter(c => !c.resolved).length;
-  const nb = document.getElementById('navBadge');
-  const tb = document.getElementById('commentBadgeTop');
-  if (n > 0) { nb.textContent = n; nb.style.display = ''; tb.innerHTML = `<span class="badge">${n}</span>`; tb.style.display = ''; }
-  else       { nb.style.display = 'none'; tb.style.display = 'none'; }
-}
-
-// ═══════════════════════════════════════
-//   FICHAS
-// ═══════════════════════════════════════
-function renderFichas() {
-  document.getElementById('addWeightBtn').style.display = isAdmin ? '' : 'none';
-  document.getElementById('addBrineBtn').style.display  = isAdmin ? '' : 'none';
-  renderWeights();
-  renderBrines();
-}
-
-function renderWeights() {
-  const el = document.getElementById('weightsList');
-  if (!el) return;
-  el.innerHTML = weights.length === 0
-    ? '<p style="color:var(--text2); font-size:13px; padding:8px 0;">Sin datos</p>'
-    : weights.map(w => `
-        <div class="ficha-row">
-          <div>
-            <div class="ficha-name">${w.name}</div>
-            ${w.notes ? `<div class="ficha-note">${w.notes}</div>` : ''}
-          </div>
-          <div style="display:flex; align-items:center; gap:8px;">
-            <span class="ing-amount">${w.grams} g</span>
-            ${isAdmin ? `
-              <button class="btn-icon" onclick="openWeightModal('${w.id}')">
-                <span class="material-symbols-outlined" style="font-size:18px; color:var(--primary);">edit</span>
-              </button>
-              <button class="btn-icon" onclick="deleteWeight('${w.id}')">
-                <span class="material-symbols-outlined" style="font-size:18px; color:var(--danger);">delete</span>
-              </button>` : ''}
-          </div>
-        </div>`).join('');
-}
-
-function renderBrines() {
-  const el = document.getElementById('brinesList');
-  if (!el) return;
-  const cats = [...new Set(brines.map(b => b.category))];
-  el.innerHTML = cats.length === 0
-    ? '<p style="color:var(--text2); font-size:13px; padding:8px 0;">Sin datos</p>'
-    : cats.map(cat => `
-        <div class="ficha-category">${cat === 'Aves' ? '🐔' : cat === 'Cerdo' ? '🐷' : '🐟'} ${cat}</div>
-        ${brines.filter(b => b.category === cat).map(b => `
-          <div class="ficha-row">
-            <div>
-              <div class="ficha-name">${b.product}</div>
-              ${b.notes ? `<div class="ficha-note">${b.notes}</div>` : ''}
-            </div>
-            <div style="display:flex; align-items:center; gap:8px;">
-              <span class="ing-amount">${b.minutes >= 60 ? (b.minutes/60)+' h' : b.minutes+' min'}</span>
-              ${isAdmin ? `
-                <button class="btn-icon" onclick="openBrineModal('${b.id}')">
-                  <span class="material-symbols-outlined" style="font-size:18px; color:var(--primary);">edit</span>
-                </button>
-                <button class="btn-icon" onclick="deleteBrine('${b.id}')">
-                  <span class="material-symbols-outlined" style="font-size:18px; color:var(--danger);">delete</span>
-                </button>` : ''}
-            </div>
-          </div>`).join('')}`).join('');
-}
-
-// ─── Pesos CRUD ───────────────────────
-function openWeightModal(id) {
-  editingWeightId = id;
-  const w = id ? weights.find(x => x.id === id) : null;
-  document.getElementById('weightModalTitle').textContent = id ? 'Editar peso' : 'Nuevo peso';
-  document.getElementById('weightName').value  = w ? w.name  : '';
-  document.getElementById('weightGrams').value = w ? w.grams : '';
-  document.getElementById('weightNotes').value = w ? (w.notes || '') : '';
-  document.getElementById('weightModal').style.display = 'flex';
-}
-
-async function saveWeight() {
-  const name  = document.getElementById('weightName').value.trim();
-  const grams = parseInt(document.getElementById('weightGrams').value);
-  const notes = document.getElementById('weightNotes').value.trim();
-  if (!name || !grams) { showToast('Nombre y gramos son obligatorios'); return; }
-  const payload = { name, grams, notes };
-  if (editingWeightId) {
-    await sb.from('weights').update(payload).eq('id', editingWeightId);
-    weights = weights.map(w => w.id === editingWeightId ? { ...w, ...payload } : w);
-  } else {
-    payload.id = Date.now().toString();
-    await sb.from('weights').insert(payload);
-    weights.push(payload);
-  }
-  closeModal('weightModal'); showToast('Guardado ✓'); renderWeights();
-}
-
-async function deleteWeight(id) {
-  if (!confirm('¿Eliminar?')) return;
-  await sb.from('weights').delete().eq('id', id);
-  weights = weights.filter(w => w.id !== id);
-  showToast('Eliminado'); renderWeights();
-}
-
-// ─── Salmueras CRUD ───────────────────
-function openBrineModal(id) {
-  editingBrineId = id;
-  const b = id ? brines.find(x => x.id === id) : null;
-  document.getElementById('brineModalTitle').textContent = id ? 'Editar salmuera' : 'Nueva salmuera';
-  document.getElementById('brineName').value    = b ? b.product  : '';
-  document.getElementById('brineCategory').value = b ? b.category : 'Aves';
-  document.getElementById('brineMinutes').value = b ? b.minutes  : '';
-  document.getElementById('brineNotes').value   = b ? (b.notes || '') : '';
-  document.getElementById('brineModal').style.display = 'flex';
-}
-
-async function saveBrine() {
-  const product  = document.getElementById('brineName').value.trim();
-  const category = document.getElementById('brineCategory').value;
-  const minutes  = parseInt(document.getElementById('brineMinutes').value);
-  const notes    = document.getElementById('brineNotes').value.trim();
-  if (!product || !minutes) { showToast('Producto y tiempo son obligatorios'); return; }
-  const payload = { product, category, minutes, notes };
-  if (editingBrineId) {
-    await sb.from('brines').update(payload).eq('id', editingBrineId);
-    brines = brines.map(b => b.id === editingBrineId ? { ...b, ...payload } : b);
-  } else {
-    payload.id = Date.now().toString();
-    await sb.from('brines').insert(payload);
-    brines.push(payload);
-  }
-  closeModal('brineModal'); showToast('Guardado ✓'); renderBrines();
-}
-
-async function deleteBrine(id) {
-  if (!confirm('¿Eliminar?')) return;
-  await sb.from('brines').delete().eq('id', id);
-  brines = brines.filter(b => b.id !== id);
-  showToast('Eliminado'); renderBrines();
-}
-
-// ═══════════════════════════════════════
-//   CONVERSOR
-// ═══════════════════════════════════════
-const CONV_TYPES = {
-  Peso:        { units: ['g','kg','oz','lb'],                   toBase: { g:1, kg:1000, oz:28.3495, lb:453.592 } },
-  Volumen:     { units: ['ml','L','taza','fl oz','tbsp','tsp'], toBase: { ml:1, L:1000, taza:236.588, 'fl oz':29.5735, tbsp:14.7868, tsp:4.92892 } },
-  Temperatura: { units: ['°C','°F'], toBase: null },
+const GRUPOS = Object.keys(db);
+const DIAS_LOGICA = ["Lunes", "Martes", "Miercoles", "Jueves", "Viernes", "Sabado", "Domingo"];
+const DIAS_DISPLAY = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"];
+
+const P_PUSH = ["Pecho", "Hombros", "Tríceps"];
+const P_PULL = ["Espalda", "Bíceps"];
+const P_LEGS = ["Piernas", "Core"];
+
+let state = JSON.parse(localStorage.getItem('iron_log_v8.6')) || {
+    hoy: [], historial: [], activeTab: 'rutinaPage',
+    semana: { "Lunes": [], "Martes": [], "Miercoles": [], "Jueves": [], "Viernes": [], "Sabado": [], "Domingo": [] },
+    plantillaSemanal: {},
+    openMenu: null,
+    sesionStartTime: null
 };
-let convType = 'Peso';
+if (state.sesionStartTime === undefined) state.sesionStartTime = null;
 
-function initConverter() {
-  document.getElementById('convTypeChips').innerHTML = Object.keys(CONV_TYPES).map(t =>
-    `<button class="chip ${t === convType ? 'active' : ''}" onclick="setConvType('${t}')">${t}</button>`
-  ).join('');
-  const units = CONV_TYPES[convType].units;
-  ['convFrom','convTo'].forEach((id, i) => {
-    const s = document.getElementById(id);
-    s.innerHTML = units.map(u => `<option>${u}</option>`).join('');
-    s.value = units[i === 0 ? 0 : 1];
-  });
-  updateConverter();
-  document.getElementById('tempRef').innerHTML = [
-    ['Bajo','150°C','300°F'],['Medio','180°C','356°F'],['Fuerte','200°C','392°F'],
-    ['Muy fuerte','220°C','428°F'],['Brasa','240°C','464°F'],['Máximo','260°C','500°F'],
-  ].map(([l,c,f]) =>
-    `<div class="ref-cell"><div class="ref-cell-lbl">${l}</div><div class="ref-cell-val">${c}</div><div class="ref-cell-sub">${f}</div></div>`
-  ).join('');
+let swInterval = null;
+let bibliotecaDia = 'hoy';
+let diasEditando = new Set();
+let calYear = new Date().getFullYear();
+let calMonth = new Date().getMonth();
+
+function tickStopwatch() {
+    if (!state.sesionStartTime) return;
+    const elapsed = Math.floor((Date.now() - state.sesionStartTime) / 1000);
+    const m = Math.floor(elapsed / 60);
+    const s = elapsed % 60;
+    const disp = document.getElementById('stopwatchDisplay');
+    if (disp) disp.innerText = `${m < 10 ? '0' : ''}${m}:${s < 10 ? '0' : ''}${s}`;
 }
 
-function setConvType(t) { convType = t; initConverter(); }
-
-function updateConverter() {
-  const val  = parseFloat(document.getElementById('convValue').value);
-  const from = document.getElementById('convFrom').value;
-  const to   = document.getElementById('convTo').value;
-  if (isNaN(val)) { document.getElementById('convResult').textContent = '—'; return; }
-  let result;
-  if (convType === 'Temperatura') result = from === to ? val : from === '°C' ? val*9/5+32 : (val-32)*5/9;
-  else { const b = CONV_TYPES[convType].toBase; result = val*b[from]/b[to]; }
-  const d = Number.isInteger(result) ? result : parseFloat(result.toFixed(4));
-  document.getElementById('convResult').textContent     = d + ' ' + to;
-  document.getElementById('convResultLabel').textContent = `${val} ${from} = ${d} ${to}`;
+function startSesionStopwatch() {
+    if (!state.sesionStartTime) { state.sesionStartTime = Date.now(); save(); }
+    clearInterval(swInterval);
+    swInterval = setInterval(tickStopwatch, 1000);
+    tickStopwatch();
+    updateStopwatchVisibility();
 }
 
-// ═══════════════════════════════════════
-//   UTILIDADES
-// ═══════════════════════════════════════
-function closeModal(id) { document.getElementById(id).style.display = 'none'; }
-
-function openLightbox(src) {
-  let lb = document.getElementById('lightbox');
-  if (!lb) {
-    lb = document.createElement('div');
-    lb.id = 'lightbox';
-    lb.className = 'lightbox-overlay';
-    lb.style.display = 'none';
-    lb.innerHTML = `
-      <button class="lightbox-close" onclick="closeLightbox()">
-        <span class="material-symbols-outlined">close</span>
-      </button>
-      <img id="lightboxImg" class="lightbox-img">`;
-    lb.addEventListener('click', e => { if (e.target === lb) closeLightbox(); });
-    document.body.appendChild(lb);
-  }
-  document.getElementById('lightboxImg').src = src;
-  lb.style.display = 'flex';
+function stopSesionStopwatch() {
+    clearInterval(swInterval);
+    swInterval = null;
 }
 
-function closeLightbox() {
-  const lb = document.getElementById('lightbox');
-  if (lb) lb.style.display = 'none';
+function resetSesionStopwatch() {
+    stopSesionStopwatch();
+    state.sesionStartTime = null;
+    const disp = document.getElementById('stopwatchDisplay');
+    if (disp) disp.innerText = '00:00';
+    updateStopwatchVisibility();
 }
 
-let toastTimer = null;
-function showToast(msg) {
-  document.querySelectorAll('.toast').forEach(t => t.remove());
-  if (toastTimer) clearTimeout(toastTimer);
-  const t = document.createElement('div');
-  t.className = 'toast'; t.textContent = msg;
-  document.body.appendChild(t);
-  toastTimer = setTimeout(() => t.remove(), 2800);
+function updateStopwatchVisibility() {
+    const row = document.getElementById('stopwatchRow');
+    if (!row) return;
+    const visible = state.activeTab === 'hoyPage' && !!state.sesionStartTime;
+    row.style.display = visible ? 'flex' : 'none';
+    if (visible) tickStopwatch();
 }
 
-// ═══════════════════════════════════════
-//   INIT
-// ═══════════════════════════════════════
-
-// Crear el input de búsqueda dinámicamente para evitar el gestor de contraseñas de Android
-const searchInput = document.createElement('input');
-searchInput.setAttribute('type', 'text');
-searchInput.setAttribute('id', 'searchInput');
-searchInput.setAttribute('placeholder', 'Buscar...');
-searchInput.setAttribute('autocomplete', 'new-password');
-searchInput.setAttribute('autocorrect', 'off');
-searchInput.setAttribute('autocapitalize', 'off');
-searchInput.setAttribute('spellcheck', 'false');
-searchInput.setAttribute('data-form-type', 'other');
-searchInput.setAttribute('data-lpignore', 'true');
-searchInput.setAttribute('data-1p-ignore', 'true');
-searchInput.setAttribute('role', 'searchbox');
-searchInput.setAttribute('aria-autocomplete', 'none');
-searchInput.style.cssText = 'border:none;background:none;outline:none;font-size:14px;font-family:Nunito,sans-serif;color:var(--text);flex:1;width:100%;';
-searchInput.addEventListener('input', onSearch);
-document.getElementById('searchInputWrap').appendChild(searchInput);
-
-initChips(RECIPE_CATEGORIES, recipeFilter, setRecipeFilter);
-loadData();
-
-// Service Worker desactivado temporalmente
-// if ('serviceWorker' in navigator) {
-//   window.addEventListener('load', () => {
-//     navigator.serviceWorker.register('/rubencecheff/sw.js').catch(() => {});
-//   });
-// }
-
-// Botón atrás de Android
-history.pushState({ view: 'home' }, '');
-
-window.addEventListener('popstate', (e) => {
-  const state = e.state;
-
-  // Cerrar modales abiertos primero
-  const openModal = document.querySelector('.modal-overlay[style*="flex"]');
-  if (openModal) { openModal.style.display = 'none'; history.pushState({ view: 'modal' }, ''); return; }
-
-  if (!state || state.view === 'home') {
-    // Volver a la página principal
-    if (document.getElementById('editorPage').classList.contains('active')) {
-      cancelRecipeEditor(); history.pushState({ view: 'home' }, ''); return;
+function updateSessionProgress() {
+    const el = document.getElementById('sessionProgress');
+    if (!el) return;
+    if (state.hoy.length === 0) { el.innerHTML = ''; return; }
+    const done = state.hoy.filter(e => e.done).length;
+    const total = state.hoy.length;
+    const pct = Math.round((done / total) * 100);
+    if (done === total) {
+        el.innerHTML = `
+        <div class="session-complete">
+            <span class="session-complete-emoji">💪</span>
+            <div class="session-complete-info">
+                <div class="session-complete-title">¡Sesión completada!</div>
+                <div class="session-complete-sub">${total} ejercicios · Guarda tu entreno</div>
+            </div>
+            <button class="session-complete-btn" onclick="finalizarSesion()">Guardar →</button>
+        </div>`;
+    } else {
+        el.innerHTML = `
+        <div class="session-progress-wrap">
+            <div class="session-progress-bar-bg">
+                <div class="session-progress-bar-fill" style="width:${pct}%"></div>
+            </div>
+            <span class="session-progress-text">${done} / ${total}</span>
+        </div>`;
     }
-    if (document.getElementById('productionEditorPage').classList.contains('active')) {
-      cancelProdEditor(); history.pushState({ view: 'home' }, ''); return;
-    }
-    if (document.getElementById('detailPage').classList.contains('active')) {
-      backTo('recipes'); history.pushState({ view: 'home' }, ''); return;
-    }
-    if (document.getElementById('productionDetailPage').classList.contains('active')) {
-      backTo(currentPage || 'productions'); history.pushState({ view: 'home' }, ''); return;
-    }
-    history.pushState({ view: 'home' }, '');
-    return;
-  }
+}
 
-  if (state.view === 'editor') {
-    if (document.getElementById('editorPage').classList.contains('active')) cancelRecipeEditor();
-    else cancelProdEditor();
-    return;
-  }
+function toggleDone(i) {
+    state.hoy[i].done = !state.hoy[i].done;
+    if (state.hoy[i].done && !state.sesionStartTime) startSesionStopwatch();
+    save(); renderToday();
+}
 
-  if (state.view === 'recipeDetail') {
-    if (document.getElementById('detailPage').classList.contains('active')) backTo('recipes');
-    return;
-  }
+function save() { localStorage.setItem('iron_log_v8.6', JSON.stringify(state)); updateCounter(); analyzeRoutine(); }
+function updateCounter() { const el = document.getElementById('exerciseCounter'); if(el) el.innerText = state.hoy.length; }
 
-  if (state.view === 'prodDetail') {
-    if (document.getElementById('productionDetailPage').classList.contains('active')) backTo(state.fromPage || 'productions');
-    return;
-  }
-});
+function analyzeRoutine() {
+    const msg = document.getElementById('coachMessage');
+    const tags = document.getElementById('coachTags');
+    if(!msg || !tags) return;
+    if(state.hoy.length === 0) { msg.innerHTML = "Lista vacía."; tags.innerHTML = ""; return; }
+    const counts = { [T_B]: 0, [T_A]: 0, [T_S]: 0 };
+    state.hoy.forEach(ex => counts[ex.t]++);
+    msg.innerHTML = counts[T_B] === 0 && !state.hoy.some(e=>e.group==="Cardio") ? "⚠️ Añade un <b>Básico</b>." : (counts[T_S] === 0 ? "🛡️ Añade algo de <b>Salud</b>." : "✅ Rutina equilibrada.");
+    tags.innerHTML = `<span class="tag tag-basico">${counts[T_B]} B</span><span class="tag tag-aisla">${counts[T_A]} A</span><span class="tag tag-salud">${counts[T_S]} S</span>`;
+}
+
+function showPage(id, btn) {
+    try { initAudio(); } catch(e) {}
+    if(id === 'rutinaPage' && document.getElementById('rutinaPage').classList.contains('active')) backToGroups();
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    if(btn) btn.classList.add('active'); else { const b = document.getElementById('btn-'+id.replace('Page','')); if(b) b.classList.add('active'); }
+    state.activeTab = id; save();
+    if (id === 'hoyPage' && state.sesionStartTime) startSesionStopwatch();
+    else if (id !== 'hoyPage') stopSesionStopwatch();
+    updateStopwatchVisibility();
+    if(id === 'rutinaPage') { if(bibliotecaDia === 'hoy') {} renderGroups(); }
+    if(id === 'hoyPage') renderToday();
+    if(id === 'semanaPage') renderWeek();
+    if(id === 'historialPage') renderHistory();
+}
+
+function renderDiaSelector() {
+    const row = document.getElementById('diaSelectorRow');
+    if (!row) return;
+    const hoy = new Date();
+    const hoyIdx = hoy.getDay() === 0 ? 6 : hoy.getDay() - 1;
+    const chips = [
+        { key: 'hoy', label: 'Hoy', sub: DIAS_DISPLAY[hoyIdx] },
+        ...DIAS_LOGICA.map((d, i) => ({ key: d, label: DIAS_DISPLAY[i].slice(0,3), sub: d }))
+    ];
+    row.innerHTML = chips.map(c => {
+        const grupos = c.key === 'hoy' ? (state.semana[DIAS_LOGICA[hoyIdx]]||[]) : (state.semana[c.key]||[]);
+        const tieneGrupos = grupos.length > 0;
+        const activo = bibliotecaDia === c.key;
+        return `<div class="dia-chip${activo ? ' dia-chip-active' : ''}${!tieneGrupos && c.key !== 'hoy' ? ' dia-chip-rest' : ''}" onclick="setDia('${c.key}')">
+            <span class="dia-chip-label">${c.label}</span>
+        </div>`;
+    }).join('');
+}
+
+function setDia(dia) {
+    bibliotecaDia = dia;
+    renderDiaSelector();
+    // Refresh exercise list if open
+    const ev = document.getElementById('exerciseView');
+    const gn = document.getElementById('selectedGroupName');
+    if (ev && ev.style.display !== 'none' && gn.innerText) showExercises(gn.innerText);
+}
+
+function getDiaLabel() {
+    if (bibliotecaDia === 'hoy') return 'HOY';
+    return bibliotecaDia.toUpperCase();
+}
+
+function getGruposParaDia() {
+    if (bibliotecaDia === 'hoy') return null; // null = mostrar todos
+    return state.semana[bibliotecaDia] || [];
+}
+
+function renderGroups() {
+    renderDiaSelector();
+    const grupos = getGruposParaDia();
+    document.getElementById('groupGrid').innerHTML = GRUPOS.map(g => {
+        const enDia = !grupos || grupos.includes(g);
+        return `<div class="group-card${!enDia ? ' group-card-dim' : ''}" onclick="showExercises('${g}')">
+            <span class="material-symbols-outlined">${db[g].icon}</span>
+            <div style="font-weight:bold;">${g}</div>
+            ${!enDia ? '<div style="font-size:9px; opacity:0.5;">no en este día</div>' : ''}
+        </div>`;
+    }).join('');
+}
+
+function showExercises(group) {
+    document.getElementById('groupsView').style.display = 'none';
+    document.getElementById('exerciseView').style.display = 'block';
+    document.getElementById('selectedGroupName').innerText = group;
+    document.getElementById('groupAdvice').innerText = db[group].advice;
+    const label = getDiaLabel();
+    document.getElementById('exerciseList').innerHTML = db[group].data.map(ex => `
+        <div class="routine-card">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <div><b>${getIcon(ex.t)}${ex.n}</b><br><small>${ex.tip}</small></div>
+                <span class="tag ${ex.t === T_B ? 'tag-basico' : ex.t === T_A ? 'tag-aisla' : 'tag-salud'}">${ex.t}</span>
+            </div>
+            <button onclick="addToDay('${ex.n}', '${group}', '${ex.t}', '${ex.tip}')" style="background:var(--primary); color:white; border:none; padding:10px; border-radius:8px; margin-top:12px; width:100%;">AÑADIR A ${label}</button>
+        </div>
+    `).join('');
+}
+
+function backToGroups() {
+    document.getElementById('groupsView').style.display = 'block';
+    document.getElementById('exerciseView').style.display = 'none';
+}
+
+function showToast(msg, color) {
+    const existing = document.getElementById('toastMsg');
+    if (existing) existing.remove();
+    const toast = document.createElement('div');
+    toast.id = 'toastMsg';
+    toast.innerText = msg;
+    if (color) toast.style.background = color;
+    document.body.appendChild(toast);
+    setTimeout(() => toast.remove(), 1200);
+}
+
+function addToDay(name, group, type, tip) {
+    const dia = bibliotecaDia;
+    if (dia === 'hoy') {
+        if (state.hoy.find(ex => ex.name === name)) { showToast("Ya está en la lista.", "#e74c3c"); return; }
+        state.hoy.push({ name, group, t: type, tip, series: '', reps: '', peso: '', nota: '', done: false });
+        save(); showToast("¡Añadido a Hoy! ✓");
+    } else {
+        if (!state.plantillaSemanal) state.plantillaSemanal = {};
+        if (!state.plantillaSemanal[dia]) state.plantillaSemanal[dia] = [];
+        if (state.plantillaSemanal[dia].find(e => e.name === name)) { showToast("Ya está en ese día.", "#e74c3c"); return; }
+        state.plantillaSemanal[dia].push({ name, group, t: type, tip, series: '', reps: '', peso: '', nota: '', done: false });
+        save(); showToast(`✓ Añadido al ${dia}`);
+    }
+}
+
+function addToToday(name, group, type, tip) { addToDay(name, group, type, tip); }
+
+// ── Lógica de tipo de equipamiento ──────────────────────────────────────────
+// Devuelve: 'cardio' | 'bodyweight' | 'band' | 'dumbbell' | 'mixed'
+function getEquipType(ex) {
+    if (ex.group === "Cardio") return 'cardio';
+    const tip = (ex.tip || '').trim();
+    if (tip === "Sin equipamiento") return 'bodyweight';
+    if (tip === "Solo Gomas")       return 'band';
+    if (tip === "Solo Mancuernas")  return 'dumbbell';
+    if (tip === "Mancuernas / Gomas") return 'mixed';
+    return 'dumbbell'; // fallback
+}
+
+// Genera el bloque de inputs de métricas según el tipo de equipamiento
+function buildMetricsHtml(ex, i) {
+    const tipo = getEquipType(ex);
+
+    if (tipo === 'cardio') {
+        return `
+            <div class="stats-grid cardio-grid">
+                <div class="input-group"><label>Tiempo (min)</label><input type="text" placeholder="00" value="${ex.series}" onchange="updateEx(${i}, 'series', this.value)"></div>
+                <div class="input-group"><label>Intensidad</label><input type="text" placeholder="Baja/Media" value="${ex.reps}" onchange="updateEx(${i}, 'reps', this.value)"></div>
+            </div>`;
+    }
+
+    if (tipo === 'bodyweight') {
+        // Sin peso — solo series y reps
+        return `
+            <div class="stats-grid">
+                <div class="input-group"><label>Series</label><input type="number" placeholder="0" value="${ex.series}" onchange="updateEx(${i}, 'series', this.value)"></div>
+                <div class="input-group"><label>Reps</label><input type="number" placeholder="0" value="${ex.reps}" onchange="updateEx(${i}, 'reps', this.value)"></div>
+                <div class="input-group"><label>Peso corporal</label><input type="text" placeholder="—" value="" disabled style="opacity:0.4; cursor:not-allowed;"></div>
+            </div>`;
+    }
+
+    if (tipo === 'band') {
+        // Solo gomas — dureza de banda como texto
+        return `
+            <div class="stats-grid">
+                <div class="input-group"><label>Series</label><input type="number" placeholder="0" value="${ex.series}" onchange="updateEx(${i}, 'series', this.value)"></div>
+                <div class="input-group"><label>Reps</label><input type="number" placeholder="0" value="${ex.reps}" onchange="updateEx(${i}, 'reps', this.value)"></div>
+                <div class="input-group"><label>🪢 Dureza banda</label><input type="text" placeholder="Ligera/Media/Fuerte" value="${ex.peso}" onchange="updateEx(${i}, 'peso', this.value)"></div>
+            </div>`;
+    }
+
+    if (tipo === 'dumbbell') {
+        // Solo mancuernas — peso en kg numérico
+        return `
+            <div class="stats-grid">
+                <div class="input-group"><label>Series</label><input type="number" placeholder="0" value="${ex.series}" onchange="updateEx(${i}, 'series', this.value)"></div>
+                <div class="input-group"><label>Reps</label><input type="number" placeholder="0" value="${ex.reps}" onchange="updateEx(${i}, 'reps', this.value)"></div>
+                <div class="input-group"><label>Peso (kg)</label><input type="number" placeholder="0" value="${ex.peso}" onchange="updateEx(${i}, 'peso', this.value)"></div>
+            </div>`;
+    }
+
+    if (tipo === 'mixed') {
+        // Mancuernas o gomas — se elige con un pequeño toggle
+        const usaBanda = ex.usaBanda === true;
+        return `
+            <div class="stats-grid">
+                <div class="input-group"><label>Series</label><input type="number" placeholder="0" value="${ex.series}" onchange="updateEx(${i}, 'series', this.value)"></div>
+                <div class="input-group"><label>Reps</label><input type="number" placeholder="0" value="${ex.reps}" onchange="updateEx(${i}, 'reps', this.value)"></div>
+                <div class="input-group">
+                    <label style="display:flex; align-items:center; gap:6px;">
+                        ${usaBanda ? '🪢 Dureza banda' : '⚖️ Peso (kg)'}
+                        <button onclick="toggleBandaMode(${i})" style="background:none; border:1px solid var(--outline); border-radius:6px; padding:2px 6px; font-size:10px; cursor:pointer; color:var(--text2);">cambiar</button>
+                    </label>
+                    ${usaBanda
+                        ? `<input type="text" placeholder="Ligera/Media/Fuerte" value="${ex.peso}" onchange="updateEx(${i}, 'peso', this.value)">`
+                        : `<input type="number" placeholder="0" value="${ex.peso}" onchange="updateEx(${i}, 'peso', this.value)">`
+                    }
+                </div>
+            </div>`;
+    }
+
+    return '';
+}
+
+function toggleBandaMode(i) {
+    state.hoy[i].usaBanda = !state.hoy[i].usaBanda;
+    state.hoy[i].peso = '';
+    save(); renderToday();
+}
+
+function renderToday() {
+    const list = document.getElementById('todayList');
+    if(!list) return;
+    if(state.hoy.length === 0) { list.innerHTML = "<p style='text-align:center; padding:40px; color:var(--text2)'>No hay ejercicios para hoy.</p>"; updateSessionProgress(); return; }
+    
+    list.innerHTML = state.hoy.map((ex, i) => {
+        const tagClass = ex.t === T_B ? 'tag-basico' : ex.t === T_A ? 'tag-aisla' : 'tag-salud';
+        const accentClass = ex.t === T_B ? 'today-card-basico' : ex.t === T_A ? 'today-card-aisla' : 'today-card-salud';
+        const doneClass = ex.done ? 'today-card-done' : '';
+        return `
+        <div class="routine-card ${accentClass} ${doneClass}">
+            <div class="today-card-header">
+                <label class="ex-done-check">
+                    <input type="checkbox" ${ex.done ? 'checked' : ''} onchange="toggleDone(${i})">
+                    <span class="ex-done-icon"></span>
+                </label>
+                <div class="${ex.done ? 'ex-done-text' : ''}" style="flex:1; min-width:0;">
+                    <b>${getIcon(ex.t)}${ex.name}</b><br>
+                    <small>${ex.group} • ${ex.tip || 'Sin espec.'}</small>
+                </div>
+                <div style="display:flex; flex-direction:column; align-items:flex-end; gap:8px;">
+                    <span class="tag ${tagClass}">${ex.t}</span>
+                    <div class="ex-actions">
+                        <button class="btn-icon" onclick="moverEjercicio(${i},-1)" ${i===0?'disabled':''}><span class="material-symbols-outlined">arrow_upward</span></button>
+                        <button class="btn-icon" onclick="moverEjercicio(${i},1)" ${i===state.hoy.length-1?'disabled':''}><span class="material-symbols-outlined">arrow_downward</span></button>
+                        <button class="btn-icon btn-swap" onclick="swapExercise(${i})" title="Cambiar"><span class="material-symbols-outlined">cached</span></button>
+                        <button class="btn-icon btn-delete" onclick="quitarDeHoy(${i})"><span class="material-symbols-outlined">delete</span></button>
+                    </div>
+                </div>
+            </div>
+            <div class="today-card-body">
+                ${buildMetricsHtml(ex, i)}
+                <div class="notes-row">
+                    <div class="input-group"><label>Notas de la sesión</label><input type="text" placeholder="..." value="${ex.nota}" onchange="updateEx(${i}, 'nota', this.value)"></div>
+                </div>
+            </div>
+        </div>
+    `}).join('');
+    updateSessionProgress();
+}
+
+function moverEjercicio(i, dir) {
+    const j = i + dir;
+    if (j < 0 || j >= state.hoy.length) return;
+    [state.hoy[i], state.hoy[j]] = [state.hoy[j], state.hoy[i]];
+    save(); renderToday();
+}
+
+function moverEjercicioDia(dia, i, dir) {
+    const r = state.plantillaSemanal && state.plantillaSemanal[dia];
+    if (!r) return;
+    const j = i + dir;
+    if (j < 0 || j >= r.length) return;
+    [r[i], r[j]] = [r[j], r[i]];
+    save(); renderWeek();
+}
+
+function quitarDeDia(dia, i) {
+    if (!state.plantillaSemanal || !state.plantillaSemanal[dia]) return;
+    state.plantillaSemanal[dia].splice(i, 1);
+    if (state.plantillaSemanal[dia].length === 0) delete state.plantillaSemanal[dia];
+    save(); renderWeek();
+}
+
+function planificarDia(dia) {
+    bibliotecaDia = dia;
+    showPage('rutinaPage');
+}
+
+function swapExercise(index) {
+    const currentEx = state.hoy[index];
+    const groupData = db[currentEx.group];
+    if (!groupData) return;
+    const options = groupData.data.filter(e => e.t === currentEx.t && e.n !== currentEx.name);
+    if (options.length === 0) { alert("No hay más ejercicios de este tipo."); return; }
+    const newEx = options[Math.floor(Math.random() * options.length)];
+    state.hoy[index].name = newEx.n;
+    state.hoy[index].tip = newEx.tip;
+    state.hoy[index].series = ''; state.hoy[index].reps = ''; state.hoy[index].peso = ''; state.hoy[index].nota = '';
+    state.hoy[index].usaBanda = false;
+    save(); renderToday();
+}
+
+function updateEx(i, field, val) { state.hoy[i][field] = val; save(); }
+function clearHoy() { if(confirm("¡Limpiar todo hoy?")) { state.hoy = []; resetSesionStopwatch(); save(); renderToday(); } }
+function quitarDeHoy(i) { state.hoy.splice(i, 1); save(); renderToday(); }
+
+function getDayColor(selected) {
+    if (selected.length === 0) return { c: "var(--color-descanso)", s: "Descanso" };
+    const strengthGroups = selected.filter(g => g !== "Cardio");
+    const hasCardio = selected.includes("Cardio");
+    if (strengthGroups.length === 0) return { c: "var(--color-verde)", s: "Solo Cardio" };
+    const hasPush = strengthGroups.some(g => P_PUSH.includes(g));
+    const hasPull = strengthGroups.some(g => P_PULL.includes(g));
+    if (hasPush && hasPull) return { c: "var(--color-rojo)", s: "Conflicto Empuje/Tirón" };
+    const allPush = strengthGroups.every(g => P_PUSH.includes(g));
+    const allPull = strengthGroups.every(g => P_PULL.includes(g));
+    const allLegs = strengthGroups.every(g => P_LEGS.includes(g));
+    if (allPush) return { c: "var(--color-verde)", s: "Sinergia: Empuje" + (hasCardio ? " + C" : "") };
+    if (allPull) return { c: "var(--color-verde)", s: "Sinergia: Tirón" + (hasCardio ? " + C" : "") };
+    if (allLegs) return { c: "var(--color-verde)", s: "Sinergia: Piernas" + (hasCardio ? " + C" : "") };
+    return { c: "var(--color-amarillo)", s: "Mezcla Híbrida" };
+}
+
+function editarDia(dia) { diasEditando.add(dia); renderWeek(); }
+function guardarDia(dia) { diasEditando.delete(dia); renderWeek(); }
+
+function renderWeek() {
+    const planner = document.getElementById('weekPlanner');
+    if (!planner) return;
+    planner.innerHTML = DIAS_LOGICA.map((dia, idx) => {
+        const sel = state.semana[dia] || [];
+        const info = getDayColor(sel);
+        const plantilla = state.plantillaSemanal ? state.plantillaSemanal[dia] : null;
+        const isOpen = state.openMenu === dia;
+        const tieneRutina = plantilla && plantilla.length > 0;
+        const labelsHtml = sel.length > 0
+            ? sel.map(g => `<span class="mini-tag">${g}</span>`).join('')
+            : '<span style="font-size:10px; color:var(--text2)">Descanso</span>';
+
+        const editando = diasEditando.has(dia);
+
+        let bodyHtml = '';
+        if (tieneRutina) {
+            bodyHtml = `
+                <div class="week-ex-list">
+                    ${plantilla.map((ex, i) => `
+                    <div class="week-ex-item">
+                        <span class="week-ex-name">${getIcon(ex.t)}${ex.name}</span>
+                        ${editando ? `
+                        <div class="week-ex-actions">
+                            <button class="btn-icon btn-sm" onclick="moverEjercicioDia('${dia}',${i},-1)" ${i===0?'disabled':''}><span class="material-symbols-outlined">arrow_upward</span></button>
+                            <button class="btn-icon btn-sm" onclick="moverEjercicioDia('${dia}',${i},1)" ${i===plantilla.length-1?'disabled':''}><span class="material-symbols-outlined">arrow_downward</span></button>
+                            <button class="btn-icon btn-delete btn-sm" onclick="quitarDeDia('${dia}',${i})"><span class="material-symbols-outlined">delete</span></button>
+                        </div>` : ''}
+                    </div>`).join('')}
+                </div>
+                <div class="week-day-actions">
+                    ${editando ? `
+                        <button class="week-btn-secondary" onclick="planificarDia('${dia}')">+ Añadir</button>
+                        <button class="week-btn-secondary" onclick="abrirSelectorParaDia('${dia}')">⚡ Generar</button>
+                        <button class="week-btn-primary" style="background:var(--color-verde); color:#2d5a27; border:1px solid #a8d8a8;" onclick="guardarDia('${dia}')">✓ Guardar</button>
+                    ` : `
+                        <button class="week-btn-secondary" onclick="editarDia('${dia}')"><span class="material-symbols-outlined" style="font-size:14px;">edit</span> Editar</button>
+                        <button class="week-btn-primary" onclick="cargarPlantillaEnHoy('${dia}')">Cargar en Hoy →</button>
+                    `}
+                </div>`;
+        } else if (sel.length > 0) {
+            bodyHtml = `
+                <div class="week-plan-empty">
+                    <button class="week-btn-plan" onclick="planificarDia('${dia}')">
+                        <span class="material-symbols-outlined">edit_note</span> Planificar este día
+                    </button>
+                    <button class="week-btn-secondary" onclick="abrirSelectorParaDia('${dia}')">⚡ Generar automáticamente</button>
+                </div>`;
+        }
+
+        return `
+        <div class="day-card" style="background-color: ${info.c}">
+            <div class="day-header">
+                <div class="day-name">${DIAS_DISPLAY[idx]}</div>
+                <div class="day-status">${info.s}</div>
+            </div>
+            <div class="selected-labels" style="margin-bottom:${tieneRutina?'8':'4'}px;">
+                ${labelsHtml}
+            </div>
+            ${bodyHtml}
+            <button onclick="toggleDayMenu('${dia}')" style="background:rgba(0,0,0,0.05); border:none; width:100%; padding:6px; border-radius:10px; font-size:10px; color:var(--text2); display:flex; align-items:center; justify-content:center; gap:4px; margin-top:10px;">
+                CONFIGURAR GRUPOS <span class="material-symbols-outlined" style="font-size:14px;">${isOpen ? 'expand_less' : 'expand_more'}</span>
+            </button>
+            <div class="group-selector ${isOpen ? 'open' : ''}">
+                ${GRUPOS.map(g => `
+                    <label class="check-item">
+                        <input type="checkbox" ${sel.includes(g)?'checked':''} onchange="toggleWeek('${dia}','${g}')"> ${g}
+                    </label>
+                `).join('')}
+            </div>
+        </div>`;
+    }).join('');
+}
+
+function togglePreview(dia) { const p = document.getElementById(`preview-${dia}`); if(p) p.style.display = p.style.display === 'none' ? 'block' : 'none'; }
+function toggleDayMenu(dia) { state.openMenu = state.openMenu === dia ? null : dia; renderWeek(); }
+function toggleWeek(dia, g) {
+    if(!state.semana[dia]) state.semana[dia] = [];
+    const idx = state.semana[dia].indexOf(g);
+    if(idx > -1) state.semana[dia].splice(idx, 1); else state.semana[dia].push(g);
+    if(state.plantillaSemanal) delete state.plantillaSemanal[dia];
+    save(); renderWeek();
+}
+
+// Contexto del modal de intensidad
+let intensityCtx = { modo: 'hoy', dia: null };
+
+function abrirSelectorIntensidad() {
+    const d = new Date();
+    const diaIdx = d.getDay() === 0 ? 6 : d.getDay() - 1;
+    const nombreDia = DIAS_LOGICA[diaIdx];
+    if (!(state.semana[nombreDia] || []).length) { alert("Hoy toca descanso según tu programación."); return; }
+    if (state.hoy.length > 0 && !confirm("¿Generar nueva rutina? Se borrará la actual.")) return;
+    intensityCtx = { modo: 'hoy', dia: nombreDia };
+    mostrarModalIntensidad("¿Cómo te encuentras hoy?");
+}
+
+function abrirSelectorParaDia(dia) {
+    const grupos = state.semana[dia] || [];
+    if (!grupos.length) { alert("Este día no tiene grupos configurados."); return; }
+    if (state.hoy.length > 0 && !confirm(`¿Generar rutina de ${dia}? Se borrará la actual.`)) return;
+    intensityCtx = { modo: 'dia', dia };
+    const d = new Date();
+    const hoyNombre = DIAS_LOGICA[d.getDay() === 0 ? 6 : d.getDay() - 1];
+    mostrarModalIntensidad(dia === hoyNombre ? "¿Cómo te encuentras hoy?" : `¿Intensidad para el ${dia}?`);
+}
+
+function abrirGenerarSemana() {
+    const count = DIAS_LOGICA.filter(d => (state.semana[d]||[]).length > 0).length;
+    if (!count) { alert("Configura grupos en al menos un día."); return; }
+    if (!confirm(`¿Generar rutinas para los ${count} días configurados?`)) return;
+    intensityCtx = { modo: 'semana', dia: null };
+    mostrarModalIntensidad(`Intensidad para la semana · ${count} días`);
+}
+
+function mostrarModalIntensidad(titulo) {
+    const t = document.getElementById('intensityModalTitle');
+    if (t) t.innerText = titulo;
+    document.getElementById('intensityModal').style.display = 'flex';
+}
+
+function cerrarSelectorIntensidad(el, e) {
+    if (!e || e.target === el) document.getElementById('intensityModal').style.display = 'none';
+}
+
+function generarConIntensidad(intensidad) {
+    cerrarSelectorIntensidad();
+    if (intensityCtx.modo === 'semana') { generarSemanaCompleta(intensidad); return; }
+    const dia = intensityCtx.dia;
+    const grupos = state.semana[dia] || [];
+    const rutina = buildRutina(grupos, intensidad, {});
+    if (!state.plantillaSemanal) state.plantillaSemanal = {};
+    state.plantillaSemanal[dia] = JSON.parse(JSON.stringify(rutina));
+
+    // Solo carga en Hoy si el día generado ES hoy
+    const d = new Date();
+    const hoyNombre = DIAS_LOGICA[d.getDay() === 0 ? 6 : d.getDay() - 1];
+    if (dia === hoyNombre) {
+        state.hoy = rutina;
+        save(); showPage('hoyPage');
+    } else {
+        save(); renderWeek();
+        showToast(`✓ Rutina del ${dia} guardada`);
+    }
+}
+
+function getEjerciciosRecientesPorGrupo(numSesiones) {
+    const result = {};
+    GRUPOS.forEach(g => result[g] = []);
+    let porGrupo = {};
+    GRUPOS.forEach(g => porGrupo[g] = 0);
+    for (const sess of state.historial) {
+        if (!sess.ejercicios) continue;
+        const gruposEnSesion = new Set();
+        sess.ejercicios.forEach(ex => {
+            if (porGrupo[ex.group] < numSesiones) {
+                result[ex.group].push(ex.name);
+                gruposEnSesion.add(ex.group);
+            }
+        });
+        gruposEnSesion.forEach(g => porGrupo[g]++);
+    }
+    return result;
+}
+
+function buildRutina(gruposSeleccionados, intensidad, recentExternal) {
+    const config = {
+        suave:   { dosBasicos: false, totalAisla: 1, salud: 2, incluirCardio: true },
+        normal:  { dosBasicos: false, totalAisla: null, salud: 2, incluirCardio: true },
+        intensa: { dosBasicos: true,  totalAisla: null, salud: 1, incluirCardio: true }
+    }[intensidad];
+    const recentHist = getEjerciciosRecientesPorGrupo(2);
+    const recent = {};
+    GRUPOS.forEach(g => recent[g] = [...(recentHist[g]||[]), ...(recentExternal[g]||[])]);
+    const getRandom = arr => arr[Math.floor(Math.random() * arr.length)];
+    const gruposSinCardio = gruposSeleccionados.filter(g => g !== 'Cardio');
+    let finalPool = [];
+
+    gruposSinCardio.forEach(g => {
+        const sinRepetir = db[g].data.filter(e => e.t === T_B && !recent[g].includes(e.n));
+        const pool = sinRepetir.length > 0 ? sinRepetir : db[g].data.filter(e => e.t === T_B);
+        if (pool.length > 0) finalPool.push({...getRandom(pool), group: g});
+    });
+    if (config.dosBasicos) {
+        gruposSinCardio.forEach(g => {
+            const ya = finalPool.filter(f => f.group === g).map(f => f.n);
+            const pool = db[g].data.filter(e => e.t === T_B && !ya.includes(e.n));
+            if (pool.length > 0) finalPool.push({...getRandom(pool), group: g});
+        });
+    }
+    if (config.totalAisla === 1) {
+        const todos = gruposSinCardio.flatMap(g => db[g].data.filter(e => e.t === T_A).map(e => ({...e, group: g})));
+        if (todos.length > 0) finalPool.push(getRandom(todos));
+    } else {
+        gruposSinCardio.forEach(g => {
+            const sinRepetir = db[g].data.filter(e => e.t === T_A && !recent[g].includes(e.n));
+            const pool = sinRepetir.length > 0 ? sinRepetir : db[g].data.filter(e => e.t === T_A);
+            if (pool.length > 0) finalPool.push({...getRandom(pool), group: g});
+        });
+    }
+    const saludShuffled = [...gruposSinCardio.flatMap(g => db[g].data.filter(e => e.t === T_S).map(e => ({...e, group: g})))].sort(() => Math.random() - 0.5);
+    let saludSel = 0;
+    for (const ex of saludShuffled) {
+        if (saludSel >= config.salud) break;
+        if (!finalPool.find(f => f.n === ex.n)) { finalPool.push(ex); saludSel++; }
+    }
+    const LINFATICOS = ['Gemelos de pie', 'Gemelo unilateral', 'Gemelo escalón'];
+    if (gruposSeleccionados.includes('Piernas') && !finalPool.some(f => LINFATICOS.includes(f.n))) {
+        const lp = db['Piernas'].data.filter(e => LINFATICOS.includes(e.n));
+        if (lp.length > 0) finalPool.push({...getRandom(lp), group: 'Piernas'});
+    }
+    if (config.incluirCardio && gruposSeleccionados.includes('Cardio')) {
+        let cp = intensidad === 'suave'
+            ? db.Cardio.data.filter(e => ['Bicicleta Estática','Marcha Sentado','Marcha Sentado Rodillas Altas'].includes(e.n))
+            : intensidad === 'intensa'
+                ? db.Cardio.data.filter(e => !['Paseo Intenso','Boxeo Sentado'].includes(e.n))
+                : [...db.Cardio.data];
+        if (!cp.length) cp = [...db.Cardio.data];
+        finalPool.unshift({...getRandom(cp), group: 'Cardio'});
+    }
+    // Ordenar ejercicios en el orden óptimo de ejecución
+    const gruposPrincipales = gruposSeleccionados.filter(g => g !== 'Cardio' && g !== 'Core');
+
+    const getScore = (ex) => {
+        if (ex.group === 'Cardio') return 0;                          // 1. Cardio siempre primero
+        if (['Gemelos de pie','Gemelo unilateral','Gemelo escalón'].includes(ex.n || ex.name)) return 999;
+        if (ex.t === T_S) return ex.group === 'Core' ? 980 : 960;    // 3. Salud casi al final
+        if (ex.group === 'Core') return ex.t === T_B ? 800 : 840;    // 4. Core después de grupos principales
+        const gIdx = gruposPrincipales.indexOf(ex.group);
+        return ex.t === T_B
+            ? 100 + gIdx * 10   // 5. Básicos de grupos principales por orden del día
+            : 500 + gIdx * 10;  // 6. Aislamientos de grupos principales por orden del día
+    };
+
+    finalPool.sort((a, b) => getScore(a) - getScore(b));
+
+    return finalPool.map(ex => ({ name: ex.n||ex.name, group: ex.group, t: ex.t, tip: ex.tip, series: '', reps: '', peso: '', nota: '', usaBanda: false, done: false }));
+}
+
+function generarSemanaCompleta(intensidad) {
+    const usados = {};
+    GRUPOS.forEach(g => usados[g] = []);
+    if (!state.plantillaSemanal) state.plantillaSemanal = {};
+    let count = 0;
+    DIAS_LOGICA.forEach(dia => {
+        const grupos = state.semana[dia] || [];
+        if (!grupos.length) return;
+        const rutina = buildRutina(grupos, intensidad, usados);
+        state.plantillaSemanal[dia] = JSON.parse(JSON.stringify(rutina));
+        rutina.forEach(ex => { if (!usados[ex.group]) usados[ex.group] = []; usados[ex.group].push(ex.name); });
+        count++;
+    });
+    save(); renderWeek();
+    showToast(`✓ ${count} rutinas generadas`);
+}
+
+function generarRutinaInteligente(intensidad) {
+    const d = new Date();
+    intensityCtx = { modo: 'hoy', dia: DIAS_LOGICA[d.getDay() === 0 ? 6 : d.getDay() - 1] };
+    generarConIntensidad(intensidad);
+}
+
+function cargarPlantillaEnHoy(dia) {
+    const plantilla = state.plantillaSemanal && state.plantillaSemanal[dia];
+    if (!plantilla || plantilla.length === 0) {
+        showToast("Este día no tiene rutina guardada.", "#e74c3c");
+        return;
+    }
+    const d = new Date();
+    const hoyNombre = DIAS_LOGICA[d.getDay() === 0 ? 6 : d.getDay() - 1];
+    const hoyDisplay = DIAS_DISPLAY[d.getDay() === 0 ? 6 : d.getDay() - 1];
+    const diaDisplay = DIAS_DISPLAY[DIAS_LOGICA.indexOf(dia)];
+
+    if (dia !== hoyNombre) {
+        if (!confirm(`Esta rutina es del ${diaDisplay}.\nHoy es ${hoyDisplay}.\n\n¿Quieres cargarla igualmente?\n\nSe guardará en el historial con la fecha de hoy.`)) return;
+    }
+    if (state.hoy.length > 0 && !confirm(`¿Reemplazar la sesión actual con la rutina del ${diaDisplay}?`)) return;
+    state.hoy = plantilla.map(ex => ({...ex, done: false}));
+    save();
+    showPage('hoyPage');
+}
+
+function limpiarPlantillas() { if(confirm("¿Borrar rutinas guardadas?")) { state.plantillaSemanal = {}; save(); renderWeek(); } }
+
+function compartirBackup() {
+    const datos = {
+        backupVersion: BACKUP_VERSION,
+        appVersion: 'IronLog',
+        fecha: new Date().toLocaleDateString(),
+        hora: new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}),
+        state: state
+    };
+    const blob = new Blob([JSON.stringify(datos, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `ironlog-backup-${new Date().toLocaleDateString().replace(/\//g,'-')}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+}
+
+function finalizarSesion() {
+    if(state.hoy.length === 0) return;
+    if(confirm("¿Guardar en el Log?")) {
+        const durSec = state.sesionStartTime ? Math.floor((Date.now() - state.sesionStartTime) / 1000) : null;
+        state.historial.unshift({ 
+            fecha: new Date().toLocaleDateString(), 
+            hora: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
+            resumen: state.hoy.map(e => `${getIcon(e.t)}${e.name}`).join('; '),
+            ejercicios: JSON.parse(JSON.stringify(state.hoy)),
+            duracion: durSec
+        });
+        state.hoy = []; resetSesionStopwatch(); save(); showPage('historialPage');
+        mostrarToastBackup();
+    }
+}
+
+function mostrarToastBackup() {
+    const existing = document.getElementById('toastBackup');
+    if (existing) existing.remove();
+    const toast = document.createElement('div');
+    toast.id = 'toastBackup';
+    toast.innerHTML = `
+        <span>✓ Sesión guardada</span>
+        <button onclick="compartirBackup(); document.getElementById('toastBackup')?.remove()">
+            📤 Guardar backup
+        </button>`;
+    toast.style.cssText = `
+        position:fixed; bottom:90px; left:50%; transform:translateX(-50%);
+        background:var(--primary); color:white; border-radius:12px;
+        padding:12px 16px; display:flex; align-items:center; gap:12px;
+        font-size:13px; font-weight:500; z-index:9998; white-space:nowrap;
+        box-shadow:0 4px 12px rgba(0,0,0,0.2);`;
+    toast.querySelector('button').style.cssText = `
+        background:white; color:var(--primary); border:none;
+        border-radius:8px; padding:6px 12px; font-size:12px;
+        font-weight:bold; cursor:pointer;`;
+    document.body.appendChild(toast);
+    setTimeout(() => toast?.remove(), 8000);
+}
+
+function borrarHistorialItem(index) { if(confirm("¿Borrar sesión?")) { state.historial.splice(index, 1); save(); renderHistory(); } }
+
+// ── Versión del esquema de backup ───────────────────────────────────────────
+// Incrementar cada vez que se añadan/quiten campos en state o se renombren ejercicios
+const BACKUP_VERSION = 1;
+
+// ── Migraciones: de versión N a N+1 ─────────────────────────────────────────
+// Añadir aquí una función por cada salto de versión futuro
+const MIGRATIONS = {
+    // Ejemplo de cómo añadir migraciones en el futuro:
+    // 1: (s) => { s.nuevocampo = s.nuevocamp || 'valor_default'; return s; },
+    // 2: (s) => { s.historial.forEach(h => { h.nuevoCampo = h.nuevoCampo || null; }); return s; },
+};
+
+function aplicarMigraciones(datos) {
+    let s = datos.state;
+    let v = datos.backupVersion || 0; // 0 = backups muy antiguos sin versión
+    while (v < BACKUP_VERSION) {
+        if (MIGRATIONS[v]) s = MIGRATIONS[v](s);
+        v++;
+    }
+    // Garantizar campos obligatorios que podrían faltar en backups antiguos
+    if (s.sesionStartTime === undefined) s.sesionStartTime = null;
+    if (s.openMenu === undefined) s.openMenu = null;
+    if (s.plantillaSemanal === undefined) s.plantillaSemanal = {};
+    if (!s.semana) s.semana = { "Lunes":[], "Martes":[], "Miercoles":[], "Jueves":[], "Viernes":[], "Sabado":[], "Domingo":[] };
+    if (!s.historial) s.historial = [];
+    if (!s.hoy) s.hoy = [];
+    // Garantizar campos en cada sesión del historial
+    s.historial.forEach(h => {
+        if (h.duracion === undefined) h.duracion = null;
+        if (h.ejercicios) h.ejercicios.forEach(ex => {
+            if (ex.done === undefined) ex.done = false;
+            if (ex.usaBanda === undefined) ex.usaBanda = false;
+        });
+    });
+    return s;
+}
+
+function exportarDatos() {
+    const datos = {
+        backupVersion: BACKUP_VERSION,
+        appVersion: 'IronLog',
+        fecha: new Date().toLocaleDateString(),
+        hora: new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}),
+        state: state
+    };
+    const blob = new Blob([JSON.stringify(datos, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `ironlog-backup-${new Date().toLocaleDateString().replace(/\//g,'-')}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+    showToast('✓ Backup exportado');
+}
+
+function importarDatos(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        try {
+            const datos = JSON.parse(e.target.result);
+            // Aceptar tanto backups nuevos (con backupVersion) como muy antiguos (con version:'ironlog-v1')
+            const esValido = datos.state && (datos.backupVersion !== undefined || datos.version);
+            if (!esValido) throw new Error('Formato inválido');
+            const fechaInfo = datos.fecha ? `del ${datos.fecha}${datos.hora ? ' a las ' + datos.hora : ''}` : 'sin fecha';
+            const sesiones = datos.state.historial ? datos.state.historial.length : 0;
+            if (!confirm(`¿Restaurar backup ${fechaInfo}?
+
+· ${sesiones} sesiones guardadas
+
+Se reemplazarán todos los datos actuales.`)) {
+                event.target.value = '';
+                return;
+            }
+            const stateRestaurado = aplicarMigraciones(datos);
+            Object.assign(state, stateRestaurado);
+            save();
+            showPage('historialPage');
+            showToast(`✓ Restauradas ${sesiones} sesiones`);
+        } catch(err) {
+            alert('Error al leer el archivo. Asegúrate de que es un backup válido de IronLog (.json).');
+        }
+        event.target.value = '';
+    };
+    reader.readAsText(file);
+}
+
+function borrarTodoHistorial() {
+    if (!confirm("¿Borrar todo el historial de sesiones?\n\nEsta acción no se puede deshacer.")) return;
+    if (!confirm("¿Seguro? Se perderán todos los registros permanentemente.")) return;
+    state.historial = [];
+    save();
+    renderHistory();
+}
+
+function renderHistory() {
+    updateStats();
+    renderCalendar();
+    const hList = document.getElementById('historyList');
+    if (hList) hList.innerHTML = '';
+}
+function getSessionIntensity(sesion) {
+    if (!sesion.ejercicios || sesion.ejercicios.length === 0) return 1;
+    let score = 0;
+    sesion.ejercicios.forEach(ex => {
+        const tipo = getEquipType(ex);
+        if (tipo === 'cardio') {
+            score += Math.max((parseFloat(ex.series) || 0) / 5, 0.5);
+        } else if (ex.t === T_B) {
+            if (tipo === 'dumbbell' || tipo === 'mixed') score += 4;
+            else if (tipo === 'band') score += 3;
+            else score += 2; // bodyweight
+        } else if (ex.t === T_A) {
+            if (tipo === 'dumbbell' || tipo === 'mixed') score += 3;
+            else if (tipo === 'band') score += 2;
+            else score += 1.5;
+        } else if (ex.t === T_S) {
+            score += 1;
+        }
+    });
+    return Math.max(score, 1);
+}
+
+function renderCalendar() {
+    const container = document.getElementById('calendarContainer');
+    if (!container) return;
+    const MESES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+    const daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
+    let firstDay = new Date(calYear, calMonth, 1).getDay();
+    firstDay = firstDay === 0 ? 6 : firstDay - 1;
+    const today = new Date();
+    const nowMonth = today.getMonth(), nowYear = today.getFullYear();
+    const isFuture = calYear > nowYear || (calYear === nowYear && calMonth > nowMonth);
+    const todayDay = today.getDay() === 0 ? 6 : today.getDay() - 1;
+    const isCurrentMonth = calYear === nowYear && calMonth === nowMonth;
+
+    // Build dayData: day → intensity score + points
+    const dayData = {};
+    let totalPuntos = 0;
+    for (let d = 1; d <= daysInMonth; d++) {
+        const ds = new Date(calYear, calMonth, d).toLocaleDateString();
+        state.historial.forEach(s => {
+            if (s.fecha === ds) {
+                const score = getSessionIntensity(s);
+                dayData[d] = (dayData[d] || 0) + score;
+                // Points: B=30, A=20, S=10, cardio=min*2
+                if (s.ejercicios) s.ejercicios.forEach(ex => {
+                    if (ex.group === 'Cardio') totalPuntos += (parseFloat(ex.series)||0)*2;
+                    else if (ex.t === T_S) totalPuntos += 10;
+                    else {
+                        const tipo = getEquipType(ex);
+                        const base = ex.t === T_B ? 40 : 30; // B=40, A=30
+                        const mult = (tipo==='dumbbell'||tipo==='mixed') ? 1 : tipo==='band' ? 0.75 : 0.5;
+                        totalPuntos += base * mult;
+                    }
+                });
+            }
+        });
+    }
+    const maxInt = Math.max(...Object.values(dayData), 1);
+
+    const diasHdr = ['lun','mar','mié','jue','vie','sáb','dom'];
+
+    let g = `<div class="cal-nav">
+        <button class="cal-btn" onclick="calPrev()">&#8249;</button>
+        <div class="cal-nav-center">
+            <span class="cal-title">${MESES[calMonth].toLowerCase()} de ${calYear}</span>
+            <span class="cal-puntos">&#129293; ${Math.round(totalPuntos)} puntos</span>
+        </div>
+        <button class="cal-btn" onclick="calNext()" ${isFuture ? 'disabled' : ''}>&#8250;</button>
+    </div>
+    <div class="cal-grid">`;
+
+    for (let i = 0; i < firstDay; i++) g += `<div class="cal-cell"></div>`;
+
+    for (let d = 1; d <= daysInMonth; d++) {
+        const ds = new Date(calYear, calMonth, d).toLocaleDateString();
+        const isToday = ds === today.toLocaleDateString();
+        const isFutureDay = new Date(calYear, calMonth, d) > today;
+        const intensity = dayData[d] || 0;
+        if (intensity > 0) {
+            const ratio = intensity / maxInt;
+            const size = Math.round(32 + ratio * 32); // 32px – 64px
+            const lightL = Math.round(75 - ratio * 38);
+            const bg = `hsl(261, 42%, ${lightL}%)`;
+            const textColor = lightL < 55 ? 'white' : '#3a2d6e';
+            const fs = Math.round(11 + ratio * 7);
+            g += `<div class="cal-cell">
+                <div class="cal-circle${isToday ? ' cal-circle-today' : ''}" style="width:${size}px;height:${size}px;background:${bg};font-size:${fs}px;color:${textColor};" onclick="openDayModal('${ds}',${d},${calMonth},${calYear})">${d}</div>
+            </div>`;
+        } else {
+            g += `<div class="cal-cell${isFutureDay ? ' cal-future' : ''}">
+                <span class="cal-dnum${isToday ? ' cal-dnum-today' : ''}">${d}</span>
+            </div>`;
+        }
+    }
+
+    // Day labels at bottom
+    g += `</div><div class="cal-footer">${diasHdr.map((d, i) => `<div class="cal-foot-d${isCurrentMonth && i === todayDay ? ' cal-foot-today' : ''}">${d}</div>`).join('')}</div>`;
+    container.innerHTML = g;
+}
+
+function calPrev() {
+    calMonth--; if (calMonth < 0) { calMonth = 11; calYear--; }
+    renderCalendar();
+}
+function calNext() {
+    const now = new Date();
+    if (calYear < now.getFullYear() || (calYear === now.getFullYear() && calMonth < now.getMonth())) {
+        calMonth++; if (calMonth > 11) { calMonth = 0; calYear++; }
+        renderCalendar();
+    }
+}
+
+function formatDuracion(sec) {
+    if (!sec) return null;
+    const h = Math.floor(sec/3600), m = Math.floor((sec%3600)/60), s = sec%60;
+    if (h > 0) return `${h}h ${m}m`;
+    return `${m}m ${s < 10?'0':''}${s}s`;
+}
+
+function openDayModal(ds, d, month, year) {
+    const sessions = state.historial.filter(h => h.fecha === ds);
+    if (!sessions.length) return;
+    const MESES = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+    document.getElementById('dayModalTitle').innerText = `${d} de ${MESES[month]} de ${year}`;
+    let cardioMin = 0, allEx = [];
+    sessions.forEach(s => {
+        if (s.ejercicios) s.ejercicios.forEach(ex => {
+            allEx.push(ex);
+            if (ex.group === 'Cardio' && ex.series) cardioMin += parseFloat(ex.series)||0;
+        });
+    });
+    const durStr = formatDuracion(sessions[0].duracion);
+    let body = `<div class="modal-times">`;
+    if (durStr) body += `<div class="modal-time-pill">⏱ ${durStr}</div>`;
+    if (cardioMin > 0) body += `<div class="modal-time-pill">🚴 ${Math.round(cardioMin)} min cardio</div>`;
+    body += `</div><div class="modal-ex-list">`;
+    allEx.forEach(ex => {
+        const tipo = getEquipType(ex);
+        let meta = '';
+        if (tipo === 'cardio') { meta = ex.series ? `${ex.series} min` : ''; if (ex.reps) meta += ` · ${ex.reps}`; }
+        else {
+            if (ex.series && ex.reps) meta = `${ex.series}×${ex.reps}`;
+            else if (ex.series) meta = `${ex.series} series`;
+            if (ex.peso) meta += ` · ${ex.peso}${tipo==='band'?'':' kg'}`;
+        }
+        body += `<div class="modal-ex-item"><span class="modal-ex-name">${getIcon(ex.t)}${ex.name}</span>${meta?`<span class="modal-ex-meta">${meta}</span>`:''}</div>`;
+    });
+    body += '</div>';
+    document.getElementById('dayModalBody').innerHTML = body;
+    document.getElementById('dayModal').style.display = 'flex';
+}
+
+function closeDayModal(el, e) {
+    if (!e || e.target === el) document.getElementById('dayModal').style.display = 'none';
+}
+
+function getMaxKgSession() {
+    let max = 0;
+    state.historial.forEach(sesion => {
+        let kg = 0;
+        if (sesion.ejercicios) {
+            sesion.ejercicios.forEach(ex => {
+                const tipo = getEquipType(ex);
+                if ((tipo === 'dumbbell' || (tipo === 'mixed' && !ex.usaBanda)) && ex.peso && ex.series && ex.reps) {
+                    kg += (parseFloat(ex.peso) * parseInt(ex.series) * parseInt(ex.reps));
+                }
+            });
+        }
+        if (kg > max) max = kg;
+    });
+    return Math.round(max);
+}
+
+const STAT_INFO = {
+    sesiones: {
+        titulo: "Total de Sesiones",
+        desc: "Número total de entrenamientos guardados en tu historial.",
+        consejo: "Un buen indicador de constancia a largo plazo. Lo importante no es el número absoluto sino que crezca de forma sostenida."
+    },
+    racha: {
+        titulo: "Racha Actual 🔥",
+        desc: "Días entrenados en tu racha activa. Se permiten hasta 2 días de descanso consecutivos sin romperla, adaptado a tu rutina con martes y jueves libres.",
+        consejo: "Con tu programación de 5 días semanales, una racha saludable es de 10-20 días. No la fuerces si el cuerpo pide descanso."
+    },
+    racha_max: {
+        titulo: "Racha Máxima 🏆",
+        desc: "La racha más larga que has alcanzado en todo tu historial, con el mismo criterio de 2 días de descanso permitidos.",
+        consejo: "Tu récord personal de constancia. Úsalo como motivación, no como obligación."
+    },
+    ses_semana: {
+        titulo: "Sesiones Esta Semana 📅",
+        desc: "Entrenamientos registrados en los últimos 7 días.",
+        consejo: "Con tu rutina habitual el ideal son 5 sesiones. 3-4 es un buen resultado si la semana laboral fue intensa."
+    },
+    descansos: {
+        titulo: "Días de Descanso Esta Semana 😴",
+        desc: "Días sin entreno en los últimos 7 días (7 menos las sesiones de la semana).",
+        consejo: "2 días es lo planificado. Si ves 3 o más, se perdió algún día de entrenamiento. Si ves 0-1, valora si estás descansando suficiente para tu recuperación linfática."
+    },
+    cardio_semana: {
+        titulo: "Cardio Esta Semana 🚴",
+        desc: "Minutos registrados en ejercicios de Cardio durante los últimos 7 días.",
+        consejo: "Para tu condición linfática el cardio de bajo impacto es especialmente beneficioso. Se recomiendan al menos 30-60 min semanales para favorecer el retorno venoso."
+    },
+    cardio_mes: {
+        titulo: "Cardio Este Mes 🚴",
+        desc: "Total de minutos de cardio acumulados desde el día 1 del mes en curso.",
+        consejo: "Un objetivo razonable para tu perfil es 120-180 min mensuales. Más tiempo a baja intensidad siempre es mejor que poco tiempo a alta intensidad."
+    },
+    ses_mes: {
+        titulo: "Sesiones Este Mes 📆",
+        desc: "Entrenamientos completados desde el día 1 del mes actual.",
+        consejo: "Entrenando 5 días por semana, un mes completo debería sumar unas 20-22 sesiones. Entre 15 y 20 es un resultado muy sólido."
+    },
+    semanas_activas: {
+        titulo: "Semanas Activas 📆",
+        desc: "Semanas del mes en las que has entrenado al menos un día.",
+        consejo: "Si el mes tiene 4 semanas y ves 4, la constancia es perfecta. Una semana en cero es señal de que algo interrumpió la rutina."
+    },
+    distribucion: {
+        titulo: "Distribución por Tipo",
+        desc: "Porcentaje de ejercicios Básicos (B), Aislamiento (A) y Salud (S) sobre el total de tu historial.",
+        consejo: "Para tu perfil, un reparto equilibrado sería B 40% · A 30% · S 30%. Un porcentaje de Salud bajo indica que estás priorizando músculo sobre movilidad y circulación, lo cual puede afectar tu condición linfática."
+    },
+    top_grupo: {
+        titulo: "Grupo Muscular Top",
+        desc: "El grupo muscular con más ejercicios acumulados en todo tu historial.",
+        consejo: "Si siempre sale el mismo, puede indicar un desequilibrio. Asegúrate de que los grupos antagonistas (Empuje/Tirón, Bíceps/Tríceps) tienen una presencia similar."
+    },
+    top_ejercicio: {
+        titulo: "Ejercicio Más Repetido",
+        desc: "El ejercicio individual que más veces aparece en tu historial.",
+        consejo: "Cierta repetición es buena para la técnica y el progreso, pero si siempre es el mismo el generador de rutinas debería estar variando. Revisa si la biblioteca tiene opciones suficientes para ese grupo."
+    },
+    salud_sesion: {
+        titulo: "Salud por Sesión 🛡️",
+        desc: "Media de ejercicios de tipo Salud en tus últimas 10 sesiones.",
+        consejo: "Para tu condición linfática y hormonal se recomiendan al menos 2 ejercicios de Salud por sesión: uno de movilidad y uno de activación circulatoria. Si este número es inferior a 2, añade más ejercicios tipo S a tu rutina."
+    },
+    mas_descuidado: {
+        titulo: "Grupo Más Descuidado ⚠️",
+        desc: "El grupo muscular con menos ejercicios registrados en los últimos 30 días (excluye Cardio).",
+        consejo: "Si aparece el mismo grupo semana tras semana, considera añadirlo a un día más de tu planificación. Un desequilibrio sostenido puede generar compensaciones posturales o debilidades asimétricas."
+    }
+};
+
+function abrirInfoStat(key) {
+    const info = STAT_INFO[key];
+    if (!info) return;
+    document.getElementById('statInfoTitle').innerText = info.titulo;
+    document.getElementById('statInfoDesc').innerText = info.desc;
+    document.getElementById('statInfoConsejo').innerText = info.consejo;
+    document.getElementById('statInfoModal').style.display = 'flex';
+}
+
+function cerrarInfoStat(el, e) {
+    if (!e || e.target === el) document.getElementById('statInfoModal').style.display = 'none';
+}
+
+function updateStats() {
+    const container = document.getElementById('statsContent');
+    if (!container) return;
+    if (state.historial.length === 0) {
+        container.innerHTML = "<div style='grid-column: 1 / span 2; text-align:center; color:var(--text2); font-size:11px; padding:16px 0;'>Entrena para ver estadísticas</div>";
+        return;
+    }
+
+    let totalKg = 0;
+    let totalSesiones = state.historial.length;
+    let gruposContador = {};
+    let ejerciciosContador = {};
+    let typeContador = { [T_B]: 0, [T_A]: 0, [T_S]: 0 };
+
+    state.historial.forEach(sesion => {
+        if (sesion.ejercicios) {
+            sesion.ejercicios.forEach(ex => {
+                const tipo = getEquipType(ex);
+                if ((tipo === 'dumbbell' || (tipo === 'mixed' && !ex.usaBanda)) && ex.peso && ex.series && ex.reps) {
+                    totalKg += (parseFloat(ex.peso) * parseInt(ex.series) * parseInt(ex.reps));
+                }
+                gruposContador[ex.group] = (gruposContador[ex.group] || 0) + 1;
+                ejerciciosContador[ex.name] = (ejerciciosContador[ex.name] || 0) + 1;
+                if (ex.t) typeContador[ex.t] = (typeContador[ex.t] || 0) + 1;
+            });
+        }
+    });
+
+    let topGrupo = "N/A";
+    if (Object.keys(gruposContador).length > 0) {
+        topGrupo = Object.keys(gruposContador).reduce((a, b) => gruposContador[a] > gruposContador[b] ? a : b);
+    }
+
+    let topEjercicio = "N/A";
+    if (Object.keys(ejerciciosContador).length > 0) {
+        const topKey = Object.keys(ejerciciosContador).reduce((a, b) => ejerciciosContador[a] > ejerciciosContador[b] ? a : b);
+        topEjercicio = topKey.length > 22 ? topKey.substring(0, 20) + '…' : topKey;
+    }
+
+    const today = new Date();
+    const last7 = [];
+    for (let i = 0; i < 7; i++) {
+        const d = new Date(today); d.setDate(today.getDate() - i);
+        last7.push(d.toLocaleDateString());
+    }
+    const sesSemana = state.historial.filter(h => last7.includes(h.fecha)).length;
+
+    // Días del mes actual
+    const thisMonth = [];
+    const tempDate = new Date(today.getFullYear(), today.getMonth(), 1);
+    while (tempDate <= today) { thisMonth.push(tempDate.toLocaleDateString()); tempDate.setDate(tempDate.getDate() + 1); }
+    const sesMes = state.historial.filter(h => thisMonth.includes(h.fecha)).length;
+
+    // Cardio: suma del campo 'series' (minutos) de ejercicios del grupo Cardio
+    const getCardioMin = (fechas) => {
+        let min = 0;
+        state.historial.filter(h => fechas.includes(h.fecha)).forEach(sesion => {
+            if (sesion.ejercicios) sesion.ejercicios.forEach(ex => {
+                if (ex.group === 'Cardio' && ex.series) min += parseFloat(ex.series) || 0;
+            });
+        });
+        return Math.round(min);
+    };
+    const cardioSemana = getCardioMin(last7);
+    const cardioMes = getCardioMin(thisMonth);
+
+    const uniqueDatesSet = new Set(state.historial.map(h => h.fecha));
+
+    // Racha actual: se permite hasta 2 días de descanso consecutivos por semana
+    let racha = 0;
+    let checkDate = new Date(today);
+    let descConsec = 0;
+    for (let i = 0; i <= 365; i++) {
+        const ds = checkDate.toLocaleDateString();
+        if (uniqueDatesSet.has(ds)) { racha++; descConsec = 0; }
+        else { descConsec++; if (descConsec > 2) break; }
+        checkDate.setDate(checkDate.getDate() - 1);
+    }
+
+    // Racha máxima histórica (mismo criterio)
+    const startHist = new Date(today); startHist.setDate(startHist.getDate() - 730);
+    let maxRacha = 0, tempRacha = 0, tempDesc = 0;
+    const histCheck = new Date(startHist);
+    while (histCheck <= today) {
+        if (uniqueDatesSet.has(histCheck.toLocaleDateString())) { tempRacha++; tempDesc = 0; if (tempRacha > maxRacha) maxRacha = tempRacha; }
+        else { tempDesc++; if (tempDesc > 2) { tempRacha = 0; tempDesc = 0; } }
+        histCheck.setDate(histCheck.getDate() + 1);
+    }
+
+    const totalTypes = (typeContador[T_B] || 0) + (typeContador[T_A] || 0) + (typeContador[T_S] || 0);
+    const pctB = totalTypes > 0 ? Math.round((typeContador[T_B] || 0) / totalTypes * 100) : 0;
+    const pctA = totalTypes > 0 ? Math.round((typeContador[T_A] || 0) / totalTypes * 100) : 0;
+    const pctS = totalTypes > 0 ? Math.round((typeContador[T_S] || 0) / totalTypes * 100) : 0;
+
+    // Días de descanso esta semana
+    const descSemana = 7 - sesSemana;
+
+    // Semanas activas este mes
+    const semanasActivas = (() => {
+        const weeks = new Set();
+        thisMonth.forEach((ds, idx) => { if (uniqueDatesSet.has(ds)) weeks.add(Math.floor(idx / 7)); });
+        return weeks.size;
+    })();
+
+    // Grupo más descuidado (últimos 30 días, excluye Cardio)
+    const last30 = [];
+    for (let i = 0; i < 30; i++) { const d = new Date(today); d.setDate(today.getDate() - i); last30.push(d.toLocaleDateString()); }
+    const recentGrupos = {};
+    GRUPOS.filter(g => g !== 'Cardio').forEach(g => recentGrupos[g] = 0);
+    state.historial.filter(h => last30.includes(h.fecha)).forEach(s => {
+        if (s.ejercicios) s.ejercicios.forEach(ex => { if (recentGrupos[ex.group] !== undefined) recentGrupos[ex.group]++; });
+    });
+    const grupoDesc = Object.keys(recentGrupos).reduce((a, b) => recentGrupos[a] <= recentGrupos[b] ? a : b);
+
+    // Media de ejercicios Salud por sesión (últimas 10 sesiones)
+    const ultimas10 = state.historial.slice(0, 10);
+    const saludMedia = ultimas10.length > 0
+        ? (ultimas10.reduce((acc, s) => acc + (s.ejercicios ? s.ejercicios.filter(e => e.t === T_S).length : 0), 0) / ultimas10.length).toFixed(1)
+        : 0;
+
+    container.innerHTML = `
+        <div class="stat-box stat-tappable" onclick="abrirInfoStat('sesiones')"><span class="stat-label">Sesiones</span><span class="stat-val">${totalSesiones}</span></div>
+        <div class="stat-box stat-tappable" onclick="abrirInfoStat('racha')"><span class="stat-label">🔥 Racha actual</span><span class="stat-val">${racha}<small>días</small></span></div>
+        <div class="stat-box stat-tappable" onclick="abrirInfoStat('racha_max')"><span class="stat-label">🏆 Racha máxima</span><span class="stat-val">${maxRacha}<small>días</small></span></div>
+        <div class="stat-box stat-tappable" onclick="abrirInfoStat('ses_semana')"><span class="stat-label">📅 Esta semana</span><span class="stat-val">${sesSemana}<small>ses.</small></span></div>
+        <div class="stat-box stat-tappable" onclick="abrirInfoStat('descansos')"><span class="stat-label">😴 Descansos semana</span><span class="stat-val">${descSemana}<small>días</small></span></div>
+        <div class="stat-box stat-tappable" onclick="abrirInfoStat('cardio_semana')"><span class="stat-label">🚴 Cardio semana</span><span class="stat-val">${cardioSemana}<small>min</small></span></div>
+        <div class="stat-box stat-tappable" onclick="abrirInfoStat('cardio_mes')"><span class="stat-label">🚴 Cardio mes</span><span class="stat-val">${cardioMes}<small>min</small></span></div>
+        <div class="stat-box stat-tappable" onclick="abrirInfoStat('ses_mes')"><span class="stat-label">📆 Sesiones mes</span><span class="stat-val">${sesMes}</span></div>
+        <div class="stat-box stat-tappable" onclick="abrirInfoStat('semanas_activas')"><span class="stat-label">📆 Semanas activas</span><span class="stat-val">${semanasActivas}</span></div>
+        <div class="stat-box stat-full stat-tappable" onclick="abrirInfoStat('distribucion')">
+            <span class="stat-label">Distribución por tipo <span class="stat-info-hint">· toca para más info</span></span>
+            <div class="stat-type-bars">
+                <div class="stat-type-row"><span class="stat-type-chip tag tag-basico">B</span><div class="stat-bar-bg"><div class="stat-bar-fill stat-bar-b" style="width:${pctB}%"></div></div><span class="stat-type-pct">${pctB}%</span></div>
+                <div class="stat-type-row"><span class="stat-type-chip tag tag-aisla">A</span><div class="stat-bar-bg"><div class="stat-bar-fill stat-bar-a" style="width:${pctA}%"></div></div><span class="stat-type-pct">${pctA}%</span></div>
+                <div class="stat-type-row"><span class="stat-type-chip tag tag-salud">S</span><div class="stat-bar-bg"><div class="stat-bar-fill stat-bar-s" style="width:${pctS}%"></div></div><span class="stat-type-pct">${pctS}%</span></div>
+            </div>
+        </div>
+        <div class="stat-box stat-tappable" onclick="abrirInfoStat('top_grupo')"><span class="stat-label">Top Grupo</span><span class="stat-val" style="font-size:13px">${topGrupo}</span></div>
+        <div class="stat-box stat-tappable" onclick="abrirInfoStat('top_ejercicio')"><span class="stat-label">Top Ejercicio</span><span class="stat-val" style="font-size:11px; line-height:1.3">${topEjercicio}</span></div>
+        <div class="stat-box stat-tappable" onclick="abrirInfoStat('salud_sesion')"><span class="stat-label">🛡️ Salud/sesión</span><span class="stat-val">${saludMedia}<small>ejs.</small></span></div>
+        <div class="stat-box stat-tappable" onclick="abrirInfoStat('mas_descuidado')"><span class="stat-label">⚠️ Más descuidado</span><span class="stat-val" style="font-size:11px">${grupoDesc}</span></div>
+    `;
+}
+
+let audioCtx = null;
+function initAudio() { if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); if (audioCtx.state === 'suspended') audioCtx.resume(); }
+function playEndSound() {
+    if (!audioCtx) return; const now = audioCtx.currentTime;
+    [523.25, 659.25, 783.99].forEach((f, i) => {
+        const o = audioCtx.createOscillator(); const g = audioCtx.createGain();
+        o.type = 'sine'; o.frequency.setValueAtTime(f, now + i*0.15);
+        g.gain.setValueAtTime(0, now + i*0.15); g.gain.linearRampToValueAtTime(0.1, now + i*0.15 + 0.05); g.gain.exponentialRampToValueAtTime(0.001, now + i*0.15 + 0.4);
+        o.connect(g); g.connect(audioCtx.destination); o.start(now + i*0.15); o.stop(now + i*0.15 + 0.5);
+    });
+}
+
+let tInterval;
+function startTimer(s) {
+    initAudio(); clearInterval(tInterval);
+    tInterval = setInterval(() => {
+        s--; let m = Math.floor(s/60), sc = s%60;
+        const disp = document.getElementById('timerDisplay');
+        if(disp) disp.innerText = `${m<10?'0':''}${m}:${sc<10?'0':''}${sc}`;
+        if(s <= 0) { clearInterval(tInterval); playEndSound(); }
+    }, 1000);
+}
+
+window.onload = () => {
+    showPage(state.activeTab || 'rutinaPage');
+    const splash = document.getElementById('splashScreen');
+    if (splash) {
+        setTimeout(() => {
+            splash.style.opacity = '0';
+            setTimeout(() => splash.remove(), 600);
+        }, 2500);
+    }
+};
