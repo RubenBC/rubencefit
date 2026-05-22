@@ -95,12 +95,14 @@
         <div class="header-row">
             <h2><span class="material-symbols-outlined">history</span> Log</h2>
             <div style="display:flex; align-items:center; gap:8px;">
+                <button onclick="toggleDarkMode()" id="darkModeBtn" style="color:var(--primary); border:none; background:none; font-size:11px; cursor:pointer;"><span class="material-symbols-outlined" style="font-size:20px;">dark_mode</span></button>
                 <button onclick="exportarDatos()" style="color:var(--primary); border:none; background:none; font-size:11px; font-weight:bold; display:flex; align-items:center; gap:3px;"><span class="material-symbols-outlined" style="font-size:16px;">upload</span> EXPORTAR</button>
                 <label style="color:var(--primary); font-size:11px; font-weight:bold; display:flex; align-items:center; gap:3px; cursor:pointer;"><span class="material-symbols-outlined" style="font-size:16px;">download</span> IMPORTAR<input type="file" accept=".json" onchange="importarDatos(event)" style="display:none;"></label>
                 <button onclick="borrarTodoHistorial()" style="color:var(--danger); border:none; background:none; font-size:11px; font-weight:bold; display:flex; align-items:center; gap:3px;"><span class="material-symbols-outlined" style="font-size:16px;">delete_forever</span> BORRAR</button>
             </div>
         </div>
 
+        <div id="cardioChart" style="background:var(--surface);border-radius:16px;padding:16px;margin-bottom:16px;border:1px solid var(--outline);"></div>
         <div id="statsDashboard" class="coach-card" style="background: var(--primary-light); border: none; margin-bottom: 20px;">
             <div style="font-weight: bold; margin-bottom: 10px; display: flex; align-items: center; gap: 5px;">
                 <span class="material-symbols-outlined">insights</span> Rendimiento
