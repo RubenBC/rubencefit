@@ -56,7 +56,8 @@ const db = {
         {n:"Puente unilateral",                  t:T_A, tip:"Sin equipamiento"},
         {n:"Gemelos de pie",                     t:T_S, tip:"Sin equipamiento"},
         {n:"Gemelo unilateral",                  t:T_S, tip:"Sin equipamiento"},
-        {n:"Gemelo escalón",                     t:T_S, tip:"Sin equipamiento"}
+        {n:"Gemelo escalón",                     t:T_S, tip:"Sin equipamiento"},
+        {n:"Caminata lateral con goma",           t:T_B, tip:"Solo Gomas"}
     ] },
     "Hombros": { icon: "accessibility_new", advice: "Cuidado del manguito rotador.", data: [
         {n:"Press militar mancuernas",           t:T_B, tip:"Solo Mancuernas"},
