@@ -47,7 +47,7 @@ const db = {
         {n:"Sentadilla búlgara",                 t:T_B, tip:"Mancuernas / Gomas"},
         {n:"Peso muerto rumano con mancuernas",  t:T_B, tip:"Solo Mancuernas"},
         {n:"Peso muerto unilateral",             t:T_B, tip:"Solo Mancuernas"},
-        {n:"Buenos días con goma",               t:T_B, tip:"Solo Gomas"},
+        {n:"paseo lateral con goma",             t:T_B, tip:"Solo Gomas"},
         {n:"Zancadas",                           t:T_B, tip:"Mancuernas / Gomas"},
         {n:"Step up",                            t:T_B, tip:"Mancuernas / Gomas"},
         {n:"Split squat",                        t:T_B, tip:"Mancuernas / Gomas"},
@@ -1015,43 +1015,9 @@ function borrarTodoHistorial() {
     renderHistory();
 }
 
-function renderCardioChart() {
-    const container = document.getElementById('cardioChart');
-    if (!container) return;
-    const today = new Date();
-    const weeks = [];
-    for (let w = 7; w >= 0; w--) {
-        const fechas = [];
-        for (let d = 6; d >= 0; d--) {
-            const dt = new Date(today); dt.setDate(today.getDate()-(w*7+d));
-            fechas.push(dt.toLocaleDateString());
-        }
-        let total = 0;
-        state.historial.filter(h => fechas.includes(h.fecha)).forEach(s => {
-            if (s.ejercicios) s.ejercicios.forEach(ex => {
-                if (ex.group==='Cardio' && ex.series) total += parseFloat(ex.series)||0;
-            });
-        });
-        const ref = new Date(today); ref.setDate(today.getDate()-w*7);
-        weeks.push({ min: Math.round(total), label: `${ref.getDate()}/${ref.getMonth()+1}` });
-    }
-    const maxMin = Math.max(...weeks.map(w=>w.min), 1);
-    container.innerHTML = `
-        <div class="cardio-chart-title">🚴 Cardio semanal · últimas 8 semanas</div>
-        <div class="cardio-chart-bars">
-            ${weeks.map(w=>`
-            <div class="cardio-bar-col">
-                <div class="cardio-bar-wrap"><div class="cardio-bar-fill" style="height:${Math.round(w.min/maxMin*100)}%"></div></div>
-                <span class="cardio-bar-val">${w.min||''}</span>
-                <span class="cardio-bar-label">${w.label}</span>
-            </div>`).join('')}
-        </div>`;
-}
-
 function renderHistory() {
     updateStats();
     renderCalendar();
-    renderCardioChart();
     const hList = document.getElementById('historyList');
     if (hList) hList.innerHTML = '';
 }
