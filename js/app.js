@@ -47,7 +47,7 @@ const db = {
         {n:"Sentadilla búlgara",                 t:T_B, tip:"Mancuernas / Gomas"},
         {n:"Peso muerto rumano con mancuernas",  t:T_B, tip:"Solo Mancuernas"},
         {n:"Peso muerto unilateral",             t:T_B, tip:"Solo Mancuernas"},
-        {n:"paseo lateral con goma",             t:T_B, tip:"Solo Gomas"},
+        {n:"Buenos días con goma",               t:T_B, tip:"Solo Gomas"},
         {n:"Zancadas",                           t:T_B, tip:"Mancuernas / Gomas"},
         {n:"Step up",                            t:T_B, tip:"Mancuernas / Gomas"},
         {n:"Split squat",                        t:T_B, tip:"Mancuernas / Gomas"},
@@ -537,18 +537,6 @@ function getDayColor(selected) {
     return { c: "var(--color-amarillo)", s: "Mezcla Híbrida" };
 }
 
-function getDiasDesdeGrupo(grupo) {
-    const hoy = new Date();
-    for (const s of state.historial) {
-        if (s.ejercicios && s.ejercicios.some(e => e.group === grupo)) {
-            const p = s.fecha.split('/');
-            const d = new Date(p[2], p[1]-1, p[0]);
-            return Math.floor((hoy-d)/(1000*60*60*24));
-        }
-    }
-    return null;
-}
-
 function editarDia(dia) { diasEditando.add(dia); renderWeek(); }
 function guardarDia(dia) { diasEditando.delete(dia); renderWeek(); }
 
@@ -606,10 +594,7 @@ function renderWeek() {
         <div class="day-card" style="background-color: ${info.c}">
             <div class="day-header">
                 <div class="day-name">${DIAS_DISPLAY[idx]}</div>
-                <div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;">
-                    <div class="day-status">${info.s}</div>
-                    ${sel.filter(g=>g!=='Cardio').map(g=>{const d=getDiasDesdeGrupo(g);const c=d===null?'':d>=5?'#2E7D32':d>=3?'#E65100':'';return d!==null&&d>=3?`<span style="font-size:9px;color:${c};font-weight:500;">${g.slice(0,3)} ${d}d</span>`:'';}).join('')}
-                </div>
+                <div class="day-status">${info.s}</div>
             </div>
             <div class="selected-labels" style="margin-bottom:${tieneRutina?'8':'4'}px;">
                 ${labelsHtml}
