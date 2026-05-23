@@ -1495,4 +1495,18 @@ body.dark-mode .btn-pill { background: #2D2640; color: #D0BCFF; }
 
 body.dark-mode .week-btn-secondary { background: rgba(255,255,255,0.06); color: #D0BCFF; border-color: #D0BCFF; }
 
+body.dark-mode .check-item {
+    background: #332F38;
+    color: #E6E1E5;
+    border-color: #49454F;
+}
+
+body.dark-mode .check-item input[type="checkbox"] {
+    accent-color: #D0BCFF;
+}
+
+body.dark-mode .group-selector {
+    border-top-color: rgba(255,255,255,0.1);
+}
+
 
