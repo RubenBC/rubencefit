@@ -21,8 +21,8 @@
     <img src="ch3ca-logo.png" style="width:220px;max-width:65vw;height:auto;display:block;" alt="ch3ca" loading="eager" onerror="this.style.display='none'">
     <div class="splash-credits">
         <p class="splash-app-name">IronLog</p>
-        <p class="splash-by">Diseñada y desarrollada por</p>
-        <p class="splash-author">Rubén Bejarano Checa</p>
+        <p class="splash-by">DiseÃ±ada y desarrollada por</p>
+        <p class="splash-author">RubÃ©n Bejarano Checa</p>
         <p class="splash-ai">Creada con asistencia de inteligencia artificial</p>
     </div>
 </div>
@@ -39,7 +39,7 @@
     <div class="stopwatch-row" id="stopwatchRow" style="display:none;">
         <span class="material-symbols-outlined" style="font-size:16px; color:var(--primary);">timer</span>
         <div class="stopwatch-display" id="stopwatchDisplay">00:00</div>
-        <span class="stopwatch-label">SESIÓN ACTIVA</span>
+        <span class="stopwatch-label">SESIÃ“N ACTIVA</span>
     </div>
 </div>
 
@@ -55,7 +55,7 @@
         </div>
         <div id="exerciseView" style="display:none;">
             <button onclick="backToGroups()" style="border:none; background:none; color:var(--primary); font-weight:bold; margin-bottom:15px; display:flex; align-items:center; gap:8px;">
-                <span class="material-symbols-outlined">arrow_back</span> Atrás
+                <span class="material-symbols-outlined">arrow_back</span> AtrÃ¡s
             </button>
             <h3 id="selectedGroupName"></h3>
             <p id="groupAdvice" style="font-size: 12px; color: var(--text2); margin-top: -10px; margin-bottom: 15px; font-style: italic;"></p>
@@ -77,7 +77,7 @@
         </div>
         <div id="sessionProgress"></div>
         <div id="todayList"></div>
-        <button class="btn-action" onclick="finalizarSesion()">FINALIZAR SESIÓN</button>
+        <button class="btn-action" onclick="finalizarSesion()">FINALIZAR SESIÃ“N</button>
     </div>
 
     <div id="semanaPage" class="page">
@@ -85,7 +85,7 @@
             <h2><span class="material-symbols-outlined">calendar_view_week</span> Semana</h2>
             <div style="display:flex; gap:8px;">
                 <button onclick="limpiarPlantillas()" style="color:var(--danger); border:none; background:none; font-size:11px; font-weight:bold;">RESETEAR</button>
-                <button onclick="abrirGenerarSemana()" style="background:var(--primary-light); color:var(--primary); border:none; padding:8px 12px; border-radius:10px; font-size:11px; font-weight:bold;">⚡ SEMANA</button>
+                <button onclick="abrirGenerarSemana()" style="background:var(--primary-light); color:var(--primary); border:none; padding:8px 12px; border-radius:10px; font-size:11px; font-weight:bold;">âš¡ SEMANA</button>
             </div>
         </div>
         <div id="weekPlanner"></div>
@@ -115,7 +115,7 @@
             <div class="day-modal-sheet">
                 <div class="day-modal-header">
                     <span id="dayModalTitle" class="day-modal-title"></span>
-                    <button class="day-modal-close" onclick="closeDayModal()">✕</button>
+                    <button class="day-modal-close" onclick="closeDayModal()">âœ•</button>
                 </div>
                 <div id="dayModalBody"></div>
             </div>
@@ -145,11 +145,11 @@
     <div class="day-modal-sheet">
         <div class="day-modal-header">
             <span id="statInfoTitle" class="day-modal-title"></span>
-            <button class="day-modal-close" onclick="cerrarInfoStat()">✕</button>
+            <button class="day-modal-close" onclick="cerrarInfoStat()">âœ•</button>
         </div>
         <p id="statInfoDesc" class="stat-info-desc"></p>
         <div class="stat-info-consejo">
-            <span class="stat-info-consejo-label">💡 Consejo</span>
+            <span class="stat-info-consejo-label">ðŸ’¡ Consejo</span>
             <p id="statInfoConsejo" class="stat-info-consejo-text"></p>
         </div>
     </div>
@@ -158,29 +158,29 @@
 <div id="intensityModal" class="day-modal" style="display:none;" onclick="cerrarSelectorIntensidad(this,event)">
         <div class="day-modal-sheet">
             <div class="day-modal-header">
-                <span class="day-modal-title" id="intensityModalTitle">¿Cómo te encuentras hoy?</span>
-                <button class="day-modal-close" onclick="cerrarSelectorIntensidad()">✕</button>
+                <span class="day-modal-title" id="intensityModalTitle">Â¿CÃ³mo te encuentras hoy?</span>
+                <button class="day-modal-close" onclick="cerrarSelectorIntensidad()">âœ•</button>
             </div>
             <div class="intensity-options">
                 <button class="intensity-btn intensity-suave" onclick="generarConIntensidad('suave')">
-                    <span class="intensity-emoji">🌿</span>
+                    <span class="intensity-emoji">ðŸŒ¿</span>
                     <div class="intensity-info">
                         <div class="intensity-title">Suave</div>
-                        <div class="intensity-desc">Pocos ejercicios, baja carga · ~20 min</div>
+                        <div class="intensity-desc">Pocos ejercicios, baja carga Â· ~20 min</div>
                     </div>
                 </button>
                 <button class="intensity-btn intensity-normal" onclick="generarConIntensidad('normal')">
-                    <span class="intensity-emoji">💪</span>
+                    <span class="intensity-emoji">ðŸ’ª</span>
                     <div class="intensity-info">
                         <div class="intensity-title">Normal</div>
-                        <div class="intensity-desc">Rutina equilibrada · ~30 min</div>
+                        <div class="intensity-desc">Rutina equilibrada Â· ~30 min</div>
                     </div>
                 </button>
                 <button class="intensity-btn intensity-intensa" onclick="generarConIntensidad('intensa')">
-                    <span class="intensity-emoji">🔥</span>
+                    <span class="intensity-emoji">ðŸ”¥</span>
                     <div class="intensity-info">
                         <div class="intensity-title">Intensa</div>
-                        <div class="intensity-desc">Más volumen, doble básico · ~45 min</div>
+                        <div class="intensity-desc">MÃ¡s volumen, doble bÃ¡sico Â· ~45 min</div>
                     </div>
                 </button>
             </div>
