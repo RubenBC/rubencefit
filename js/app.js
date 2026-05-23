@@ -591,10 +591,13 @@ function renderWeek() {
         }
 
         return `
-        <div class="day-card" style="background-color: ${info.c}">
+        <div class="day-card">
             <div class="day-header">
                 <div class="day-name">${DIAS_DISPLAY[idx]}</div>
-                <div class="day-status">${info.s}</div>
+                <div style="display:flex;align-items:center;gap:6px;">
+                    <span style="width:10px;height:10px;border-radius:50%;background:${info.c === 'var(--color-descanso)' ? 'var(--outline)' : info.c};flex-shrink:0;display:inline-block;border:1px solid rgba(0,0,0,0.1);"></span>
+                    <div class="day-status">${info.s}</div>
+                </div>
             </div>
             <div class="selected-labels" style="margin-bottom:${tieneRutina?'8':'4'}px;">
                 ${labelsHtml}
