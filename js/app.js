@@ -70,7 +70,8 @@ const db = {
         {n:"Pájaros inclinados",                 t:T_A, tip:"Mancuernas / Gomas"},
         {n:"Reverse fly goma",                   t:T_A, tip:"Solo Gomas"},
         {n:"Face pull abierto",                  t:T_S, tip:"Solo Gomas"},
-        {n:"Elevaciones laterales ligeras",      t:T_S, tip:"Mancuernas / Gomas"}
+        {n:"Elevaciones laterales ligeras",      t:T_S, tip:"Mancuernas / Gomas"},
+        {n:"Encogimientos con mancuernas",       t:T_A, tip:"Solo Mancuernas"}
     ] },
     "Bíceps": { icon: "fitness_center", advice: "Flexión de codo técnica.", data: [
         {n:"Curl alterno mancuernas",            t:T_B, tip:"Solo Mancuernas"},
@@ -117,9 +118,44 @@ const db = {
         {n:"Bicicleta Estática",       t:T_S, tip:"Bicicleta"},
         {n:"Caminata Activa con Braceo",              t:T_S, tip:"Sin equipamiento"},
         {n:"Boxeo Sentado",        t:T_S, tip:"Sin equipamiento"},
+        {n:"Shadow boxing de pie",          t:T_S, tip:"Sin equipamiento"},
         {n:"Círculos de Brazos",           t:T_S, tip:"Sin equipamiento"},
         {n:"Marcha Sentado",    t:T_S, tip:"Sin equipamiento"},
         {n:"Paseo Intenso",              t:T_S, tip:"Sin equipamiento"}
+    ] },
+    "Movilidad": { icon: "rotate_right", advice: "Calentamiento y movilidad de pierna (drenaje).", data: [
+        {n:"Gato-vaca",                          t:T_S, tip:"Sin equipamiento"},
+        {n:"Rotaciones torácicas tumbado",       t:T_S, tip:"Sin equipamiento"},
+        {n:"CARs escapulares",                   t:T_S, tip:"Sin equipamiento"},
+        {n:"Círculos de brazos amplios",         t:T_S, tip:"Sin equipamiento"},
+        {n:"Movilidad de muñecas",               t:T_S, tip:"Sin equipamiento"},
+        {n:"Movilidad cervical suave",           t:T_S, tip:"Sin equipamiento"},
+        {n:"Bombeo de tobillo tumbado",          t:T_S, tip:"Sin equipamiento"},
+        {n:"Círculos de tobillo",                t:T_S, tip:"Sin equipamiento"},
+        {n:"Movilidad cadera 90/90",             t:T_S, tip:"Sin equipamiento"},
+        {n:"Apertura/cierre rodilla tumbado",    t:T_S, tip:"Sin equipamiento"},
+        {n:"Clamshell (sin goma)",               t:T_S, tip:"Sin equipamiento"},
+        {n:"Abducción cadera tumbado lateral",   t:T_S, tip:"Sin equipamiento"},
+        {n:"Aducción cadera tumbado lateral",    t:T_S, tip:"Sin equipamiento"},
+        {n:"Pedaleo aéreo suave",                t:T_S, tip:"Sin equipamiento"},
+        {n:"Rotaciones externas con goma ligera",t:T_S, tip:"Solo Gomas"}
+    ] },
+    "Drenaje": { icon: "spa", advice: "Vuelta a la calma, estiramientos y drenaje linfático.", data: [
+        {n:"Piernas en pared",                   t:T_S, tip:"Sin equipamiento"},
+        {n:"Bombeo de tobillo lento",            t:T_S, tip:"Sin equipamiento"},
+        {n:"Auto-masaje drenaje linfático",      t:T_S, tip:"Sin equipamiento"},
+        {n:"Respiración diafragmática",          t:T_S, tip:"Sin equipamiento"},
+        {n:"Respiración 4-7-8",                  t:T_S, tip:"Sin equipamiento"},
+        {n:"Postura del niño",                   t:T_S, tip:"Sin equipamiento"},
+        {n:"Mariposa (estiramiento aductores)",  t:T_S, tip:"Sin equipamiento"},
+        {n:"Estiramiento isquios tumbado",       t:T_S, tip:"Sin equipamiento"},
+        {n:"Estiramiento psoas",                 t:T_S, tip:"Sin equipamiento"},
+        {n:"Estiramiento pectoral en marco",     t:T_S, tip:"Sin equipamiento"},
+        {n:"Estiramiento tríceps overhead",      t:T_S, tip:"Sin equipamiento"},
+        {n:"Estiramiento dorsal lateralizado",   t:T_S, tip:"Sin equipamiento"},
+        {n:"Estiramiento hombros (brazo cruzado)",t:T_S, tip:"Sin equipamiento"},
+        {n:"Estiramiento bíceps en pared",       t:T_S, tip:"Sin equipamiento"},
+        {n:"Gato pasivo",                        t:T_S, tip:"Sin equipamiento"}
     ] }
 };
 
@@ -522,9 +558,10 @@ function quitarDeHoy(i) { state.hoy.splice(i, 1); save(); renderToday(); }
 
 function getDayColor(selected) {
     if (selected.length === 0) return { c: "var(--color-descanso)", s: "Descanso" };
-    const strengthGroups = selected.filter(g => g !== "Cardio");
+    const NEUTROS = ["Cardio", "Movilidad", "Drenaje"];
+    const strengthGroups = selected.filter(g => !NEUTROS.includes(g));
     const hasCardio = selected.includes("Cardio");
-    if (strengthGroups.length === 0) return { c: "var(--color-verde)", s: "Solo Cardio" };
+    if (strengthGroups.length === 0) return { c: "var(--color-verde)", s: "Solo Cardio/Movilidad" };
     const hasPush = strengthGroups.some(g => P_PUSH.includes(g));
     const hasPull = strengthGroups.some(g => P_PULL.includes(g));
     if (hasPush && hasPull) return { c: "var(--color-rojo)", s: "Conflicto Empuje/Tirón" };
@@ -591,13 +628,10 @@ function renderWeek() {
         }
 
         return `
-        <div class="day-card">
+        <div class="day-card" style="background-color: ${info.c}">
             <div class="day-header">
                 <div class="day-name">${DIAS_DISPLAY[idx]}</div>
-                <div style="display:flex;align-items:center;gap:6px;">
-                    <span style="width:10px;height:10px;border-radius:50%;background:${info.c === 'var(--color-descanso)' ? 'var(--outline)' : info.c};flex-shrink:0;display:inline-block;border:1px solid rgba(0,0,0,0.1);"></span>
-                    <div class="day-status">${info.s}</div>
-                </div>
+                <div class="day-status">${info.s}</div>
             </div>
             <div class="selected-labels" style="margin-bottom:${tieneRutina?'8':'4'}px;">
                 ${labelsHtml}
@@ -718,7 +752,8 @@ function buildRutina(gruposSeleccionados, intensidad, recentExternal) {
     const recent = {};
     GRUPOS.forEach(g => recent[g] = [...(recentHist[g]||[]), ...(recentExternal[g]||[])]);
     const getRandom = arr => arr[Math.floor(Math.random() * arr.length)];
-    const gruposSinCardio = gruposSeleccionados.filter(g => g !== 'Cardio');
+    const ESPECIALES = ["Movilidad", "Drenaje"];
+    const gruposSinCardio = gruposSeleccionados.filter(g => g !== 'Cardio' && !ESPECIALES.includes(g));
     let finalPool = [];
 
     gruposSinCardio.forEach(g => {
@@ -763,12 +798,21 @@ function buildRutina(gruposSeleccionados, intensidad, recentExternal) {
         if (!cp.length) cp = [...db.Cardio.data];
         finalPool.unshift({...getRandom(cp), group: 'Cardio'});
     }
+    // Movilidad y Drenaje: añadir 4-6 ejercicios variados de cada grupo si está seleccionado
+    ESPECIALES.forEach(g => {
+        if (!gruposSeleccionados.includes(g) || !db[g]) return;
+        const n = intensidad === 'suave' ? 3 : (intensidad === 'intensa' ? 6 : 5);
+        const pool = [...db[g].data].sort(() => Math.random() - 0.5).slice(0, n);
+        pool.forEach(ex => finalPool.push({...ex, group: g}));
+    });
     // Ordenar ejercicios en el orden óptimo de ejecución
-    const gruposPrincipales = gruposSeleccionados.filter(g => g !== 'Cardio' && g !== 'Core');
+    const gruposPrincipales = gruposSeleccionados.filter(g => g !== 'Cardio' && g !== 'Core' && !ESPECIALES.includes(g));
 
     const getScore = (ex) => {
-        if (ex.group === 'Cardio') return 0;                          // 1. Cardio siempre primero
+        if (ex.group === 'Movilidad') return -100;                    // 0. Movilidad/Calentamiento primero
+        if (ex.group === 'Cardio') return 0;                          // 1. Cardio (al final si se reordena)
         if (['Gemelos de pie','Gemelo unilateral','Gemelo escalón'].includes(ex.n || ex.name)) return 999;
+        if (ex.group === 'Drenaje') return 1000;                      // 2. Drenaje al final
         if (ex.t === T_S) return ex.group === 'Core' ? 980 : 960;    // 3. Salud casi al final
         if (ex.group === 'Core') return ex.t === T_B ? 800 : 840;    // 4. Core después de grupos principales
         const gIdx = gruposPrincipales.indexOf(ex.group);
