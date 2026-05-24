@@ -24,23 +24,12 @@ const db = {
         {n:"Pullover con mancuerna",       t:T_A, tip:"Solo Mancuernas",   info:"Desde encima del pecho hacia atrás de la cabeza con brazos semiestirados.", recSeries:"3", recReps:"10-15"},
         {n:"Face pull con goma",           t:T_A, tip:"Solo Gomas",         info:"Tirar de la goma hacia la cara abriendo los codos hacia los lados.", recSeries:"3-4", recReps:"12-20"}
     ] },
-    "Piernas": { icon: "directions_walk", advice: "Sin impacto y retorno venoso.", data: [
-        {n:"Sentadilla goblet",                  t:T_B, tip:"Solo Mancuernas",      info:"Con mancuerna al pecho, sentadilla profunda manteniendo el torso erguido.", recSeries:"3-4", recReps:"8-12"},
-        {n:"Sentadilla sumo",                    t:T_B, tip:"Mancuernas / Gomas",   info:"Pies muy separados y puntas hacia afuera. Mayor énfasis en aductores e isquiotibiales.", recSeries:"3-4", recReps:"8-12"},
-        {n:"Sentadilla búlgara",                 t:T_B, tip:"Mancuernas / Gomas",   info:"Pie trasero elevado en silla. Baja la rodilla trasera y sube con la pierna delantera.", recSeries:"3", recReps:"8-10"},
-        {n:"Peso muerto rumano con mancuernas",  t:T_B, tip:"Solo Mancuernas",      info:"Con piernas casi rectas, bajar las mancuernas hasta sentir el estiramiento de isquiotibiales.", recSeries:"3-4", recReps:"8-12"},
-        {n:"Bisagra de cadera con goma",         t:T_B, tip:"Solo Gomas",            info:"Goma por detrás de la cintura, bisagra de cadera hacia delante y vuelve. Trabaja isquiotibiales y glúteos.", recSeries:"3-4", recReps:"10-15"},
-        {n:"Peso muerto unilateral",             t:T_B, tip:"Solo Mancuernas",      info:"Una pierna a la vez, bajar la mancuerna manteniendo la espalda recta. Mejora equilibrio.", recSeries:"3", recReps:"8-10"},
-        {n:"Zancadas",                           t:T_B, tip:"Mancuernas / Gomas",   info:"Un paso adelante, baja la rodilla trasera hacia el suelo y vuelve a la posición inicial.", recSeries:"3", recReps:"10-12"},
-        {n:"Step up",                            t:T_B, tip:"Mancuernas / Gomas",   info:"Sube a un escalón con un pie, lleva la rodilla contraria arriba y baja controlado.", recSeries:"3", recReps:"10-12"},
-        {n:"Split squat",                        t:T_B, tip:"Mancuernas / Gomas",   info:"Pies en posición de zancada estática, baja y sube sin cambiar la posición de los pies.", recSeries:"3", recReps:"10-12"},
-        {n:"Puente glúteo",                      t:T_B, tip:"Mancuernas / Gomas",   info:"Tumbado boca arriba, sube las caderas apretando glúteos hasta formar una línea.", recSeries:"3-4", recReps:"12-15"},
-        {n:"Hip thrust suelo",                   t:T_B, tip:"Mancuernas / Gomas",   info:"Hombros en el suelo, empuja caderas hacia arriba con máxima contracción de glúteos.", recSeries:"3-4", recReps:"12-15"},
-        {n:"Puente unilateral",                  t:T_A, tip:"Sin equipamiento",     info:"Puente glúteo con una sola pierna. La otra permanece extendida o en el aire.", recSeries:"3", recReps:"10-12"},
-        {n:"Caminata lateral con goma",          t:T_B, tip:"Solo Gomas",            info:"Goma en tobillos o rodillas, pasos laterales controlados. Activa glúteo medio y abductores.", recSeries:"3", recReps:"10-15"},
-        {n:"Gemelos de pie",                     t:T_S, tip:"Sin equipamiento",     info:"De pie, elevar los talones lentamente y bajar controlado. Principal bomba venosa de la pierna.", recSeries:"3-4", recReps:"12-20"},
-        {n:"Gemelo unilateral",                  t:T_S, tip:"Sin equipamiento",     info:"Igual que gemelos de pie pero con una sola pierna. Trabaja específicamente la bomba linfática de esa extremidad.", recSeries:"3-4", recReps:"12-20"},
-        {n:"Gemelo escalón",                     t:T_S, tip:"Sin equipamiento",     info:"Con el talón colgando en un escalón, rango completo. Mayor estiramiento y activación.", recSeries:"3-4", recReps:"12-15"}
+    "Piernas": { icon: "directions_walk", advice: "Drenaje linfático y retorno venoso.", data: [
+        {n:"Elevación de piernas en pared",  t:T_S, tip:"Sin equipamiento", info:"Túmbate boca arriba y apoya las piernas en vertical contra la pared, relajando completamente pies y tobillos.", recSeries:"2-4", recReps:"5-15 min"},
+        {n:"Bomba de tobillo",               t:T_S, tip:"Sin equipamiento", info:"Con la pierna estirada, alterna llevar la punta del pie hacia ti y luego estirarla hacia delante.", recSeries:"3-5", recReps:"20-40"},
+        {n:"Elevaciones de talones",         t:T_S, tip:"Sin equipamiento", info:"Elevar talones lentamente y bajar controlado sin rebotes. De pie o sentado con apoyo en pared.", recSeries:"3-4", recReps:"12-20"},
+        {n:"Pedaleo en el aire",             t:T_S, tip:"Sin equipamiento", info:"Boca arriba, simula pedaleo lento manteniendo rango cómodo. Activa la circulación de piernas y cadera.", recSeries:"2-3", recReps:"3-5 min"},
+        {n:"Marcha en el sitio",             t:T_S, tip:"Sin equipamiento", info:"De pie, levanta rodillas de forma suave alternando piernas sin impacto. Activa el retorno linfático.", recSeries:"1", recReps:"2-5 min"}
     ] },
     "Hombros": { icon: "accessibility_new", advice: "Cuidado del manguito rotador.", data: [
         {n:"Press militar mancuernas",     t:T_B, tip:"Solo Mancuernas",   info:"Empujar mancuernas desde los hombros hacia arriba con el cuerpo estable.", recSeries:"3-5", recReps:"6-12"},
@@ -829,7 +818,7 @@ function buildRutina(gruposSeleccionados, intensidad, recentExternal) {
         if (saludSel >= config.salud) break;
         if (!finalPool.find(f => f.n === ex.n)) { finalPool.push(ex); saludSel++; }
     }
-    const LINFATICOS = ['Gemelos de pie', 'Gemelo unilateral', 'Gemelo escalón'];
+    const LINFATICOS = ['Elevaciones de talones','Bomba de tobillo','Elevación de piernas en pared','Pedaleo en el aire','Marcha en el sitio'];
     if (gruposSeleccionados.includes('Piernas') && !finalPool.some(f => LINFATICOS.includes(f.n))) {
         const lp = getEjerciciosDe('Piernas').filter(e => LINFATICOS.includes(e.n));
         if (lp.length > 0) finalPool.push({...getRandom(lp), group: 'Piernas'});
@@ -844,7 +833,7 @@ function buildRutina(gruposSeleccionados, intensidad, recentExternal) {
 
     const getScore = (ex) => {
         if (ex.group === 'Cardio') return 0;                          // 1. Cardio siempre primero
-        if (['Gemelos de pie','Gemelo unilateral','Gemelo escalón'].includes(ex.n || ex.name)) return 999;
+        if (['Elevaciones de talones','Bomba de tobillo','Elevación de piernas en pared','Pedaleo en el aire','Marcha en el sitio'].includes(ex.n || ex.name)) return 999;
         if (ex.t === T_S) return ex.group === 'Core' ? 980 : 960;    // 3. Salud casi al final
         if (ex.group === 'Core') return ex.t === T_B ? 800 : 840;    // 4. Core después de grupos principales
         const gIdx = gruposPrincipales.indexOf(ex.group);
