@@ -634,7 +634,10 @@ function renderWeek() {
                 <div class="week-ex-list">
                     ${plantilla.map((ex, i) => `
                     <div class="week-ex-item">
-                        <span class="week-ex-name">${getIcon(ex.t)}${ex.name} <span style="color:var(--text2);font-weight:400;font-size:11px;">(${ex.group})</span></span>
+                        <div style="display:flex;align-items:center;justify-content:space-between;gap:6px;flex:1;">
+                            <span class="week-ex-name">${getIcon(ex.t)}${ex.name} <span style="color:var(--text2);font-weight:400;font-size:11px;">(${ex.group})</span></span>
+                            ${(() => { const dbEx = getEjerciciosDe(ex.group).find(e => (e.n||e.name)===ex.name); return dbEx?.info ? `<button class="week-info-btn" onclick="abrirInfoEjercicio('${ex.name}','${ex.group}')"><span class="material-symbols-outlined" style="font-size:15px;">info</span></button>` : ''; })()}
+                        </div>
                         ${editando ? `
                         <div class="week-ex-actions">
                             <button class="btn-icon btn-sm" onclick="moverEjercicioDia('${dia}',${i},-1)" ${i===0?'disabled':''}><span class="material-symbols-outlined">arrow_upward</span></button>
@@ -664,10 +667,18 @@ function renderWeek() {
         }
 
         return `
-        <div class="day-card" style="background-color: ${info.c}">
+        <div class="day-card">
             <div class="day-header">
                 <div class="day-name">${DIAS_DISPLAY[idx]}</div>
-                <div class="day-status">${info.s}</div>
+                <div style="display:flex;align-items:center;gap:7px;">
+                    <span class="day-dot" style="background:${
+                        info.c === 'var(--color-rojo)'      ? '#E53935' :
+                        info.c === 'var(--color-amarillo)'  ? '#F9A825' :
+                        info.c === 'var(--color-verde)'     ? '#43A047' :
+                        'var(--outline)'
+                    };"></span>
+                    <div class="day-status">${info.s}</div>
+                </div>
             </div>
             <div class="selected-labels" style="margin-bottom:${tieneRutina?'8':'4'}px;">
                 ${labelsHtml}
