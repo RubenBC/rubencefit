@@ -139,6 +139,55 @@
     </button>
 </nav>
 
+<!-- MODAL INFO EJERCICIO -->
+<div id="exInfoModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:9000;align-items:flex-end;justify-content:center;" onclick="cerrarInfoEjercicio(this,event)">
+    <div style="background:var(--surface);border-radius:24px 24px 0 0;padding:24px 20px 40px;width:100%;max-width:600px;animation:slideUp 0.22s ease;">
+        <div style="width:32px;height:4px;background:var(--outline);border-radius:2px;margin:0 auto 20px;"></div>
+        <h3 id="exInfoNombre" style="margin:0 0 12px;color:var(--primary);font-size:17px;"></h3>
+        <p id="exInfoDesc" style="margin:0 0 16px;color:var(--text);font-size:14px;line-height:1.6;"></p>
+        <div id="exInfoRecWrap" style="background:var(--primary-light);border-radius:10px;padding:10px 14px;margin-bottom:20px;">
+            <span style="font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:1px;">Recomendado</span>
+            <p id="exInfoRec" style="margin:4px 0 0;color:var(--primary);font-weight:600;font-size:14px;"></p>
+        </div>
+        <button onclick="document.getElementById('exInfoModal').style.display='none'" style="width:100%;background:var(--primary);color:white;border:none;border-radius:12px;padding:14px;font-size:15px;font-weight:bold;cursor:pointer;">Cerrar</button>
+    </div>
+</div>
+
+<!-- MODAL EDITAR/AÑADIR EJERCICIO -->
+<div id="editExModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:9000;align-items:flex-end;justify-content:center;" onclick="cerrarEditarEjercicio(this,event)">
+    <div style="background:var(--surface);border-radius:24px 24px 0 0;padding:24px 20px 40px;width:100%;max-width:600px;animation:slideUp 0.22s ease;">
+        <div style="width:32px;height:4px;background:var(--outline);border-radius:2px;margin:0 auto 20px;"></div>
+        <h3 style="margin:0 0 20px;color:var(--primary);font-size:17px;">Editar ejercicio</h3>
+        <div class="input-group" style="margin-bottom:12px;">
+            <label>Nombre</label>
+            <input id="editExNombre" type="text" placeholder="Nombre del ejercicio">
+        </div>
+        <div class="input-group" style="margin-bottom:12px;">
+            <label>Tipo</label>
+            <select id="editExTipo" style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--outline);background:var(--surface);color:var(--text);font-size:14px;">
+                <option value="T_B">🔥 Básico</option>
+                <option value="T_A">🎯 Aislamiento</option>
+                <option value="T_S">🛡️ Salud</option>
+            </select>
+        </div>
+        <div class="input-group" style="margin-bottom:12px;">
+            <label>Descripción</label>
+            <textarea id="editExInfo" placeholder="Cómo se hace..." style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--outline);background:var(--surface);color:var(--text);font-size:13px;min-height:70px;resize:none;box-sizing:border-box;"></textarea>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px;">
+            <div class="input-group">
+                <label>Series rec.</label>
+                <input id="editExRecSeries" type="text" placeholder="ej: 3-4">
+            </div>
+            <div class="input-group">
+                <label>Reps rec.</label>
+                <input id="editExRecReps" type="text" placeholder="ej: 8-12">
+            </div>
+        </div>
+        <button onclick="guardarEjercicio()" style="width:100%;background:var(--primary);color:white;border:none;border-radius:12px;padding:14px;font-size:15px;font-weight:bold;cursor:pointer;">Guardar</button>
+    </div>
+</div>
+
 <script src="js/app.js"></script>
 
 <div id="statInfoModal" class="day-modal" style="display:none;" onclick="cerrarInfoStat(this,event)">
