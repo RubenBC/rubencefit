@@ -302,10 +302,10 @@ function showExercises(group) {
                 </div>
                 <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
                     <span class="tag ${tagClass}">${ex.t}</span>
-                    <div style="display:flex;gap:4px;">
-                        ${ex.info ? `<button class="btn-icon-sm" onclick="abrirInfoEjercicio('${nombre}','${group}')" title="Info">ⓘ</button>` : ''}
-                        <button class="btn-icon-sm" onclick="abrirEditarEjercicio('${nombre}','${group}',${esCustom})" title="Editar">✏️</button>
-                        ${esCustom ? `<button class="btn-icon-sm btn-delete" onclick="eliminarCustom('${nombre}','${group}')" title="Eliminar">🗑</button>` : ''}
+                    <div style="display:flex;gap:4px;margin-top:4px;">
+                        ${ex.info ? `<button class="btn-ex-info" onclick="abrirInfoEjercicio('${nombre}','${group}')"><span class="material-symbols-outlined" style="font-size:16px;">info</span></button>` : ''}
+                        <button class="btn-ex-edit" onclick="abrirEditarEjercicio('${nombre}','${group}',${esCustom})"><span class="material-symbols-outlined" style="font-size:16px;">edit</span></button>
+                        ${esCustom ? `<button class="btn-ex-del" onclick="eliminarCustom('${nombre}','${group}')"><span class="material-symbols-outlined" style="font-size:16px;">delete</span></button>` : ''}
                     </div>
                 </div>
             </div>
@@ -802,28 +802,28 @@ function buildRutina(gruposSeleccionados, intensidad, recentExternal) {
     let finalPool = [];
 
     gruposSinCardio.forEach(g => {
-        const sinRepetir = db[g].data.filter(e => e.t === T_B && !recent[g].includes(e.n));
-        const pool = sinRepetir.length > 0 ? sinRepetir : db[g].data.filter(e => e.t === T_B);
+        const sinRepetir = getEjerciciosDe(g).filter(e => e.t === T_B && !recent[g].includes(e.n));
+        const pool = sinRepetir.length > 0 ? sinRepetir : getEjerciciosDe(g).filter(e => e.t === T_B);
         if (pool.length > 0) finalPool.push({...getRandom(pool), group: g});
     });
     if (config.dosBasicos) {
         gruposSinCardio.forEach(g => {
             const ya = finalPool.filter(f => f.group === g).map(f => f.n);
-            const pool = db[g].data.filter(e => e.t === T_B && !ya.includes(e.n));
+            const pool = getEjerciciosDe(g).filter(e => e.t === T_B && !ya.includes(e.n));
             if (pool.length > 0) finalPool.push({...getRandom(pool), group: g});
         });
     }
     if (config.totalAisla === 1) {
-        const todos = gruposSinCardio.flatMap(g => db[g].data.filter(e => e.t === T_A).map(e => ({...e, group: g})));
+        const todos = gruposSinCardio.flatMap(g => getEjerciciosDe(g).filter(e => e.t === T_A).map(e => ({...e, group: g})));
         if (todos.length > 0) finalPool.push(getRandom(todos));
     } else {
         gruposSinCardio.forEach(g => {
-            const sinRepetir = db[g].data.filter(e => e.t === T_A && !recent[g].includes(e.n));
-            const pool = sinRepetir.length > 0 ? sinRepetir : db[g].data.filter(e => e.t === T_A);
+            const sinRepetir = getEjerciciosDe(g).filter(e => e.t === T_A && !recent[g].includes(e.n));
+            const pool = sinRepetir.length > 0 ? sinRepetir : getEjerciciosDe(g).filter(e => e.t === T_A);
             if (pool.length > 0) finalPool.push({...getRandom(pool), group: g});
         });
     }
-    const saludShuffled = [...gruposSinCardio.flatMap(g => db[g].data.filter(e => e.t === T_S).map(e => ({...e, group: g})))].sort(() => Math.random() - 0.5);
+    const saludShuffled = [...gruposSinCardio.flatMap(g => getEjerciciosDe(g).filter(e => e.t === T_S).map(e => ({...e, group: g})))].sort(() => Math.random() - 0.5);
     let saludSel = 0;
     for (const ex of saludShuffled) {
         if (saludSel >= config.salud) break;
@@ -831,16 +831,12 @@ function buildRutina(gruposSeleccionados, intensidad, recentExternal) {
     }
     const LINFATICOS = ['Gemelos de pie', 'Gemelo unilateral', 'Gemelo escalón'];
     if (gruposSeleccionados.includes('Piernas') && !finalPool.some(f => LINFATICOS.includes(f.n))) {
-        const lp = db['Piernas'].data.filter(e => LINFATICOS.includes(e.n));
+        const lp = getEjerciciosDe('Piernas').filter(e => LINFATICOS.includes(e.n));
         if (lp.length > 0) finalPool.push({...getRandom(lp), group: 'Piernas'});
     }
     if (config.incluirCardio && gruposSeleccionados.includes('Cardio')) {
-        let cp = intensidad === 'suave'
-            ? db.Cardio.data.filter(e => ['Bicicleta Estática','Marcha Sentado','Marcha Sentado Rodillas Altas'].includes(e.n))
-            : intensidad === 'intensa'
-                ? db.Cardio.data.filter(e => !['Paseo Intenso','Boxeo Sentado'].includes(e.n))
-                : [...db.Cardio.data];
-        if (!cp.length) cp = [...db.Cardio.data];
+        let cp = [...getEjerciciosDe("Cardio")];
+        if (!cp.length) cp = [...getEjerciciosDe("Cardio")];
         finalPool.unshift({...getRandom(cp), group: 'Cardio'});
     }
     // Ordenar ejercicios en el orden óptimo de ejecución
