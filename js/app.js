@@ -24,7 +24,7 @@ const db = {
         {n:"Pullover con mancuerna",       t:T_A, tip:"Solo Mancuernas",   info:"Desde encima del pecho hacia atrás de la cabeza con brazos semiestirados.", recSeries:"3", recReps:"10-15"},
         {n:"Face pull con goma",           t:T_A, tip:"Solo Gomas",         info:"Tirar de la goma hacia la cara abriendo los codos hacia los lados.", recSeries:"3-4", recReps:"12-20"}
     ] },
-    "Piernas": { icon: "directions_walk", advice: "Drenaje linfático y retorno venoso.", data: [
+    "Drenaje": { icon: "water_drop", advice: "Drenaje linfático y retorno venoso.", data: [
         {n:"Elevación de piernas en pared",  t:T_S, tip:"Sin equipamiento", info:"Túmbate boca arriba y apoya las piernas en vertical contra la pared, relajando completamente pies y tobillos.", recSeries:"2-4", recReps:"5-15 min"},
         {n:"Bomba de tobillo",               t:T_S, tip:"Sin equipamiento", info:"Con la pierna estirada, alterna llevar la punta del pie hacia ti y luego estirarla hacia delante.", recSeries:"3-5", recReps:"20-40"},
         {n:"Elevaciones de talones",         t:T_S, tip:"Sin equipamiento", info:"Elevar talones lentamente y bajar controlado sin rebotes. De pie o sentado con apoyo en pared.", recSeries:"3-4", recReps:"12-20"},
@@ -83,6 +83,7 @@ const db = {
 };
 
 const GRUPOS = Object.keys(db);
+const GRUPOS_SEMANA = GRUPOS.filter(g => g !== 'Drenaje'); // Piernas no aparece en planificación semanal
 
 function getEjerciciosDe(grupo) {
     const base = (db[grupo]?.data || []).map(ex => {
@@ -97,7 +98,7 @@ const DIAS_DISPLAY = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sá
 
 const P_PUSH = ["Pecho", "Hombros", "Tríceps"];
 const P_PULL = ["Espalda", "Bíceps"];
-const P_LEGS = ["Piernas", "Core"];
+const P_LEGS = ["Drenaje", "Core"];
 
 let state = JSON.parse(localStorage.getItem('iron_log_v8.6')) || {
     hoy: [], historial: [], activeTab: 'rutinaPage',
@@ -633,7 +634,7 @@ function renderWeek() {
                 <div class="week-ex-list">
                     ${plantilla.map((ex, i) => `
                     <div class="week-ex-item">
-                        <span class="week-ex-name">${getIcon(ex.t)}${ex.name}</span>
+                        <span class="week-ex-name">${getIcon(ex.t)}${ex.name} <span style="color:var(--text2);font-weight:400;font-size:11px;">(${ex.group})</span></span>
                         ${editando ? `
                         <div class="week-ex-actions">
                             <button class="btn-icon btn-sm" onclick="moverEjercicioDia('${dia}',${i},-1)" ${i===0?'disabled':''}><span class="material-symbols-outlined">arrow_upward</span></button>
@@ -676,7 +677,7 @@ function renderWeek() {
                 CONFIGURAR GRUPOS <span class="material-symbols-outlined" style="font-size:14px;">${isOpen ? 'expand_less' : 'expand_more'}</span>
             </button>
             <div class="group-selector ${isOpen ? 'open' : ''}">
-                ${GRUPOS.map(g => `
+                ${GRUPOS_SEMANA.map(g => `
                     <label class="check-item">
                         <input type="checkbox" ${sel.includes(g)?'checked':''} onchange="toggleWeek('${dia}','${g}')"> ${g}
                     </label>
@@ -779,69 +780,103 @@ function getEjerciciosRecientesPorGrupo(numSesiones) {
 
 function buildRutina(gruposSeleccionados, intensidad, recentExternal) {
     const config = {
-        suave:   { dosBasicos: false, totalAisla: 1, salud: 2, incluirCardio: true },
-        normal:  { dosBasicos: false, totalAisla: null, salud: 2, incluirCardio: true },
-        intensa: { dosBasicos: true,  totalAisla: null, salud: 1, incluirCardio: true }
+        suave:   { dosBasicos: false, totalAisla: 1, salud: 2, coreCount: 1, incluirCardio: true },
+        normal:  { dosBasicos: false, totalAisla: null, salud: 2, coreCount: 2, incluirCardio: true },
+        intensa: { dosBasicos: true,  totalAisla: null, salud: 2, coreCount: 2, incluirCardio: true }
     }[intensidad];
-    const recentHist = getEjerciciosRecientesPorGrupo(2);
+
+    // Cardio por intensidad (punto 3)
+    const CARDIO_SUAVE  = ['Pedaleo continuo suave','Pedaleo progresivo','Pedaleo con micro-pauses'];
+    const CARDIO_NORMAL = ['Pedaleo continuo suave','Pedaleo progresivo','Pedaleo con micro-pauses','Intervalos suaves','Paseo largo en el parque'];
+
+    const recentHist = getEjerciciosRecientesPorGrupo(3); // punto 5: anti-repetición 3 sesiones
     const recent = {};
     GRUPOS.forEach(g => recent[g] = [...(recentHist[g]||[]), ...(recentExternal[g]||[])]);
     const getRandom = arr => arr[Math.floor(Math.random() * arr.length)];
-    const gruposSinCardio = gruposSeleccionados.filter(g => g !== 'Cardio');
+
+    // Grupos sin Cardio, sin Core, sin Piernas
+    const gruposPrincipales = gruposSeleccionados.filter(g => g !== 'Cardio' && g !== 'Core' && g !== 'Drenaje');
     let finalPool = [];
 
-    gruposSinCardio.forEach(g => {
+    // ── Básicos (1 por grupo, 2 en Intensa) ──────────────────────────────────
+    gruposPrincipales.forEach(g => {
         const sinRepetir = getEjerciciosDe(g).filter(e => e.t === T_B && !recent[g].includes(e.n));
         const pool = sinRepetir.length > 0 ? sinRepetir : getEjerciciosDe(g).filter(e => e.t === T_B);
         if (pool.length > 0) finalPool.push({...getRandom(pool), group: g});
     });
     if (config.dosBasicos) {
-        gruposSinCardio.forEach(g => {
+        gruposPrincipales.forEach(g => {
             const ya = finalPool.filter(f => f.group === g).map(f => f.n);
             const pool = getEjerciciosDe(g).filter(e => e.t === T_B && !ya.includes(e.n));
             if (pool.length > 0) finalPool.push({...getRandom(pool), group: g});
         });
     }
+
+    // ── Aislamientos ──────────────────────────────────────────────────────────
     if (config.totalAisla === 1) {
-        const todos = gruposSinCardio.flatMap(g => getEjerciciosDe(g).filter(e => e.t === T_A).map(e => ({...e, group: g})));
+        const todos = gruposPrincipales.flatMap(g => getEjerciciosDe(g).filter(e => e.t === T_A).map(e => ({...e, group: g})));
         if (todos.length > 0) finalPool.push(getRandom(todos));
     } else {
-        gruposSinCardio.forEach(g => {
+        gruposPrincipales.forEach(g => {
             const sinRepetir = getEjerciciosDe(g).filter(e => e.t === T_A && !recent[g].includes(e.n));
             const pool = sinRepetir.length > 0 ? sinRepetir : getEjerciciosDe(g).filter(e => e.t === T_A);
             if (pool.length > 0) finalPool.push({...getRandom(pool), group: g});
         });
     }
-    const saludShuffled = [...gruposSinCardio.flatMap(g => getEjerciciosDe(g).filter(e => e.t === T_S).map(e => ({...e, group: g})))].sort(() => Math.random() - 0.5);
+
+    // ── Salud de grupos principales ───────────────────────────────────────────
+    const saludShuffled = [...gruposPrincipales.flatMap(g => getEjerciciosDe(g).filter(e => e.t === T_S).map(e => ({...e, group: g})))].sort(() => Math.random() - 0.5);
     let saludSel = 0;
     for (const ex of saludShuffled) {
         if (saludSel >= config.salud) break;
         if (!finalPool.find(f => f.n === ex.n)) { finalPool.push(ex); saludSel++; }
     }
-    const LINFATICOS = ['Elevaciones de talones','Bomba de tobillo','Elevación de piernas en pared','Pedaleo en el aire','Marcha en el sitio'];
-    if (gruposSeleccionados.includes('Piernas') && !finalPool.some(f => LINFATICOS.includes(f.n))) {
-        const lp = getEjerciciosDe('Piernas').filter(e => LINFATICOS.includes(e.n));
-        if (lp.length > 0) finalPool.push({...getRandom(lp), group: 'Piernas'});
+
+    // ── Core explícito (1 en Suave, 2 en Normal/Intensa) ─────────────────────
+    if (gruposSeleccionados.includes('Core')) {
+        const coreEjs = getEjerciciosDe('Core');
+        const coreB = coreEjs.filter(e => e.t === T_B && !recent['Core'].includes(e.n));
+        const coreS = coreEjs.filter(e => e.t === T_S && !recent['Core'].includes(e.n));
+        const corePool = [...coreB, ...coreS];
+        let added = 0;
+        const usados = [];
+        while (added < config.coreCount && corePool.length > usados.length) {
+            const disponibles = corePool.filter(e => !usados.includes(e.n));
+            if (!disponibles.length) break;
+            const sel = getRandom(disponibles);
+            finalPool.push({...sel, group: 'Core'});
+            usados.push(sel.n);
+            added++;
+        }
     }
+
+    // ── Linfático SIEMPRE (punto 1) ───────────────────────────────────────────
+    const LINFATICOS = ['Elevaciones de talones','Bomba de tobillo','Elevación de piernas en pared','Pedaleo en el aire','Marcha en el sitio'];
+    if (!finalPool.some(f => LINFATICOS.includes(f.n))) {
+        const lp = getEjerciciosDe('Drenaje').filter(e => LINFATICOS.includes(e.n));
+        if (lp.length > 0) finalPool.push({...getRandom(lp), group: 'Drenaje'});
+    }
+
+    // ── Cardio por intensidad (punto 3) ──────────────────────────────────────
     if (config.incluirCardio && gruposSeleccionados.includes('Cardio')) {
-        let cp = [...getEjerciciosDe("Cardio")];
-        if (!cp.length) cp = [...getEjerciciosDe("Cardio")];
+        const cardioPool = intensidad === 'suave'
+            ? getEjerciciosDe('Cardio').filter(e => CARDIO_SUAVE.includes(e.n))
+            : intensidad === 'normal'
+                ? getEjerciciosDe('Cardio').filter(e => CARDIO_NORMAL.includes(e.n))
+                : [...getEjerciciosDe('Cardio')];
+        const cp = cardioPool.length > 0 ? cardioPool : [...getEjerciciosDe('Cardio')];
         finalPool.unshift({...getRandom(cp), group: 'Cardio'});
     }
-    // Ordenar ejercicios en el orden óptimo de ejecución
-    const gruposPrincipales = gruposSeleccionados.filter(g => g !== 'Cardio' && g !== 'Core');
 
+    // ── Orden óptimo ──────────────────────────────────────────────────────────
     const getScore = (ex) => {
-        if (ex.group === 'Cardio') return 0;                          // 1. Cardio siempre primero
-        if (['Elevaciones de talones','Bomba de tobillo','Elevación de piernas en pared','Pedaleo en el aire','Marcha en el sitio'].includes(ex.n || ex.name)) return 999;
-        if (ex.t === T_S) return ex.group === 'Core' ? 980 : 960;    // 3. Salud casi al final
-        if (ex.group === 'Core') return ex.t === T_B ? 800 : 840;    // 4. Core después de grupos principales
+        if (ex.group === 'Cardio') return 0;
+        if (LINFATICOS.includes(ex.n || ex.name)) return 999;
+        if (ex.t === T_S) return ex.group === 'Core' ? 980 : 960;
+        if (ex.group === 'Core') return ex.t === T_B ? 800 : 840;
         const gIdx = gruposPrincipales.indexOf(ex.group);
-        return ex.t === T_B
-            ? 100 + gIdx * 10   // 5. Básicos de grupos principales por orden del día
-            : 500 + gIdx * 10;  // 6. Aislamientos de grupos principales por orden del día
+        return ex.t === T_B ? 100 + gIdx * 10 : 500 + gIdx * 10;
     };
-
     finalPool.sort((a, b) => getScore(a) - getScore(b));
 
     return finalPool.map(ex => {
@@ -852,6 +887,7 @@ function buildRutina(gruposSeleccionados, intensidad, recentExternal) {
             recSeries: ex.recSeries||'', recReps: ex.recReps||'' };
     });
 }
+
 
 function getUltimosValores(nombre) {
     for (const s of state.historial) {
