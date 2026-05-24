@@ -1546,3 +1546,37 @@ body.dark-mode textarea {
     color: #E6E1E5;
     border-color: #49454F;
 }
+
+/* =========================================================
+   SEMANA — DOT COMPATIBILIDAD + INFO BTN EJERCICIO
+========================================================= */
+.day-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    display: inline-block;
+    box-shadow: 0 0 0 2px rgba(255,255,255,0.3);
+}
+
+.week-info-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    border: none;
+    border-radius: 7px;
+    background: var(--primary-light);
+    color: var(--primary);
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: opacity 0.15s;
+}
+
+.week-info-btn:active { opacity: 0.6; }
+
+body.dark-mode .week-info-btn {
+    background: #2D2640;
+    color: #D0BCFF;
+}
