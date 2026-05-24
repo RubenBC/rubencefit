@@ -1500,24 +1500,42 @@ body.dark-mode .week-btn-secondary { background: rgba(255,255,255,0.06); color: 
 /* =========================================================
    BOTONES ICON EJERCICIO
 ========================================================= */
-.btn-icon-sm {
-    background: var(--primary-light);
-    color: var(--primary);
+.btn-ex-info,
+.btn-ex-edit,
+.btn-ex-del {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
     border: none;
     border-radius: 8px;
-    padding: 4px 8px;
-    font-size: 13px;
     cursor: pointer;
-    line-height: 1.4;
+    transition: opacity 0.15s;
 }
 
-.btn-icon-sm.btn-delete {
+.btn-ex-info {
+    background: var(--primary-light);
+    color: var(--primary);
+}
+
+.btn-ex-edit {
+    background: rgba(103,80,164,0.08);
+    color: #6750A4;
+}
+
+.btn-ex-del {
     background: #FDECEA;
     color: var(--danger);
 }
 
-body.dark-mode .btn-icon-sm { background: #2D2640; }
-body.dark-mode .btn-icon-sm.btn-delete { background: #3B1A1A; }
+.btn-ex-info:active,
+.btn-ex-edit:active,
+.btn-ex-del:active { opacity: 0.7; }
+
+body.dark-mode .btn-ex-info { background: #2D2640; color: #D0BCFF; }
+body.dark-mode .btn-ex-edit { background: #2D2640; color: #D0BCFF; }
+body.dark-mode .btn-ex-del  { background: #3B1A1A; color: #EF9A9A; }
 
 /* =========================================================
    DARK MODE — select + textarea
