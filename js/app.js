@@ -3,7 +3,7 @@ const T_B = "Básico"; const T_A = "Aislamiento"; const T_S = "Salud";
 function getIcon(t) {
     if(t === T_B) return '🔥 ';
     if(t === T_A) return '🎯 ';
-    if(t === T_S) return '🛡️ ';
+    if(t === T_S) return '🩺 ';
     return '';
 }
 
