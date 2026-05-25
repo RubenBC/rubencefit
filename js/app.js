@@ -3,7 +3,7 @@ const T_B = "Básico"; const T_A = "Aislamiento"; const T_S = "Salud";
 function getIcon(t) {
     if(t === T_B) return '🔥 ';
     if(t === T_A) return '🎯 ';
-    if(t === T_S) return '🩺 ';
+    if(t === T_S) return '🛡️ ';
     return '';
 }
 
@@ -1540,6 +1540,35 @@ if (localStorage.getItem('ironlog_dark') === '1') {
     const btn = document.getElementById('darkModeBtn');
     if (btn) btn.querySelector('span').innerText = 'light_mode';
 }
+
+// ── Botón atrás de Android ────────────────────────────────────────────────────
+history.pushState({ ironlog: true }, '');
+
+function handleBackButton() {
+    // 1. Cerrar cualquier modal abierto (por orden de prioridad)
+    const modales = ['exInfoModal','editExModal','intensidadModal',
+                     'generarSemanaModal','statInfoModal','dayModal'];
+    for (const id of modales) {
+        const el = document.getElementById(id);
+        if (el && el.style.display !== 'none' && el.style.display !== '') {
+            el.style.display = 'none';
+            return;
+        }
+    }
+    // 2. Vista de ejercicios en Biblioteca → volver a grupos
+    const exView = document.getElementById('exerciseView');
+    if (exView && exView.style.display !== 'none') {
+        backToGroups();
+        return;
+    }
+    // 3. En pestaña principal → no hacer nada (el re-push evita el cierre)
+}
+
+window.addEventListener('popstate', () => {
+    handleBackButton();
+    // Siempre re-añadimos una entrada para que nunca se vacíe el historial
+    history.pushState({ ironlog: true }, '');
+});
     const splash = document.getElementById('splashScreen');
     if (splash) {
         setTimeout(() => {
