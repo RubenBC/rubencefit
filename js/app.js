@@ -1516,8 +1516,8 @@ function playEndSound() {
     if (!audioCtx) return; const now = audioCtx.currentTime;
     [523.25, 659.25, 783.99].forEach((f, i) => {
         const o = audioCtx.createOscillator(); const g = audioCtx.createGain();
-        o.type = 'sine'; o.frequency.setValueAtTime(f, now + i*0.15);
-        g.gain.setValueAtTime(0, now + i*0.15); g.gain.linearRampToValueAtTime(0.1, now + i*0.15 + 0.05); g.gain.exponentialRampToValueAtTime(0.001, now + i*0.15 + 0.4);
+        o.type = 'triangle'; o.frequency.setValueAtTime(f, now + i*0.15);
+        g.gain.setValueAtTime(0, now + i*0.15); g.gain.linearRampToValueAtTime(0.8, now + i*0.15 + 0.05); g.gain.exponentialRampToValueAtTime(0.001, now + i*0.15 + 0.4);
         o.connect(g); g.connect(audioCtx.destination); o.start(now + i*0.15); o.stop(now + i*0.15 + 0.5);
     });
 }
