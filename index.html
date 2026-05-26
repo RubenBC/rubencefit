@@ -190,6 +190,30 @@
     </div>
 </div>
 
+<!-- MODAL SINCRONIZACIÓN NUBE -->
+<div id="syncModal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.45);z-index:99999;align-items:flex-end;justify-content:center;" onclick="if(event.target===this)cerrarSyncModal()">
+    <div class="day-modal-sheet" style="padding:24px 20px 40px;width:100%;max-width:600px;">
+        <div style="width:32px;height:4px;background:var(--outline);border-radius:2px;margin:0 auto 20px;"></div>
+        <div style="text-align:center;font-size:28px;margin-bottom:12px;">☁️</div>
+        <h3 style="text-align:center;margin:0 0 8px;font-size:17px;color:var(--primary);">Sincronización</h3>
+        <p id="syncTxt" style="text-align:center;color:var(--text2);font-size:13px;margin:0 0 24px;"></p>
+        <div style="display:flex;flex-direction:column;gap:10px;">
+            <button id="syncBtnGuardar" onclick="cerrarSyncModal();syncToSupabase();"
+                style="background:var(--primary);color:white;border:none;border-radius:12px;padding:14px;font-size:15px;font-weight:bold;cursor:pointer;width:100%;">
+                ↑ Guardar en la nube
+            </button>
+            <button id="syncBtnRestaurar" onclick="cerrarSyncModal();restaurarDesdeSupabase();"
+                style="background:var(--primary-light);color:var(--primary);border:none;border-radius:12px;padding:14px;font-size:15px;font-weight:bold;cursor:pointer;width:100%;">
+                ↓ Restaurar desde la nube
+            </button>
+            <button onclick="cerrarSyncModal();"
+                style="background:none;color:var(--text2);border:none;padding:10px;font-size:14px;cursor:pointer;width:100%;">
+                Cancelar
+            </button>
+        </div>
+    </div>
+</div>
+
 <script src="js/app.js"></script>
 
 <div id="statInfoModal" class="day-modal" style="display:none;" onclick="cerrarInfoStat(this,event)">
