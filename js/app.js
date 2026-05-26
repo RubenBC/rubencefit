@@ -1590,11 +1590,13 @@ async function loadFromSupabase() {
 function setSyncIcon(status) {
     const btn = document.getElementById('syncIcon');
     if (!btn) return;
-    const el = btn.querySelector('span') || btn;
+    const span = btn.querySelector('span');
+    if (!span) return;
     const icons = { sync: 'sync', ok: 'cloud_done', error: 'cloud_off' };
     const colors = { sync: 'var(--text2)', ok: '#43A047', error: '#E53935' };
-    el.innerText = icons[status]; btn.style.color = colors[status];
-    if (status === 'sync') el.classList.add('spin'); else el.classList.remove('spin');
+    span.innerText = icons[status];
+    btn.style.color = colors[status];
+    if (status === 'sync') span.classList.add('spin'); else span.classList.remove('spin');
 }
 
 async function restaurarDesdeSupabase() {
