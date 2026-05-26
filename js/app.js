@@ -110,6 +110,7 @@ let state = JSON.parse(localStorage.getItem('iron_log_v8.6')) || {
 if (state.sesionStartTime === undefined) state.sesionStartTime = null;
 if (!state.ejerciciosCustom) state.ejerciciosCustom = {};
 if (!state.ejerciciosEditados) state.ejerciciosEditados = {};
+if (!state.lastSync) state.lastSync = null;
 
 let swInterval = null;
 let bibliotecaDia = 'hoy';
@@ -985,6 +986,7 @@ function finalizarSesion() {
         });
         state.hoy = []; resetSesionStopwatch(); save(); showPage('historialPage');
         mostrarToastBackup();
+        syncToSupabase();
     }
 }
 
@@ -1517,7 +1519,7 @@ function playEndSound() {
     [523.25, 659.25, 783.99].forEach((f, i) => {
         const o = audioCtx.createOscillator(); const g = audioCtx.createGain();
         o.type = 'triangle'; o.frequency.setValueAtTime(f, now + i*0.15);
-        g.gain.setValueAtTime(0, now + i*0.15); g.gain.linearRampToValueAtTime(1.0, now + i*0.15 + 0.05); g.gain.exponentialRampToValueAtTime(0.001, now + i*0.15 + 0.4);
+        g.gain.setValueAtTime(0, now + i*0.15); g.gain.linearRampToValueAtTime(0.8, now + i*0.15 + 0.05); g.gain.exponentialRampToValueAtTime(0.001, now + i*0.15 + 0.4);
         o.connect(g); g.connect(audioCtx.destination); o.start(now + i*0.15); o.stop(now + i*0.15 + 0.5);
     });
 }
@@ -1543,6 +1545,7 @@ if (localStorage.getItem('ironlog_dark') === '1') {
 
 // ── Botón atrás de Android ────────────────────────────────────────────────────
 history.pushState({ ironlog: true }, '');
+loadFromSupabase();
 
 function handleBackButton() {
     // 1. Cerrar cualquier modal abierto (por orden de prioridad)
