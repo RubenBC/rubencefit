@@ -1376,143 +1376,77 @@ function updateStats() {
     const container = document.getElementById('statsContent');
     if (!container) return;
     if (state.historial.length === 0) {
-        container.innerHTML = "<div style='grid-column: 1 / span 2; text-align:center; color:var(--text2); font-size:11px; padding:16px 0;'>Entrena para ver estadísticas</div>";
+        container.innerHTML = "<div style='grid-column:1/span 2;text-align:center;color:var(--text2);font-size:11px;padding:16px 0;'>Entrena para ver estadísticas</div>";
         return;
     }
-
-    let totalSesiones = state.historial.length;
-    let gruposContador = {};
-    let ejerciciosContador = {};
-    let typeContador = { [T_B]: 0, [T_A]: 0, [T_S]: 0 };
-
-    state.historial.forEach(sesion => {
-        if (sesion.ejercicios) {
-            sesion.ejercicios.forEach(ex => {
-                gruposContador[ex.group] = (gruposContador[ex.group] || 0) + 1;
-                ejerciciosContador[ex.name] = (ejerciciosContador[ex.name] || 0) + 1;
-                if (ex.t) typeContador[ex.t] = (typeContador[ex.t] || 0) + 1;
-            });
-        }
-    });
-
-    let topGrupo = "N/A";
-    if (Object.keys(gruposContador).length > 0) {
-        topGrupo = Object.keys(gruposContador).reduce((a, b) => gruposContador[a] > gruposContador[b] ? a : b);
-    }
-
-    let topEjercicio = "N/A";
-    if (Object.keys(ejerciciosContador).length > 0) {
-        const topKey = Object.keys(ejerciciosContador).reduce((a, b) => ejerciciosContador[a] > ejerciciosContador[b] ? a : b);
-        topEjercicio = topKey.length > 22 ? topKey.substring(0, 20) + '…' : topKey;
-    }
-
     const today = new Date();
-    const last7 = [];
-    for (let i = 0; i < 7; i++) {
-        const d = new Date(today); d.setDate(today.getDate() - i);
-        last7.push(d.toLocaleDateString());
-    }
-    const sesSemana = state.historial.filter(h => last7.includes(h.fecha)).length;
-
-    // Días del mes actual
-    const thisMonth = [];
-    const tempDate = new Date(today.getFullYear(), today.getMonth(), 1);
-    while (tempDate <= today) { thisMonth.push(tempDate.toLocaleDateString()); tempDate.setDate(tempDate.getDate() + 1); }
-    const sesMes = state.historial.filter(h => thisMonth.includes(h.fecha)).length;
-
-    // Cardio: suma del campo 'series' (minutos) de ejercicios del grupo Cardio
-    const getCardioMin = (fechas) => {
-        let min = 0;
-        state.historial.filter(h => fechas.includes(h.fecha)).forEach(sesion => {
-            if (sesion.ejercicios) sesion.ejercicios.forEach(ex => {
-                if (ex.group === 'Cardio' && ex.series) min += parseFloat(ex.series) || 0;
-            });
-        });
-        return Math.round(min);
-    };
-    const cardioSemana = getCardioMin(last7);
-    const cardioMes = getCardioMin(thisMonth);
-
     const uniqueDatesSet = new Set(state.historial.map(h => h.fecha));
-
-    // Racha actual: se permite hasta 2 días de descanso consecutivos por semana
-    let racha = 0;
+    let racha = 0, descConsec = 0;
     let checkDate = new Date(today);
-    let descConsec = 0;
     for (let i = 0; i <= 365; i++) {
         const ds = checkDate.toLocaleDateString();
         if (uniqueDatesSet.has(ds)) { racha++; descConsec = 0; }
         else { descConsec++; if (descConsec > 2) break; }
         checkDate.setDate(checkDate.getDate() - 1);
     }
-
-    // Racha máxima histórica (mismo criterio)
-    const startHist = new Date(today); startHist.setDate(startHist.getDate() - 730);
     let maxRacha = 0, tempRacha = 0, tempDesc = 0;
+    const startHist = new Date(today); startHist.setDate(startHist.getDate() - 730);
     const histCheck = new Date(startHist);
     while (histCheck <= today) {
-        if (uniqueDatesSet.has(histCheck.toLocaleDateString())) { tempRacha++; tempDesc = 0; if (tempRacha > maxRacha) maxRacha = tempRacha; }
-        else { tempDesc++; if (tempDesc > 2) { tempRacha = 0; tempDesc = 0; } }
+        if (uniqueDatesSet.has(histCheck.toLocaleDateString())) {
+            tempRacha++; tempDesc = 0; if (tempRacha > maxRacha) maxRacha = tempRacha;
+        } else { tempDesc++; if (tempDesc > 2) { tempRacha = 0; tempDesc = 0; } }
         histCheck.setDate(histCheck.getDate() + 1);
     }
-
-    const totalTypes = (typeContador[T_B] || 0) + (typeContador[T_A] || 0) + (typeContador[T_S] || 0);
-    const pctB = totalTypes > 0 ? Math.round((typeContador[T_B] || 0) / totalTypes * 100) : 0;
-    const pctA = totalTypes > 0 ? Math.round((typeContador[T_A] || 0) / totalTypes * 100) : 0;
-    const pctS = totalTypes > 0 ? Math.round((typeContador[T_S] || 0) / totalTypes * 100) : 0;
-
-    // Días de descanso esta semana
+    const last7 = [], prev7 = [];
+    for (let i=0;i<7;i++){const d=new Date(today);d.setDate(today.getDate()-i);last7.push(d.toLocaleDateString());}
+    for (let i=7;i<14;i++){const d=new Date(today);d.setDate(today.getDate()-i);prev7.push(d.toLocaleDateString());}
+    const sesSemana = state.historial.filter(h=>last7.includes(h.fecha)).length;
+    const sesPrevSemana = state.historial.filter(h=>prev7.includes(h.fecha)).length;
     const descSemana = 7 - sesSemana;
-
-    // Semanas activas este mes
-    const semanasActivas = (() => {
-        const weeks = new Set();
-        thisMonth.forEach((ds, idx) => { if (uniqueDatesSet.has(ds)) weeks.add(Math.floor(idx / 7)); });
-        return weeks.size;
-    })();
-
-    // Grupo más descuidado (últimos 30 días, excluye Cardio)
-    const last30 = [];
-    for (let i = 0; i < 30; i++) { const d = new Date(today); d.setDate(today.getDate() - i); last30.push(d.toLocaleDateString()); }
-    const recentGrupos = {};
-    GRUPOS.filter(g => g !== 'Cardio').forEach(g => recentGrupos[g] = 0);
-    state.historial.filter(h => last30.includes(h.fecha)).forEach(s => {
-        if (s.ejercicios) s.ejercicios.forEach(ex => { if (recentGrupos[ex.group] !== undefined) recentGrupos[ex.group]++; });
-    });
-    const grupoDesc = Object.keys(recentGrupos).reduce((a, b) => recentGrupos[a] <= recentGrupos[b] ? a : b);
-
-    // Media de ejercicios Salud por sesión (últimas 10 sesiones)
-    const ultimas10 = state.historial.slice(0, 10);
-    const saludMedia = ultimas10.length > 0
-        ? (ultimas10.reduce((acc, s) => acc + (s.ejercicios ? s.ejercicios.filter(e => e.t === T_S).length : 0), 0) / ultimas10.length).toFixed(1)
-        : 0;
-
-    container.innerHTML = `
-        <div class="stat-box stat-tappable" onclick="abrirInfoStat('sesiones')"><span class="stat-label">Sesiones</span><span class="stat-val">${totalSesiones}</span></div>
+    const diff = sesSemana - sesPrevSemana;
+    const tendenciaIcon = diff>0?'↑':diff<0?'↓':'=';
+    const tendenciaColor = diff>0?'#2E7D32':diff<0?'var(--danger)':'var(--text2)';
+    const tendenciaTexto = diff>0?`+${diff} vs sem. ant.`:diff<0?`${diff} vs sem. ant.`:`igual sem. ant.`;
+    const thisMonth = [];
+    const tmp = new Date(today.getFullYear(),today.getMonth(),1);
+    while (tmp<=today){thisMonth.push(tmp.toLocaleDateString());tmp.setDate(tmp.getDate()+1);}
+    const getCardioMin = (fechas) => { let min=0; state.historial.filter(h=>fechas.includes(h.fecha)).forEach(s=>{if(s.ejercicios)s.ejercicios.forEach(ex=>{if(ex.group==='Cardio'&&ex.series)min+=parseFloat(ex.series)||0;})}); return Math.round(min); };
+    const cardioSemana = getCardioMin(last7);
+    const cardioMes = getCardioMin(thisMonth);
+    let cardioTotal = 0;
+    state.historial.forEach(s=>{if(s.ejercicios)s.ejercicios.forEach(ex=>{if(ex.group==='Cardio'&&ex.series)cardioTotal+=parseFloat(ex.series)||0;});});
+    cardioTotal = Math.round(cardioTotal);
+    const ultimaFecha = state.historial[0]?.fecha;
+    let diasDescanso = 0;
+    if (ultimaFecha){const p=ultimaFecha.split('/');const u=new Date(p[2],p[1]-1,p[0]);diasDescanso=Math.floor((today-u)/(1000*60*60*24));}
+    const diasColor = diasDescanso>=3?'var(--danger)':diasDescanso>=2?'#E65100':'var(--primary)';
+    const last30=[];for(let i=0;i<30;i++){const d=new Date(today);d.setDate(today.getDate()-i);last30.push(d.toLocaleDateString());}
+    const gruposSesiones={};
+    GRUPOS.filter(g=>g!=='Cardio'&&g!=='Drenaje').forEach(g=>gruposSesiones[g]=0);
+    state.historial.filter(h=>last30.includes(h.fecha)).forEach(s=>{const gs=new Set();if(s.ejercicios)s.ejercicios.forEach(ex=>{if(gruposSesiones[ex.group]!==undefined)gs.add(ex.group);});gs.forEach(g=>gruposSesiones[g]++);});
+    const maxGrupo=Math.max(...Object.values(gruposSesiones),1);
+    const gruposBars=Object.entries(gruposSesiones).sort((a,b)=>b[1]-a[1]).map(([g,n])=>`<div class="stat-group-row"><span class="stat-group-name">${g}</span><div class="stat-bar-bg" style="flex:1;"><div class="stat-bar-fill stat-bar-b" style="width:${Math.round(n/maxGrupo*100)}%;min-width:${n>0?'4px':'0'};"></div></div><span class="stat-group-n">${n}</span></div>`).join('');
+    const LINFATICOS_STAT=['Elevaciones de talones','Bomba de tobillo','Elevación de piernas en pared','Bicicleta en el aire','Marcha en el sitio'];
+    let linfCount=0;
+    state.historial.filter(h=>last7.includes(h.fecha)).forEach(s=>{if(s.ejercicios)s.ejercicios.forEach(ex=>{if(LINFATICOS_STAT.includes(ex.name))linfCount++;});});
+    const linfColor=linfCount>=4?'#2E7D32':linfCount>=2?'#E65100':'var(--danger)';
+    const linfLabel=linfCount>=4?'✓ Bien':linfCount>=2?'! Mejorable':'⚠ Bajo';
+    container.innerHTML=`
         <div class="stat-box stat-tappable" onclick="abrirInfoStat('racha')"><span class="stat-label">🔥 Racha actual</span><span class="stat-val">${racha}<small>días</small></span></div>
         <div class="stat-box stat-tappable" onclick="abrirInfoStat('racha_max')"><span class="stat-label">🏆 Racha máxima</span><span class="stat-val">${maxRacha}<small>días</small></span></div>
-        <div class="stat-box stat-tappable" onclick="abrirInfoStat('ses_semana')"><span class="stat-label">📅 Esta semana</span><span class="stat-val">${sesSemana}<small>ses.</small></span></div>
         <div class="stat-box stat-tappable" onclick="abrirInfoStat('descansos')"><span class="stat-label">😴 Descansos semana</span><span class="stat-val">${descSemana}<small>días</small></span></div>
+        <div class="stat-box stat-tappable" onclick="abrirInfoStat('tendencia')"><span class="stat-label">📈 Tendencia semanal</span><span class="stat-val" style="font-size:13px;color:${tendenciaColor};">${tendenciaIcon} ${sesSemana}ses<small style="color:${tendenciaColor};">${tendenciaTexto}</small></span></div>
         <div class="stat-box stat-tappable" onclick="abrirInfoStat('cardio_semana')"><span class="stat-label">🚴 Cardio semana</span><span class="stat-val">${cardioSemana}<small>min</small></span></div>
         <div class="stat-box stat-tappable" onclick="abrirInfoStat('cardio_mes')"><span class="stat-label">🚴 Cardio mes</span><span class="stat-val">${cardioMes}<small>min</small></span></div>
-        <div class="stat-box stat-tappable" onclick="abrirInfoStat('ses_mes')"><span class="stat-label">📆 Sesiones mes</span><span class="stat-val">${sesMes}</span></div>
-        <div class="stat-box stat-tappable" onclick="abrirInfoStat('semanas_activas')"><span class="stat-label">📆 Semanas activas</span><span class="stat-val">${semanasActivas}</span></div>
-        <div class="stat-box stat-full stat-tappable" onclick="abrirInfoStat('distribucion')">
-            <span class="stat-label">Distribución por tipo <span class="stat-info-hint">· toca para más info</span></span>
-            <div class="stat-type-bars">
-                <div class="stat-type-row"><span class="stat-type-chip tag tag-basico">B</span><div class="stat-bar-bg"><div class="stat-bar-fill stat-bar-b" style="width:${pctB}%"></div></div><span class="stat-type-pct">${pctB}%</span></div>
-                <div class="stat-type-row"><span class="stat-type-chip tag tag-aisla">A</span><div class="stat-bar-bg"><div class="stat-bar-fill stat-bar-a" style="width:${pctA}%"></div></div><span class="stat-type-pct">${pctA}%</span></div>
-                <div class="stat-type-row"><span class="stat-type-chip tag tag-salud">S</span><div class="stat-bar-bg"><div class="stat-bar-fill stat-bar-s" style="width:${pctS}%"></div></div><span class="stat-type-pct">${pctS}%</span></div>
-            </div>
-        </div>
-        <div class="stat-box stat-tappable" onclick="abrirInfoStat('top_grupo')"><span class="stat-label">Top Grupo</span><span class="stat-val" style="font-size:13px">${topGrupo}</span></div>
-        <div class="stat-box stat-tappable" onclick="abrirInfoStat('top_ejercicio')"><span class="stat-label">Top Ejercicio</span><span class="stat-val" style="font-size:11px; line-height:1.3">${topEjercicio}</span></div>
-        <div class="stat-box stat-tappable" onclick="abrirInfoStat('salud_sesion')"><span class="stat-label">🛡️ Salud/sesión</span><span class="stat-val">${saludMedia}<small>ejs.</small></span></div>
-        <div class="stat-box stat-tappable" onclick="abrirInfoStat('mas_descuidado')"><span class="stat-label">⚠️ Más descuidado</span><span class="stat-val" style="font-size:11px">${grupoDesc}</span></div>
+        <div class="stat-box stat-tappable" onclick="abrirInfoStat('dias_descanso')"><span class="stat-label">⏱ Último entreno</span><span class="stat-val" style="color:${diasColor};">${diasDescanso}<small>días</small></span></div>
+        <div class="stat-box stat-tappable" onclick="abrirInfoStat('cardio_total')"><span class="stat-label">🚴 Cardio total</span><span class="stat-val">${cardioTotal}<small>min</small></span></div>
+        <div class="stat-box stat-tappable" onclick="abrirInfoStat('linfaticos_semana')" style="grid-column:1/span 2;"><span class="stat-label">🦵 Linfáticos semana <span class="stat-info-hint" style="color:${linfColor};">${linfLabel}</span></span><span class="stat-val">${linfCount}<small>ejercicios</small></span></div>
+        <div class="stat-box stat-full stat-tappable" onclick="abrirInfoStat('grupos_mes')"><span class="stat-label">Sesiones por grupo · 30 días</span><div class="stat-group-bars">${gruposBars}</div></div>
     `;
 }
 
-let audioCtx = null;
+
 function initAudio() { if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); if (audioCtx.state === 'suspended') audioCtx.resume(); }
 function playEndSound() {
     if (!audioCtx) return; const now = audioCtx.currentTime;
