@@ -24,7 +24,7 @@
         <p class="splash-by">Diseñada y desarrollada por</p>
         <p class="splash-author">Rubén Bejarano Checa</p>
         <p class="splash-ai">Creada con asistencia de inteligencia artificial</p>
-        <p class="splash-version">v4.5</p>
+        <p class="splash-version">v4.6</p>
     </div>
 </div>
 
@@ -96,7 +96,7 @@
         <div class="header-row">
             <h2><span class="material-symbols-outlined">history</span> Log</h2>
             <div style="display:flex; align-items:center; gap:8px;">
-                <button id="syncIcon" onclick="onSyncIconPress()" style="background:none;border:none;cursor:pointer;padding:8px;color:#43A047;display:flex;align-items:center;"><span class="material-symbols-outlined" style="font-size:22px;">cloud_done</span></button>
+                <button id="syncIcon" onclick="onSyncIconPress()" ontouchend="onSyncIconPress();event.preventDefault();" style="background:none;border:none;cursor:pointer;padding:12px 10px;color:#43A047;display:flex;align-items:center;min-width:44px;min-height:44px;"><span class="material-symbols-outlined" style="font-size:22px;">cloud_done</span></button>
                 <button onclick="toggleDarkMode()" id="darkModeBtn" style="background:none;border:none;cursor:pointer;padding:8px;color:var(--primary);display:flex;align-items:center;"><span class="material-symbols-outlined" style="font-size:22px;">dark_mode</span></button>
                 <button onclick="exportarDatos()" style="background:none;border:none;cursor:pointer;padding:8px;color:var(--primary);display:flex;align-items:center;" title="Exportar"><span class="material-symbols-outlined" style="font-size:22px;">upload</span></button>
                 <label style="cursor:pointer;padding:8px;color:var(--primary);display:flex;align-items:center;" title="Importar"><span class="material-symbols-outlined" style="font-size:22px;">download</span><input type="file" accept=".json" onchange="importarDatos(event)" style="display:none;"></label>
