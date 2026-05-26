@@ -1588,11 +1588,12 @@ async function loadFromSupabase() {
 }
 
 function setSyncIcon(status) {
-    const el = document.getElementById('syncIcon');
-    if (!el) return;
+    const btn = document.getElementById('syncIcon');
+    if (!btn) return;
+    const el = btn.querySelector('span') || btn;
     const icons = { sync: 'sync', ok: 'cloud_done', error: 'cloud_off' };
     const colors = { sync: 'var(--text2)', ok: '#43A047', error: '#E53935' };
-    el.innerText = icons[status]; el.style.color = colors[status];
+    el.innerText = icons[status]; btn.style.color = colors[status];
     if (status === 'sync') el.classList.add('spin'); else el.classList.remove('spin');
 }
 
