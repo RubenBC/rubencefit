@@ -1554,6 +1554,9 @@ function cerrarSyncModal() {
 }
 
 function onSyncIconPress() {
+    const btn = document.getElementById('syncIcon');
+    if (btn) btn.style.opacity = '0.5';
+    setTimeout(() => { if (btn) btn.style.opacity = '1'; }, 300);
     showToast('☁️ Abriendo sync...');
     const hayDatos = state.historial && state.historial.length > 0;
     document.getElementById('syncBtnGuardar').style.display = hayDatos ? 'block' : 'none';
