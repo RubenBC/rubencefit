@@ -1620,9 +1620,9 @@ function cerrarSyncModal() {
 }
 
 function onSyncIconPress() {
+    showToast('☁️ Abriendo sync...');
     const hayDatos = state.historial && state.historial.length > 0;
     document.getElementById('syncBtnGuardar').style.display = hayDatos ? 'block' : 'none';
-    document.getElementById('syncBtnRestaurar').style.display = 'block';
     document.getElementById('syncTxt').innerText = hayDatos
         ? 'Elige qué quieres hacer con la nube'
         : 'No hay sesiones locales';
