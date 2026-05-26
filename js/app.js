@@ -1613,10 +1613,16 @@ async function restaurarDesdeSupabase() {
     } catch(e) { setSyncIcon('error'); showToast('❌ Error al conectar con la nube'); }
 }
 
+function cerrarSyncModal() {
+    const m = document.getElementById('syncModal');
+    if (m) m.remove();
+}
+
 function onSyncIconPress() {
     const hayDatos = state.historial && state.historial.length > 0;
     const modal = document.createElement('div');
-    modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:99999;display:flex;align-items:flex-end;justify-content:center;';
+    modal.id = 'syncModal';
+    modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.45);z-index:99999;display:flex;align-items:flex-end;justify-content:center;';
     modal.innerHTML = `
         <div style="background:var(--surface);border-radius:24px 24px 0 0;padding:24px 20px 40px;width:100%;max-width:600px;animation:slideUp 0.22s ease;">
             <div style="width:32px;height:4px;background:var(--outline);border-radius:2px;margin:0 auto 20px;"></div>
@@ -1627,26 +1633,26 @@ function onSyncIconPress() {
             </p>
             <div style="display:flex;flex-direction:column;gap:10px;">
                 ${hayDatos ? `
-                <button onclick="syncToSupabase();this.closest('div[style*=inset]').remove();"
+                <button onclick="cerrarSyncModal();syncToSupabase();"
                     style="background:var(--primary);color:white;border:none;border-radius:12px;padding:14px;font-size:15px;font-weight:bold;cursor:pointer;">
                     ↑ Guardar en la nube
                 </button>
-                <button onclick="restaurarDesdeSupabase();this.closest('div[style*=inset]').remove();"
+                <button onclick="cerrarSyncModal();restaurarDesdeSupabase();"
                     style="background:var(--primary-light);color:var(--primary);border:none;border-radius:12px;padding:14px;font-size:15px;font-weight:bold;cursor:pointer;">
                     ↓ Restaurar desde la nube
                 </button>` : `
-                <button onclick="restaurarDesdeSupabase();this.closest('div[style*=inset]').remove();"
+                <button onclick="cerrarSyncModal();restaurarDesdeSupabase();"
                     style="background:var(--primary);color:white;border:none;border-radius:12px;padding:14px;font-size:15px;font-weight:bold;cursor:pointer;">
                     ↓ Restaurar desde la nube
                 </button>`}
-                <button onclick="this.closest('div[style*=inset]').remove();"
+                <button onclick="cerrarSyncModal();"
                     style="background:none;color:var(--text2);border:none;padding:10px;font-size:14px;cursor:pointer;">
                     Cancelar
                 </button>
             </div>
         </div>`;
     document.body.appendChild(modal);
-    modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
+    modal.addEventListener('click', e => { if (e.target === modal) cerrarSyncModal(); });
 }
 
 loadFromSupabase();
