@@ -96,7 +96,7 @@
         <div class="header-row">
             <h2><span class="material-symbols-outlined">history</span> Log</h2>
             <div style="display:flex; align-items:center; gap:8px;">
-                <span id="syncIcon" class="material-symbols-outlined" style="font-size:18px;color:#43A047;vertical-align:middle;cursor:pointer;" onclick="onSyncIconPress()" title="Sincronizar">cloud_done</span>
+                <button id="syncIcon" onclick="onSyncIconPress()" style="background:none;border:none;cursor:pointer;padding:8px;display:flex;align-items:center;color:#43A047;"><span class="material-symbols-outlined" style="font-size:20px;">cloud_done</span></button>
                 <button onclick="toggleDarkMode()" id="darkModeBtn" style="color:var(--primary); border:none; background:none; font-size:11px; cursor:pointer;"><span class="material-symbols-outlined" style="font-size:20px;">dark_mode</span></button>
                 <button onclick="exportarDatos()" style="color:var(--primary); border:none; background:none; font-size:11px; font-weight:bold; display:flex; align-items:center; gap:3px;"><span class="material-symbols-outlined" style="font-size:16px;">upload</span> EXPORTAR</button>
                 <label style="color:var(--primary); font-size:11px; font-weight:bold; display:flex; align-items:center; gap:3px; cursor:pointer;"><span class="material-symbols-outlined" style="font-size:16px;">download</span> IMPORTAR<input type="file" accept=".json" onchange="importarDatos(event)" style="display:none;"></label>
