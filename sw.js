@@ -1,4 +1,4 @@
-const CACHE_NAME = 'ironlog-v39';
+const CACHE_NAME = 'ironlog-v40';
 const ASSETS = [
   './manifest.json',
   './icon.png',
@@ -17,10 +17,7 @@ self.addEventListener('install', event => {
 self.addEventListener('activate', event => {
   event.waitUntil(
     caches.keys().then(keys =>
-      Promise.all(
-        keys.filter(key => key !== CACHE_NAME)
-            .map(key => caches.delete(key))
-      )
+      Promise.all(keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k)))
     )
   );
   self.clients.claim();
