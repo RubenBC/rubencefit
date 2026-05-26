@@ -1565,7 +1565,8 @@ async function syncToSupabase() {
             body: JSON.stringify({ device_id: getDeviceId(), state_data: state, updated_at: new Date().toISOString() })
         });
         setSyncIcon(res.ok ? 'ok' : 'error');
-    } catch(e) { setSyncIcon('error'); }
+        showToast(res.ok ? '☁️ Guardado en la nube' : '❌ Error al sincronizar');
+    } catch(e) { setSyncIcon('error'); showToast('❌ Sin conexión'); }
 }
 
 async function loadFromSupabase() {
@@ -1613,12 +1614,15 @@ async function restaurarDesdeSupabase() {
 }
 
 function onSyncIconPress() {
-    if (state.historial && state.historial.length === 0) {
-        if (confirm('No hay sesiones locales.\n¿Restaurar datos desde la nube?')) {
-            restaurarDesdeSupabase();
-        }
+    const hayDatos = state.historial && state.historial.length > 0;
+    const msg = hayDatos
+        ? '☁️ Sincronización\n\n¿Qué quieres hacer?\n\nAcepta → Guardar en la nube\nCancela → Restaurar desde la nube'
+        : '☁️ No hay sesiones locales.\n\nAcepta → Restaurar desde la nube\nCancela → Salir';
+    if (confirm(msg)) {
+        if (hayDatos) { syncToSupabase(); }
+        else { restaurarDesdeSupabase(); }
     } else {
-        syncToSupabase();
+        if (hayDatos) { restaurarDesdeSupabase(); }
     }
 }
 
