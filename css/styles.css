@@ -1580,3 +1580,9 @@ body.dark-mode .week-info-btn {
     background: #2D2640;
     color: #D0BCFF;
 }
+
+/* =========================================================
+   SYNC ICON SPIN
+========================================================= */
+@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+.spin { animation: spin 1s linear infinite; display: inline-block; }
