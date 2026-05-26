@@ -1,15 +1,21 @@
-const CACHE_NAME = 'ironlog-v40';
-const ASSETS = [
-  './manifest.json',
+const CACHE_NAME = 'ironlog-v41';
+
+// Solo cacheamos recursos estáticos que no cambian
+const STATIC_ASSETS = [
   './icon.png',
-  './css/styles.css',
+  './ch3ca-logo.png',
+  './manifest.json'
+];
+
+// Archivos de código — siempre red primero
+const CODE_ASSETS = [
   './js/app.js',
-  './ch3ca-logo.png'
+  './css/styles.css'
 ];
 
 self.addEventListener('install', event => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then(cache => cache.addAll(ASSETS))
+    caches.open(CACHE_NAME).then(cache => cache.addAll(STATIC_ASSETS))
   );
   self.skipWaiting();
 });
@@ -24,10 +30,24 @@ self.addEventListener('activate', event => {
 });
 
 self.addEventListener('fetch', event => {
-  if (event.request.mode === 'navigate') {
-    event.respondWith(fetch(event.request));
+  const url = new URL(event.request.url);
+  const isCodeFile = CODE_ASSETS.some(a => url.pathname.endsWith(a.replace('./', '/')));
+
+  if (event.request.mode === 'navigate' || isCodeFile) {
+    // Network first: siempre intenta la red, cachea el resultado
+    event.respondWith(
+      fetch(event.request)
+        .then(res => {
+          const clone = res.clone();
+          caches.open(CACHE_NAME).then(c => c.put(event.request, clone));
+          return res;
+        })
+        .catch(() => caches.match(event.request))
+    );
     return;
   }
+
+  // Cache first para imágenes y recursos estáticos
   event.respondWith(
     caches.match(event.request).then(cached => cached || fetch(event.request))
   );
