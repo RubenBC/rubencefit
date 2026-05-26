@@ -1586,3 +1586,15 @@ body.dark-mode .week-info-btn {
 ========================================================= */
 @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 .spin { animation: spin 1s linear infinite; display: inline-block; }
+
+/* =========================================================
+   SPLASH VERSION
+========================================================= */
+.splash-version {
+    margin: 8px 0 0;
+    font-family: 'Roboto', sans-serif;
+    font-size: 10px;
+    font-weight: 400;
+    color: var(--outline);
+    letter-spacing: 1px;
+}
