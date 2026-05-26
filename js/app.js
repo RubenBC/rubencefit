@@ -1469,17 +1469,7 @@ function startTimer(s) {
     }, 1000);
 }
 
-window.onload = () => {
-    showPage(state.activeTab || 'rutinaPage');
-if (localStorage.getItem('ironlog_dark') === '1') {
-    document.body.classList.add('dark-mode');
-    const btn = document.getElementById('darkModeBtn');
-    if (btn) btn.querySelector('span').innerText = 'light_mode';
-}
-
-// ── Botón atrás de Android ────────────────────────────────────────────────────
-history.pushState({ ironlog: true }, '');
-// ── Supabase sync ────────────────────────────────────────────────────────────
+// ── Supabase ─────────────────────────────────────────────────────────────────
 const SUPABASE_URL = 'https://qcawsoaeppuyvqhpybtt.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_m3iwz7iGVKkakn-_CoOr6g_mD1wmBoK';
 
@@ -1535,18 +1525,19 @@ function setSyncIcon(status) {
 async function restaurarDesdeSupabase() {
     try {
         setSyncIcon('sync');
+        showToast('Conectando con la nube...');
         const res = await fetch(`${SUPABASE_URL}/rest/v1/ironlog_sync?device_id=eq.${getDeviceId()}&select=state_data,updated_at`,
             { headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` } });
-        if (!res.ok) { setSyncIcon('error'); return; }
+        if (!res.ok) { setSyncIcon('error'); showToast(`❌ Error: ${res.status}`); return; }
         const data = await res.json();
-        if (!data.length) { showToast('☁️ No hay datos en la nube'); setSyncIcon('ok'); return; }
+        if (!data.length) { showToast('☁️ Sin datos en la nube para este dispositivo'); setSyncIcon('ok'); return; }
+        const sesiones = data[0].state_data?.historial?.length || 0;
         Object.assign(state, data[0].state_data);
         state.lastSync = data[0].updated_at;
-        save();
-        showPage(state.activeTab || 'rutinaPage');
+        save(); showPage(state.activeTab || 'rutinaPage');
         setSyncIcon('ok');
-        showToast('✅ Datos restaurados desde la nube');
-    } catch(e) { setSyncIcon('error'); showToast('❌ Error al conectar con la nube'); }
+        showToast(`✅ Restauradas ${sesiones} sesiones`);
+    } catch(e) { setSyncIcon('error'); showToast(`❌ ${e.message||'Sin conexión'}`); }
 }
 
 function cerrarSyncModal() {
@@ -1557,7 +1548,6 @@ function onSyncIconPress() {
     const btn = document.getElementById('syncIcon');
     if (btn) btn.style.opacity = '0.5';
     setTimeout(() => { if (btn) btn.style.opacity = '1'; }, 300);
-    showToast('☁️ Abriendo sync...');
     const hayDatos = state.historial && state.historial.length > 0;
     document.getElementById('syncBtnGuardar').style.display = hayDatos ? 'block' : 'none';
     document.getElementById('syncTxt').innerText = hayDatos
@@ -1566,12 +1556,8 @@ function onSyncIconPress() {
     document.getElementById('syncModal').style.display = 'flex';
 }
 
-loadFromSupabase();
-
 function handleBackButton() {
-    // 1. Cerrar cualquier modal abierto (por orden de prioridad)
-    const modales = ['exInfoModal','editExModal','intensidadModal',
-                     'generarSemanaModal','statInfoModal','dayModal'];
+    const modales = ['exInfoModal','editExModal','intensidadModal','generarSemanaModal','statInfoModal','dayModal','syncModal'];
     for (const id of modales) {
         const el = document.getElementById(id);
         if (el && el.style.display !== 'none' && el.style.display !== '') {
@@ -1579,20 +1565,24 @@ function handleBackButton() {
             return;
         }
     }
-    // 2. Vista de ejercicios en Biblioteca → volver a grupos
     const exView = document.getElementById('exerciseView');
-    if (exView && exView.style.display !== 'none') {
-        backToGroups();
-        return;
-    }
-    // 3. En pestaña principal → no hacer nada (el re-push evita el cierre)
+    if (exView && exView.style.display !== 'none') { backToGroups(); return; }
 }
 
 window.addEventListener('popstate', () => {
     handleBackButton();
-    // Siempre re-añadimos una entrada para que nunca se vacíe el historial
     history.pushState({ ironlog: true }, '');
 });
+
+window.onload = () => {
+    showPage(state.activeTab || 'rutinaPage');
+    if (localStorage.getItem('ironlog_dark') === '1') {
+        document.body.classList.add('dark-mode');
+        const btn = document.getElementById('darkModeBtn');
+        if (btn) btn.querySelector('span').innerText = 'light_mode';
+    }
+    history.pushState({ ironlog: true }, '');
+    loadFromSupabase();
     const splash = document.getElementById('splashScreen');
     if (splash) {
         setTimeout(() => {
