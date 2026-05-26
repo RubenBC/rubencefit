@@ -1595,6 +1595,33 @@ function setSyncIcon(status) {
     if (status === 'sync') el.classList.add('spin'); else el.classList.remove('spin');
 }
 
+async function restaurarDesdeSupabase() {
+    try {
+        setSyncIcon('sync');
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/ironlog_sync?device_id=eq.${getDeviceId()}&select=state_data,updated_at`,
+            { headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` } });
+        if (!res.ok) { setSyncIcon('error'); return; }
+        const data = await res.json();
+        if (!data.length) { showToast('☁️ No hay datos en la nube'); setSyncIcon('ok'); return; }
+        Object.assign(state, data[0].state_data);
+        state.lastSync = data[0].updated_at;
+        save();
+        showPage(state.activeTab || 'rutinaPage');
+        setSyncIcon('ok');
+        showToast('✅ Datos restaurados desde la nube');
+    } catch(e) { setSyncIcon('error'); showToast('❌ Error al conectar con la nube'); }
+}
+
+function onSyncIconPress() {
+    if (state.historial && state.historial.length === 0) {
+        if (confirm('No hay sesiones locales.\n¿Restaurar datos desde la nube?')) {
+            restaurarDesdeSupabase();
+        }
+    } else {
+        syncToSupabase();
+    }
+}
+
 loadFromSupabase();
 
 function handleBackButton() {
