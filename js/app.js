@@ -987,6 +987,7 @@ function finalizarSesion() {
         state.hoy = []; resetSesionStopwatch(); save(); showPage('historialPage');
         mostrarToastBackup();
         syncToSupabase();
+        syncToSupabase();
     }
 }
 
@@ -1545,6 +1546,55 @@ if (localStorage.getItem('ironlog_dark') === '1') {
 
 // ── Botón atrás de Android ────────────────────────────────────────────────────
 history.pushState({ ironlog: true }, '');
+// ── Supabase sync ────────────────────────────────────────────────────────────
+const SUPABASE_URL = 'https://qcawsoaeppuyvqhpybtt.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_m3iwz7iGVKkakn-_CoOr6g_mD1wmBoK';
+
+function getDeviceId() {
+    let id = localStorage.getItem('ironlog_device_id');
+    if (!id) { id = 'dev_' + Math.random().toString(36).slice(2) + Date.now().toString(36); localStorage.setItem('ironlog_device_id', id); }
+    return id;
+}
+
+async function syncToSupabase() {
+    try {
+        setSyncIcon('sync');
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/ironlog_sync`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Prefer': 'resolution=merge-duplicates' },
+            body: JSON.stringify({ device_id: getDeviceId(), state_data: state, updated_at: new Date().toISOString() })
+        });
+        setSyncIcon(res.ok ? 'ok' : 'error');
+    } catch(e) { setSyncIcon('error'); }
+}
+
+async function loadFromSupabase() {
+    try {
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/ironlog_sync?device_id=eq.${getDeviceId()}&select=state_data,updated_at`,
+            { headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` } });
+        if (!res.ok) return;
+        const data = await res.json();
+        if (!data.length) return;
+        const remoteUpdated = new Date(data[0].updated_at);
+        const localUpdated  = new Date(state.lastSync || 0);
+        if (remoteUpdated > localUpdated) {
+            Object.assign(state, data[0].state_data);
+            state.lastSync = data[0].updated_at;
+            save(); showPage(state.activeTab || 'rutinaPage');
+            showToast('☁️ Datos sincronizados desde la nube');
+        }
+    } catch(e) {}
+}
+
+function setSyncIcon(status) {
+    const el = document.getElementById('syncIcon');
+    if (!el) return;
+    const icons = { sync: 'sync', ok: 'cloud_done', error: 'cloud_off' };
+    const colors = { sync: 'var(--text2)', ok: '#43A047', error: '#E53935' };
+    el.innerText = icons[status]; el.style.color = colors[status];
+    if (status === 'sync') el.classList.add('spin'); else el.classList.remove('spin');
+}
+
 loadFromSupabase();
 
 function handleBackButton() {
