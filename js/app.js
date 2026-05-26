@@ -987,7 +987,6 @@ function finalizarSesion() {
         state.hoy = []; resetSesionStopwatch(); save(); showPage('historialPage');
         mostrarToastBackup();
         syncToSupabase();
-        syncToSupabase();
     }
 }
 
@@ -1617,45 +1616,17 @@ async function restaurarDesdeSupabase() {
 }
 
 function cerrarSyncModal() {
-    const m = document.getElementById('syncModal');
-    if (m) m.remove();
+    document.getElementById('syncModal').style.display = 'none';
 }
 
 function onSyncIconPress() {
     const hayDatos = state.historial && state.historial.length > 0;
-    const modal = document.createElement('div');
-    modal.id = 'syncModal';
-    modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.45);z-index:99999;display:flex;align-items:flex-end;justify-content:center;';
-    modal.innerHTML = `
-        <div style="background:var(--surface);border-radius:24px 24px 0 0;padding:24px 20px 40px;width:100%;max-width:600px;animation:slideUp 0.22s ease;">
-            <div style="width:32px;height:4px;background:var(--outline);border-radius:2px;margin:0 auto 20px;"></div>
-            <div style="text-align:center;font-size:28px;margin-bottom:12px;">☁️</div>
-            <h3 style="text-align:center;margin:0 0 8px;font-size:17px;color:var(--text);">Sincronización</h3>
-            <p style="text-align:center;color:var(--text2);font-size:13px;margin:0 0 24px;">
-                ${hayDatos ? 'Elige qué quieres hacer con la nube' : 'No hay sesiones locales'}
-            </p>
-            <div style="display:flex;flex-direction:column;gap:10px;">
-                ${hayDatos ? `
-                <button onclick="cerrarSyncModal();syncToSupabase();"
-                    style="background:var(--primary);color:white;border:none;border-radius:12px;padding:14px;font-size:15px;font-weight:bold;cursor:pointer;">
-                    ↑ Guardar en la nube
-                </button>
-                <button onclick="cerrarSyncModal();restaurarDesdeSupabase();"
-                    style="background:var(--primary-light);color:var(--primary);border:none;border-radius:12px;padding:14px;font-size:15px;font-weight:bold;cursor:pointer;">
-                    ↓ Restaurar desde la nube
-                </button>` : `
-                <button onclick="cerrarSyncModal();restaurarDesdeSupabase();"
-                    style="background:var(--primary);color:white;border:none;border-radius:12px;padding:14px;font-size:15px;font-weight:bold;cursor:pointer;">
-                    ↓ Restaurar desde la nube
-                </button>`}
-                <button onclick="cerrarSyncModal();"
-                    style="background:none;color:var(--text2);border:none;padding:10px;font-size:14px;cursor:pointer;">
-                    Cancelar
-                </button>
-            </div>
-        </div>`;
-    document.body.appendChild(modal);
-    modal.addEventListener('click', e => { if (e.target === modal) cerrarSyncModal(); });
+    document.getElementById('syncBtnGuardar').style.display = hayDatos ? 'block' : 'none';
+    document.getElementById('syncBtnRestaurar').style.display = 'block';
+    document.getElementById('syncTxt').innerText = hayDatos
+        ? 'Elige qué quieres hacer con la nube'
+        : 'No hay sesiones locales';
+    document.getElementById('syncModal').style.display = 'flex';
 }
 
 loadFromSupabase();
