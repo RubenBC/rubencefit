@@ -1,7 +1,7 @@
 {
-  "name": "IronLog",
-  "short_name": "IronLog",
-  "description": "Registro de entrenamientos personales",
+  "name": "Rubencefit",
+  "short_name": "Rubencefit",
+  "description": "Entrenamiento personal inteligente",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#FFFFFF",
