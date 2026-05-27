@@ -1,1817 +1,279 @@
-:root {
-    --primary: #6750A4;
-    --primary-light: #EADDFF;
-
-    --bg: #F6F2FA;
-
-    --surface: #FFFBFE;
-    --surface2: #F2EDF7;
-
-    --text: #1C1B1F;
-    --text1: #1C1B1F;
-    --text2: #625B71;
-
-    --outline: #CAC4D0;
-
-    --danger: #B3261E;
-
-    --color-descanso: #FFFBFE;
-    --color-verde: #C8E6C9;
-    --color-amarillo: #FFF9C4;
-    --color-rojo: #FFCDD2;
-
-    --state-hover: rgba(103,80,164,0.08);
-    --state-pressed: rgba(103,80,164,0.12);
-    --shape-full: 999px;
-}
-
-* {
-    box-sizing: border-box;
-    -webkit-tap-highlight-color: transparent;
-}
-
-html,
-body {
-    height: 100%;
-    overflow-x: hidden;
-}
-
-body {
-    font-family: 'Roboto', 'Google Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-    margin: 0;
-    background: var(--bg);
-    color: var(--text);
-    padding-bottom: calc(120px + env(safe-area-inset-bottom));
-    scroll-behavior: smooth;
-}
-
-/* =========================================================
-   TOPBAR & TIMER
-========================================================= */
-
-.topbar {
-    position: sticky;
-    top: 0;
-    background: rgba(255,255,255,0.92);
-    backdrop-filter: blur(12px);
-    padding: calc(10px + env(safe-area-inset-top)) 16px 10px;
-    z-index: 100;
-    border-bottom: 1px solid var(--outline);
-}
-
-.timer-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background: var(--surface2);
-    padding: 8px 12px;
-    border-radius: 16px;
-    gap: 8px;
-}
-
-.timer-display {
-    font-family: 'Roboto Mono', monospace;
-    font-size: 24px;
-    font-weight: bold;
-    color: var(--primary);
-}
-
-.btn-pill {
-    border: none;
-    background: var(--primary-light);
-    color: var(--primary);
-    padding: 6px 14px;
-    border-radius: var(--shape-full);
-    font-size: 12px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: transform 0.08s ease, background 0.15s;
-    letter-spacing: 0.2px;
-}
-
-.btn-pill:hover {
-    background: #DDD6F3;
-}
-
-.btn-pill:active {
-    transform: scale(0.96);
-}
-
-/* =========================================================
-   LAYOUT
-========================================================= */
-
-.main {
-    padding: 16px;
-    max-width: 600px;
-    margin: 0 auto;
-}
-
-.page {
-    display: none;
-    animation: fadeIn 0.25s ease;
-}
-
-.page.active {
-    display: block;
-}
-
-@keyframes fadeIn {
-
-    from {
-        opacity: 0;
-        transform: translateY(8px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-h2 {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 22px;
-    margin-bottom: 20px;
-    color: var(--text);
-}
-
-.header-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 15px;
-}
-
-/* =========================================================
-   CARDS
-========================================================= */
-
-.routine-card,
-.day-card,
-.coach-card {
-
-    background: var(--surface);
-
-    border-radius: 20px;
-
-    padding: 16px;
-
-    margin-bottom: 12px;
-
-    border: 1px solid var(--outline);
-
-    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
-}
-
-.routine-card {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-/* =========================================================
-   ESTADÍSTICAS
-========================================================= */
-
-.stat-box {
-    background: var(--primary-light);
-    padding: 12px 8px;
-    border-radius: 16px;
-    text-align: center;
-}
-
-.stat-val {
-    display: block;
-    font-size: 18px;
-    font-weight: bold;
-    color: var(--primary);
-}
-
-.stat-val small {
-    font-size: 10px;
-    margin-left: 2px;
-}
-
-.stat-label {
-    display: block;
-    font-size: 9px;
-    color: var(--text2);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    margin-bottom: 4px;
-}
-
-/* =========================================================
-   COACH
-========================================================= */
-
-.coach-card {
-    border: none;
-    background: #fff;
-    position: relative;
-    overflow: hidden;
-}
-
-.coach-status {
-    display: flex;
-    gap: 6px;
-    margin-top: 10px;
-}
-
-/* =========================================================
-   TAGS
-========================================================= */
-
-.tag {
-    padding: 4px 10px;
-    border-radius: var(--shape-full);
-    font-size: 10px;
-    font-weight: 600;
-    text-transform: uppercase;
-    white-space: nowrap;
-    letter-spacing: 0.3px;
-}
-
-.tag-basico {
-    background: #FFE0B2;
-    color: #E65100;
-}
-
-.tag-aisla {
-    background: #D1C4E9;
-    color: #4527A0;
-}
-
-.tag-salud {
-    background: #C8E6C9;
-    color: #1B5E20;
-}
-
-/* =========================================================
-   INPUTS
-========================================================= */
-
-.input-group {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-}
-
-.input-group label {
-    font-size: 10px;
-    font-weight: bold;
-    color: var(--text2);
-    text-transform: uppercase;
-}
-
-.input-group input {
-
-    width: 100%;
-
-    border: 1px solid var(--outline);
-
-    background: var(--surface2);
-
-    padding: 10px;
-
-    border-radius: 12px;
-
-    font-size: 14px;
-
-    color: var(--primary);
-
-    font-weight: bold;
-
-    transition: border 0.15s ease;
-}
-
-.input-group input:focus {
-    outline: none;
-    border-color: var(--primary);
-    box-shadow: 0 0 0 2px rgba(103,80,164,0.18);
-    background: var(--surface);
-}
-
-/* =========================================================
-   BIBLIOTECA
-========================================================= */
-
-.group-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
-}
-
-.group-card {
-
-    background: var(--surface);
-
-    border-radius: 18px;
-
-    padding: 20px;
-
-    text-align: center;
-
-    border: 1px solid var(--outline);
-
-    cursor: pointer;
-
-    transition: transform 0.08s ease;
-}
-
-.group-card:hover {
-    background: var(--state-hover);
-}
-
-.group-card:active {
-    transform: scale(0.96);
-    background: var(--primary-light);
-}
-
-.group-card .material-symbols-outlined {
-
-    font-size: 32px;
-
-    color: var(--primary);
-
-    margin-bottom: 8px;
-}
-
-/* =========================================================
-   TODAY
-========================================================= */
-
-#todayList {
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-}
-
-.today-card {
-    overflow: hidden;
-}
-
-.today-header {
-
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-
-    gap: 12px;
-
-    cursor: pointer;
-}
-
-.today-title {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-}
-
-.today-title b {
-    font-size: 15px;
-    line-height: 1.3;
-}
-
-.today-title small {
-    color: var(--text2);
-    font-size: 12px;
-}
-
-.today-header-right {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.expand-icon {
-    transition: transform 0.2s ease;
-    color: var(--text2);
-}
-
-.expand-icon.open {
-    transform: rotate(180deg);
-}
-
-.today-content {
-    max-height: 0;
-    overflow: hidden;
-    transition:
-        max-height 0.25s ease,
-        margin-top 0.25s ease;
-}
-
-.today-content.open {
-    max-height: 500px;
-    margin-top: 14px;
-}
-
-.today-grid-3 {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
-}
-
-.today-grid-2 {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 10px;
-}
-
-.today-notes {
-    margin-top: 12px;
-}
-
-.today-actions {
-    display: flex;
-    gap: 8px;
-    margin-top: 14px;
-}
-
-/* --- Today Card: estructura y acento --- */
-#todayList .routine-card {
-    padding: 0;
-    overflow: hidden;
-    border-color: transparent;
-    box-shadow: 0 6px 20px rgba(103, 80, 164, 0.10), 0 1px 6px rgba(0,0,0,0.05);
-    gap: 0;
-}
-
-.today-card-basico { border-left: 4px solid #E65100; }
-.today-card-aisla  { border-left: 4px solid #4527A0; }
-.today-card-salud  { border-left: 4px solid #2E7D32; }
-
-.today-card-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    padding: 14px 16px;
-    background: linear-gradient(135deg, rgba(103,80,164,0.06) 0%, rgba(255,255,255,0) 70%);
-    border-bottom: 1px solid var(--outline);
-}
-
-.today-card-body {
-    padding: 14px 16px 16px;
-}
-
-/* --- Stats grid --- */
-.stats-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
-}
-
-.cardio-grid {
-    grid-template-columns: repeat(2, 1fr);
-}
-
-/* --- Notes row --- */
-.notes-row {
-    margin-top: 12px;
-}
-
-/* --- Ex-actions --- */
-.ex-actions {
-    display: flex;
-    gap: 6px;
-}
-
-/* --- Inputs refinados en contexto hoy --- */
-#todayList .input-group label {
-    color: var(--primary);
-    opacity: 0.75;
-    letter-spacing: 0.6px;
-}
-
-#todayList .input-group input {
-    background: var(--bg);
-    border-radius: 10px;
-    padding: 9px 12px;
-}
-
-/* =========================================================
-   BOTONES
-========================================================= */
-
-.btn-action {
-
-    width: 100%;
-
-    background: var(--primary);
-
-    color: white;
-
-    border: none;
-
-    padding: 16px;
-
-    border-radius: 16px;
-
-    font-weight: bold;
-
-    font-size: 16px;
-
-    margin-top: 20px;
-
-    cursor: pointer;
-
-    transition: transform 0.08s ease;
-}
-
-.btn-action:active {
-    transform: scale(0.98);
-}
-
-.btn-icon {
-
-    border: none;
-
-    cursor: pointer;
-
-    padding: 10px;
-
-    border-radius: 12px;
-
-    background: var(--surface2);
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    transition:
-        transform 0.08s ease,
-        background 0.15s ease;
-}
-
-.btn-icon:active {
-    transform: scale(0.94);
-}
-
-.btn-icon .material-symbols-outlined {
-    font-size: 20px;
-}
-
-.btn-swap {
-    color: var(--primary);
-}
-
-.btn-delete {
-    color: var(--danger);
-}
-
-/* =========================================================
-   SEMANA & PLANNER
-========================================================= */
-
-.day-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 8px;
-}
-
-.day-name {
-    font-weight: bold;
-    font-size: 16px;
-}
-
-.day-status {
-    font-size: 11px;
-    font-weight: bold;
-    opacity: 0.8;
-}
-
-.selected-labels {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 4px;
-}
-
-.mini-tag {
-    background: rgba(255,255,255,0.5);
-    padding: 2px 6px;
-    border-radius: 4px;
-    font-size: 10px;
-    font-weight: bold;
-}
-
-.mini-tag.template {
-    background: var(--primary);
-    color: var(--primary);
-}
-
-.btn-preview {
-    background: none;
-    border: none;
-    color: var(--primary);
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    font-size: 11px;
-    font-weight: bold;
-    margin-top: 5px;
-    padding: 4px 0;
-}
-
-.preview-list {
-    background: rgba(255,255,255,0.4);
-    border-radius: 8px;
-    padding: 8px;
-    margin-top: 8px;
-    font-size: 11px;
-}
-
-.preview-item {
-    padding: 2px 0;
-    border-bottom: 1px solid rgba(0,0,0,0.05);
-}
-
-.group-selector {
-    display: none;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 8px;
-    margin-top: 12px;
-    padding-top: 12px;
-    border-top: 1px solid rgba(0,0,0,0.1);
-}
-
-.group-selector.open {
-    display: grid;
-}
-
-.check-item {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 13px;
-    background: rgba(255,255,255,0.6);
-    padding: 8px;
-    border-radius: 8px;
-    border: 1px solid rgba(0,0,0,0.05);
-    cursor: pointer;
-}
-
-/* =========================================================
-   NAVEGACIÓN
-========================================================= */
-
-.bottom-nav {
-
-    position: fixed;
-
-    bottom: 0;
-
-    width: 100%;
-
-    background: rgba(255,255,255,0.94);
-
-    backdrop-filter: blur(12px);
-
-    display: flex;
-
-    border-top: 1px solid var(--outline);
-
-    padding: 12px 0 calc(12px + env(safe-area-inset-bottom));
-
-    z-index: 101;
-}
-
-.nav-btn {
-    flex: 1;
-    border: none;
-    background: none;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    color: var(--text2);
-    font-size: 12px;
-    gap: 4px;
-    cursor: pointer;
-    position: relative;
-    padding-top: 4px;
-    transition: color 0.2s;
-}
-
-.nav-btn::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    width: 64px;
-    height: 32px;
-    border-radius: var(--shape-full);
-    background: transparent;
-    transition: background 0.2s;
-    z-index: 0;
-}
-
-.nav-btn .material-symbols-outlined {
-    position: relative;
-    z-index: 1;
-}
-
-.nav-btn span:last-child {
-    position: relative;
-    z-index: 1;
-}
-
-.nav-btn.active {
-    color: var(--primary);
-    font-weight: 500;
-}
-
-.nav-btn.active::before {
-    background: var(--primary-light);
-}
-
-.nav-btn .material-symbols-outlined {
-    font-variation-settings: 'FILL' 0;
-}
-
-.nav-btn.active .material-symbols-outlined {
-    font-variation-settings: 'FILL' 1;
-}
-
-/* =========================================================
-   BADGES
-========================================================= */
-
-.counter-badge {
-
-    background: var(--primary);
-
-    color: white;
-
-    font-size: 12px;
-
-    padding: 2px 8px;
-
-    border-radius: 10px;
-
-    font-weight: bold;
-}
-
-/* =========================================================
-   TOAST
-========================================================= */
-
-@keyframes fadeInOut {
-    0%   { opacity: 0; transform: translateX(-50%) translateY(10px); }
-    20%  { opacity: 1; transform: translateX(-50%) translateY(0);    }
-    75%  { opacity: 1; }
-    100% { opacity: 0; transform: translateX(-50%) translateY(-6px); }
-}
-
-#toastMsg {
-    position: fixed;
-    bottom: 90px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: var(--primary);
-    color: white;
-    padding: 10px 22px;
-    border-radius: 20px;
-    font-size: 14px;
-    font-weight: bold;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.25);
-    z-index: 9999;
-    white-space: nowrap;
-    animation: fadeInOut 1.2s ease forwards;
-}
-
-/* =========================================================
-   ESTADÍSTICAS — MEJORAS
-========================================================= */
-
-.stat-full { grid-column: 1 / span 2; }
-
-.stat-type-bars { display:flex; flex-direction:column; gap:7px; margin-top:8px; }
-
-.stat-type-row { display:flex; align-items:center; gap:8px; }
-
-.stat-type-chip { font-size:9px; font-weight:bold; min-width:22px; text-align:center; padding:2px 5px; border-radius:6px; }
-
-.stat-bar-bg { flex:1; height:8px; background:rgba(0,0,0,0.07); border-radius:99px; overflow:hidden; }
-
-.stat-bar-fill { height:100%; border-radius:99px; transition:width 0.6s ease; min-width:4px; }
-
-.stat-bar-b { background:#e74c3c; }
-.stat-bar-a { background:#9b59b6; }
-.stat-bar-s { background:#27ae60; }
-
-.stat-type-pct { font-size:10px; font-weight:bold; color:var(--text2); min-width:28px; text-align:right; }
-
-/* =========================================================
-   CRONÓMETRO DE SESIÓN
-========================================================= */
-
-.stopwatch-row {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    padding: 7px 16px;
-    background: rgba(103, 80, 164, 0.07);
-    border-top: 1px solid rgba(103, 80, 164, 0.15);
-}
-
-.stopwatch-display {
-    font-family: 'Roboto Mono', monospace;
-    font-size: 22px;
-    font-weight: 500;
-    color: var(--primary);
-    letter-spacing: 3px;
-}
-
-.stopwatch-label {
-    font-size: 9px;
-    color: var(--text2);
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
-
-/* =========================================================
-   EJERCICIO COMPLETADO (checkbox)
-========================================================= */
-
-.ex-done-check {
-    display: flex;
-    align-items: center;
-    cursor: pointer;
-    flex-shrink: 0;
-    margin-right: 10px;
-}
-
-.ex-done-check input[type="checkbox"] { display: none; }
-
-.ex-done-icon {
-    width: 28px;
-    height: 28px;
-    border-radius: 50%;
-    border: 2px solid var(--outline);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    transition: background 0.2s, border-color 0.2s;
-}
-
-.ex-done-check input:checked + .ex-done-icon {
-    background: var(--primary);
-    border-color: var(--primary);
-}
-
-.ex-done-check input:checked + .ex-done-icon::after {
-    content: '✓';
-    color: white;
-    font-size: 15px;
-    font-weight: bold;
-}
-
-.ex-done-text {
-    opacity: 0.45;
-    text-decoration: line-through;
-    text-decoration-color: var(--text2);
-}
-
-.today-card-done { opacity: 0.65; }
-
-/* =========================================================
-   CALENDARIO DE ACTIVIDAD
-========================================================= */
-
-#calendarContainer {
-    background: var(--surface);
-    border-radius: 20px;
-    padding: 20px 14px 14px;
-    margin: 16px 0;
-    border: 1px solid var(--outline);
-    box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
-}
-
-.cal-nav {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 18px;
-}
-
-.cal-nav-center {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 4px;
-}
-
-.cal-btn {
-    background: none;
-    border: none;
-    font-size: 26px;
-    color: var(--primary);
-    cursor: pointer;
-    padding: 0 8px;
-    line-height: 1;
-}
-
-.cal-btn:disabled { opacity: 0.15; cursor: default; }
-
-.cal-title {
-    font-weight: bold;
-    font-size: 16px;
-    color: var(--primary);
-}
-
-.cal-puntos {
-    font-size: 13px;
-    color: var(--primary); opacity:0.75;
-    font-weight: 500;
-}
-
-.cal-grid {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 4px 2px;
-}
-
-.cal-cell {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 52px;
-}
-
-.cal-future { opacity: 0.25; }
-
-.cal-dnum {
-    font-size: 15px;
-    color: var(--text2);
-    font-weight: 400;
-}
-
-.cal-dnum-today {
-    color: var(--primary) !important;
-    font-weight: bold;
-}
-
-.cal-circle {
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-weight: 600;
-    flex-shrink: 0;
-    transition: transform 0.15s;
-}
-
-.cal-circle-today {
-    box-shadow: 0 0 0 2.5px var(--primary);
-}
-
-.cal-footer {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    margin-top: 10px;
-    border-top: 1px solid var(--outline);
-    padding-top: 8px;
-}
-
-.cal-foot-d {
-    text-align: center;
-    font-size: 11px;
-    color: var(--text2); opacity:0.65;
-}
-
-.cal-foot-today {
-    color: var(--primary);
-    font-weight: bold;
-}
-
-/* =========================================================
-   MODAL DÍA
-========================================================= */
-.day-modal { position:fixed; inset:0; background:rgba(0,0,0,0.35); z-index:500; display:flex; align-items:flex-end; justify-content:center; }
-.day-modal-sheet { background:white; border-radius:24px 24px 0 0; padding:8px 20px 36px; width:100%; max-width:600px; max-height:75vh; overflow-y:auto; animation:slideUp 0.22s ease; }
-
-.day-modal-sheet::before {
-    content: '';
-    display: block;
-    width: 32px;
-    height: 4px;
-    border-radius: 2px;
-    background: var(--outline);
-    margin: 0 auto 16px;
-}
-@keyframes slideUp { from{transform:translateY(100%);opacity:0} to{transform:translateY(0);opacity:1} }
-.day-modal-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; }
-.day-modal-title { font-size:16px; font-weight:bold; color:var(--primary); text-transform:capitalize; }
-.day-modal-close { background:none; border:none; font-size:18px; color:var(--text2); cursor:pointer; padding:4px 8px; }
-.modal-times { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:14px; }
-.modal-time-pill { background:var(--primary-light); color:var(--primary); border-radius:20px; padding:5px 12px; font-size:12px; font-weight:500; }
-.modal-ex-list { display:flex; flex-direction:column; gap:0; }
-.modal-ex-item { display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:1px solid var(--outline); font-size:13px; }
-.modal-ex-item:last-child { border-bottom:none; }
-.modal-ex-name { color:var(--text1); flex:1; }
-.modal-ex-meta { font-family:monospace; font-size:12px; color:var(--primary); font-weight:500; margin-left:8px; flex-shrink:0; }
-
-/* =========================================================
-   MODAL DE SELECCIÓN DE INTENSIDAD
-========================================================= */
-.intensity-options {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    margin-top: 8px;
-}
-
-.intensity-btn {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    background: var(--surface2);
-    border: 2px solid transparent;
-    border-radius: 16px;
-    padding: 16px;
-    cursor: pointer;
-    text-align: left;
-    transition: border-color 0.15s, transform 0.1s, background 0.15s;
-    width: 100%;
-}
-
-.intensity-btn:hover {
-    background: var(--primary-light);
-}
-
-.intensity-btn:active {
-    transform: scale(0.98);
-}
-
-.intensity-suave { border-color: #a8d8b9; }
-.intensity-normal { border-color: var(--primary); }
-.intensity-intensa { border-color: #e8a87c; }
-
-.intensity-emoji {
-    font-size: 26px;
-    flex-shrink: 0;
-}
-
-.intensity-info {
-    flex: 1;
-    min-width: 0;
-}
-
-.intensity-title {
-    font-weight: bold;
-    font-size: 15px;
-    color: var(--primary);
-}
-
-.intensity-desc {
-    font-size: 11px;
-    color: var(--text2);
-    margin-top: 2px;
-    line-height: 1.3;
-}
-
-/* =========================================================
-   STAT INFO MODAL
-========================================================= */
-.stat-tappable {
-    cursor: pointer;
-    transition: transform 0.1s, opacity 0.1s;
-    user-select: none;
-}
-
-.stat-tappable:active {
-    transform: scale(0.95);
-    opacity: 0.85;
-}
-
-.stat-info-hint {
-    font-size: 8px;
-    opacity: 0.5;
-    font-weight: 400;
-    text-transform: none;
-    letter-spacing: 0;
-}
-
-.stat-info-desc {
-    font-size: 14px;
-    color: var(--text);
-    line-height: 1.6;
-    margin: 0 0 16px;
-}
-
-.stat-info-consejo {
-    background: var(--primary-light);
-    border-radius: 14px;
-    padding: 14px 16px;
-}
-
-.stat-info-consejo-label {
-    font-size: 11px;
-    font-weight: bold;
-    color: var(--primary);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    display: block;
-    margin-bottom: 6px;
-}
-
-.stat-info-consejo-text {
-    font-size: 13px;
-    color: var(--text);
-    line-height: 1.6;
-    margin: 0;
-}
-
-/* =========================================================
-   PROGRESO DE SESIÓN
-========================================================= */
-
-.session-progress-wrap {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 10px 0 4px;
-}
-
-.session-progress-bar-bg {
-    flex: 1;
-    height: 6px;
-    background: var(--outline);
-    border-radius: var(--shape-full);
-    overflow: hidden;
-}
-
-.session-progress-bar-fill {
-    height: 100%;
-    background: var(--primary);
-    border-radius: var(--shape-full);
-    transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.session-progress-text {
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--primary);
-    min-width: 36px;
-    text-align: right;
-}
-
-.session-complete {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    background: var(--primary);
-    border-radius: 16px;
-    padding: 14px 16px;
-    margin: 10px 0 4px;
-    animation: slideUp 0.3s ease;
-}
-
-.session-complete-emoji { font-size: 26px; flex-shrink: 0; }
-
-.session-complete-info { flex: 1; min-width: 0; }
-
-.session-complete-title { font-weight: bold; font-size: 14px; color: white; }
-
-.session-complete-sub { font-size: 11px; color: rgba(255,255,255,0.75); margin-top: 2px; }
-
-.session-complete-btn {
-    background: white;
-    color: var(--primary);
-    border: none;
-    border-radius: var(--shape-full);
-    padding: 8px 14px;
-    font-size: 12px;
-    font-weight: bold;
-    cursor: pointer;
-    flex-shrink: 0;
-    white-space: nowrap;
-}
-
-/* =========================================================
-   DÍA SELECTOR EN BIBLIOTECA
-========================================================= */
-.dia-selector-row {
-    display: flex;
-    gap: 6px;
-    overflow-x: auto;
-    padding: 0 0 12px;
-    scrollbar-width: none;
-    -webkit-overflow-scrolling: touch;
-}
-.dia-selector-row::-webkit-scrollbar { display: none; }
-
-.dia-chip {
-    flex-shrink: 0;
-    padding: 6px 14px;
-    border-radius: var(--shape-full);
-    background: var(--surface2);
-    font-size: 12px;
-    font-weight: 500;
-    color: var(--text2);
-    cursor: pointer;
-    transition: background 0.15s, color 0.15s;
-    border: 1.5px solid transparent;
-}
-
-.dia-chip-active {
-    background: var(--primary-light);
-    color: var(--primary);
-    font-weight: bold;
-    border-color: var(--primary);
-}
-
-.dia-chip-rest {
-    opacity: 0.45;
-}
-
-.group-card-dim {
-    opacity: 0.45;
-}
-
-/* =========================================================
-   SEMANA — NUEVA VISTA CON EJERCICIOS
-========================================================= */
-.week-ex-list {
-    display: flex;
-    flex-direction: column;
-    gap: 0;
-    margin: 6px 0;
-    background: rgba(255,255,255,0.55);
-    border-radius: 10px;
-    overflow: hidden;
-}
-
-.week-ex-item {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 8px 10px;
-    border-bottom: 1px solid rgba(0,0,0,0.05);
-    gap: 6px;
-}
-
-.week-ex-item:last-child { border-bottom: none; }
-
-.week-ex-name {
-    font-size: 12px;
-    color: var(--text);
-    flex: 1;
-    min-width: 0;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-
-.week-ex-actions {
-    display: flex;
-    gap: 2px;
-    flex-shrink: 0;
-}
-
-.btn-sm {
-    width: 28px !important;
-    height: 28px !important;
-    font-size: 14px !important;
-}
-
-.btn-sm .material-symbols-outlined {
-    font-size: 14px !important;
-}
-
-.week-day-actions {
-    display: flex;
-    gap: 6px;
-    margin-top: 8px;
-    flex-wrap: wrap;
-}
-
-.week-plan-empty {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    margin: 8px 0;
-}
-
-.week-btn-plan {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    background: var(--primary);
-    color: white;
-    border: none;
-    border-radius: 12px;
-    padding: 12px;
-    font-size: 13px;
-    font-weight: bold;
-    cursor: pointer;
-    width: 100%;
-}
-
-.week-btn-primary {
-    flex: 1;
-    background: var(--primary);
-    color: white;
-    border: none;
-    border-radius: 8px;
-    padding: 8px 10px;
-    font-size: 11px;
-    font-weight: bold;
-    cursor: pointer;
-    white-space: nowrap;
-}
-
-.week-btn-secondary {
-    flex: 1;
-    background: rgba(255,255,255,0.6);
-    color: var(--primary);
-    border: 1px solid var(--primary);
-    border-radius: 8px;
-    padding: 8px 10px;
-    font-size: 11px;
-    font-weight: bold;
-    cursor: pointer;
-    white-space: nowrap;
-}
-
-/* =========================================================
-   SPLASH SCREEN
-========================================================= */
-#splashScreen {
-    position: fixed;
-    top: 0; left: 0; right: 0; bottom: 0;
-    width: 100vw;
-    height: 100vh;
-    background: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 99999;
-    transition: opacity 0.5s ease;
-}
-
-#splashScreen.fade-out {
-    opacity: 0;
-    pointer-events: none;
-}
-
-/* splash styles now inline */
-
-/* =========================================================
-   SPLASH CREDITS
-========================================================= */
-.splash-credits {
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-}
-
-.splash-app-name {
-    font-family: 'Roboto', sans-serif;
-    font-size: 22px;
-    font-weight: 300;
-    letter-spacing: 6px;
-    text-transform: uppercase;
-    color: var(--primary);
-    margin: 0 0 12px;
-}
-
-.splash-by {
-    font-family: 'Roboto', sans-serif;
-    font-size: 11px;
-    font-weight: 400;
-    color: var(--text2);
-    letter-spacing: 0.5px;
-    margin: 0;
-    text-transform: uppercase;
-}
-
-.splash-author {
-    font-family: 'Roboto', sans-serif;
-    font-size: 16px;
-    font-weight: 500;
-    color: var(--text);
-    letter-spacing: 1px;
-    margin: 0 0 10px;
-}
-
-.splash-ai {
-    font-family: 'Roboto', sans-serif;
-    font-size: 10px;
-    font-weight: 400;
-    color: var(--outline);
-    letter-spacing: 0.3px;
-    margin: 0;
-    font-style: italic;
-}
-
-/* =========================================================
-   RÉCORD BADGE
-========================================================= */
-.record-badge {
-    display: inline-block;
-    font-size: 9px;
-    font-weight: 600;
-    color: #B8860B;
-    background: #FFF8DC;
-    border-radius: 6px;
-    padding: 1px 5px;
-    margin-left: 4px;
-    vertical-align: middle;
-}
-
-/* =========================================================
-   MODO OSCURO
-========================================================= */
-body.dark-mode {
-    --primary: #D0BCFF;
-    --primary-light: #2D2640;
-    --bg: #1C1B1F;
-    --surface: #2B2930;
-    --surface2: #332F38;
-    --text: #E6E1E5;
-    --text1: #E6E1E5;
-    --text2: #CAC4D0;
-    --outline: #49454F;
-    --color-descanso: #2B2930;
-    --color-verde: #1A3320;
-    --color-amarillo: #332B00;
-    --color-rojo: #3B1A1A;
-    background: #1C1B1F;
-    color: #E6E1E5;
-}
-
-body.dark-mode,
-body.dark-mode .main,
-body.dark-mode .page { background: #1C1B1F; color: #E6E1E5; }
-
-body.dark-mode .topbar { background: rgba(30,28,35,0.95); border-color: #49454F; }
-
-body.dark-mode .routine-card,
-body.dark-mode .coach-card,
-body.dark-mode .day-card,
-body.dark-mode #calendarContainer,
-body.dark-mode .stat-box { background: #2B2930; color: #E6E1E5; }
-
-body.dark-mode .day-modal-sheet { background: #2B2930; color: #E6E1E5; }
-
-body.dark-mode .week-ex-list { background: rgba(255,255,255,0.06); }
-
-body.dark-mode .week-ex-item { border-color: rgba(255,255,255,0.08); }
-
-body.dark-mode input,
-body.dark-mode textarea {
-    background: #332F38;
-    color: #E6E1E5;
-    border-color: #49454F;
-}
-
-body.dark-mode .group-card { background: #2B2930; color: #E6E1E5; border-color: #49454F; }
-
-body.dark-mode .bottom-nav { background: rgba(30,28,35,0.95); border-color: #49454F; }
-
-body.dark-mode .nav-btn { color: #CAC4D0; }
-
-body.dark-mode .nav-btn.active { color: #D0BCFF; }
-
-body.dark-mode .nav-btn.active::before { background: #2D2640; }
-
-body.dark-mode .intensity-btn { background: #332F38; }
-
-body.dark-mode .mini-tag { background: #3D3842; color: #CAC4D0; }
-
-body.dark-mode .tag-basico { background: #3A2D5C; color: #D0BCFF; }
-body.dark-mode .tag-aisla  { background: #1A3320; color: #81C784; }
-body.dark-mode .tag-salud  { background: #1A2E3A; color: #4FC3F7; }
-
-body.dark-mode .btn-pill { background: #2D2640; color: #D0BCFF; }
-
-body.dark-mode .week-btn-secondary { background: rgba(255,255,255,0.06); color: #D0BCFF; border-color: #D0BCFF; }
-
-
-
-/* =========================================================
-   BOTONES ICON EJERCICIO
-========================================================= */
-.btn-ex-info,
-.btn-ex-edit,
-.btn-ex-del {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 32px;
-    height: 32px;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: opacity 0.15s;
-}
-
-.btn-ex-info {
-    background: var(--primary-light);
-    color: var(--primary);
-}
-
-.btn-ex-edit {
-    background: rgba(103,80,164,0.08);
-    color: #6750A4;
-}
-
-.btn-ex-del {
-    background: #FDECEA;
-    color: var(--danger);
-}
-
-.btn-ex-info:active,
-.btn-ex-edit:active,
-.btn-ex-del:active { opacity: 0.7; }
-
-body.dark-mode .btn-ex-info { background: #2D2640; color: #D0BCFF; }
-body.dark-mode .btn-ex-edit { background: #2D2640; color: #D0BCFF; }
-body.dark-mode .btn-ex-del  { background: #3B1A1A; color: #EF9A9A; }
-
-/* =========================================================
-   DARK MODE — select + textarea
-========================================================= */
-body.dark-mode select,
-body.dark-mode textarea {
-    background: #332F38;
-    color: #E6E1E5;
-    border-color: #49454F;
-}
-
-/* =========================================================
-   SEMANA — DOT COMPATIBILIDAD + INFO BTN EJERCICIO
-========================================================= */
-.day-dot {
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    flex-shrink: 0;
-    display: inline-block;
-    box-shadow: 0 0 0 2px rgba(255,255,255,0.3);
-}
-
-.week-info-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 26px;
-    height: 26px;
-    border: none;
-    border-radius: 7px;
-    background: var(--primary-light);
-    color: var(--primary);
-    cursor: pointer;
-    flex-shrink: 0;
-    transition: opacity 0.15s;
-}
-
-.week-info-btn:active { opacity: 0.6; }
-
-body.dark-mode .week-info-btn {
-    background: #2D2640;
-    color: #D0BCFF;
-}
-
-/* =========================================================
-   SYNC ICON SPIN
-========================================================= */
-@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-.spin { animation: spin 1s linear infinite; display: inline-block; }
-
-/* =========================================================
-   SPLASH VERSION
-========================================================= */
-.splash-version {
-    margin: 8px 0 0;
-    font-family: 'Roboto', sans-serif;
-    font-size: 10px;
-    font-weight: 400;
-    color: var(--outline);
-    letter-spacing: 1px;
-}
-
-/* =========================================================
-   TIMER — CUSTOM INPUT + RESET
-========================================================= */
-.timer-display-wrap {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-}
-
-.timer-reset-btn {
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 4px;
-    color: var(--text2);
-    display: flex;
-    align-items: center;
-    opacity: 0.55;
-    transition: opacity 0.15s;
-}
-
-.timer-reset-btn:active { opacity: 1; }
-
-.timer-controls {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 5px;
-}
-
-.timer-custom-row {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-}
-
-.timer-custom-input {
-    width: 68px;
-    border: 1.5px solid var(--outline);
-    border-radius: 12px;
-    background: var(--bg);
-    color: var(--text);
-    font-size: 13px;
-    font-family: 'Roboto Mono', monospace;
-    padding: 4px 10px;
-    outline: none;
-    text-align: center;
-    transition: border-color 0.15s;
-}
-
-.timer-custom-input:focus {
-    border-color: var(--primary);
-}
-
-.timer-custom-input::placeholder {
-    color: var(--text2);
-    font-family: 'Roboto', sans-serif;
-    font-size: 11px;
-}
-
-/* quita flechas del input number */
-.timer-custom-input::-webkit-outer-spin-button,
-.timer-custom-input::-webkit-inner-spin-button { -webkit-appearance: none; }
-.timer-custom-input[type=number] { -moz-appearance: textfield; }
-
-.btn-pill-go {
-    background: var(--primary);
-    color: #fff;
-    padding: 5px 10px;
-    font-size: 13px;
-}
-
-.btn-pill-go:hover { background: #5A3FBF; }
-
-/* =========================================================
-   MATERIAL YOU — SESIONES POR GRUPO
-========================================================= */
-.myu-groups-container {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    margin-top: 4px;
-}
-
-.myu-group-row {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.myu-group-label-wrap {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    min-width: 100px;
-    max-width: 100px;
-}
-
-.myu-group-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    flex-shrink: 0;
-}
-
-.myu-group-name {
-    font-size: 11px;
-    font-weight: 500;
-    color: var(--text);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.myu-group-track {
-    flex: 1;
-    height: 10px;
-    background: var(--surface2);
-    border-radius: 99px;
-    overflow: hidden;
-}
-
-.myu-group-fill {
-    height: 100%;
-    border-radius: 99px;
-    transition: width 0.6s cubic-bezier(.34,1.56,.64,1);
-    min-width: 0;
-}
-
-.myu-group-count {
-    font-size: 11px;
-    font-weight: 700;
-    min-width: 20px;
-    text-align: right;
-}
-
-/* =========================================================
-   STAT TOOLTIP FLOTANTE (Material You snackbar-style)
-========================================================= */
-.stat-tooltip-overlay {
-    position: fixed;
-    inset: 0;
-    z-index: 9500;
-    background: transparent;
-}
-
-.stat-tooltip {
-    position: fixed;
-    bottom: 88px;      /* por encima del nav */
-    left: 50%;
-    transform: translateX(-50%) translateY(16px);
-    width: calc(100% - 32px);
-    max-width: 400px;
-    z-index: 9600;
-    background: var(--surface);
-    border-radius: 20px;
-    padding: 18px 20px 20px;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.18), 0 2px 8px rgba(0,0,0,0.10);
-    opacity: 0;
-    transition: opacity 0.2s ease, transform 0.2s cubic-bezier(.34,1.3,.64,1);
-    pointer-events: none;
-    border: 1px solid var(--outline);
-}
-
-.stat-tooltip.stat-tooltip-visible {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0);
-    pointer-events: auto;
-}
-
-.stat-tooltip-inner {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-.stat-tooltip-title {
-    font-size: 15px;
-    font-weight: 700;
-    color: var(--primary);
-    line-height: 1.3;
-}
-
-.stat-tooltip-desc {
-    font-size: 13px;
-    color: var(--text);
-    line-height: 1.6;
-}
-
-.stat-tooltip-consejo {
-    font-size: 12px;
-    color: var(--text2);
-    line-height: 1.5;
-    background: var(--primary-light);
-    border-radius: 12px;
-    padding: 10px 12px;
-    border-left: 3px solid var(--primary);
-}
-
-/* dark mode overrides */
-body.dark-mode .timer-custom-input {
-    background: #2B2930;
-    color: #E6E1E5;
-    border-color: #49454F;
-}
-
-body.dark-mode .stat-tooltip {
-    background: #2B2930;
-    border-color: #49454F;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.45);
-}
-
-body.dark-mode .myu-group-name { color: #E6E1E5; }
-body.dark-mode .myu-group-track { background: #3B3740; }
-
+<!DOCTYPE html>
+<html lang="es" translate="no">
+<head>
+    <meta name="google" content="notranslate">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#6750A4">
+    <title>Rubencefit</title>
+    
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icon.png">
+
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@500&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<div id="splashScreen" style="position:fixed;top:0;left:0;width:100%;height:100%;background:white;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:32px;z-index:99999;overflow:hidden;transition:opacity 0.6s ease;">
+    <img src="ch3ca-logo.png" style="width:220px;max-width:65vw;height:auto;display:block;" alt="ch3ca" loading="eager" onerror="this.style.display='none'">
+    <div class="splash-credits">
+        <p class="splash-app-name">Rubencefit</p>
+        <p class="splash-by">Diseñada y desarrollada por</p>
+        <p class="splash-author">Rubén Bejarano Checa</p>
+        <p class="splash-ai">Creada con asistencia de inteligencia artificial</p>
+        <p class="splash-version">v4.7</p>
+    </div>
+</div>
+
+<div class="topbar">
+    <div class="timer-row">
+        <div class="timer-left">
+            <div class="timer-display" id="timerDisplay">00:00</div>
+            <button class="timer-stop-btn" onclick="resetTimer()" title="Detener">
+                <span class="material-symbols-outlined">stop_circle</span>
+            </button>
+        </div>
+        <div class="timer-right">
+            <div class="timer-presets">
+                <button class="btn-pill" onclick="startTimer(60)">60s</button>
+                <button class="btn-pill" onclick="startTimer(90)">90s</button>
+                <button class="btn-pill" onclick="startTimer(120)">120s</button>
+            </div>
+            <div class="timer-custom">
+                <input id="timerCustomInput" class="timer-custom-input"
+                    type="number" min="1" max="9999"
+                    placeholder="seg" inputmode="numeric"
+                    onkeydown="if(event.key==='Enter')startTimerCustom()">
+                <button class="timer-go-btn" onclick="startTimerCustom()">
+                    <span class="material-symbols-outlined">play_arrow</span>
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="stopwatch-row" id="stopwatchRow" style="display:none;">
+        <span class="material-symbols-outlined" style="font-size:16px; color:var(--primary);">timer</span>
+        <div class="stopwatch-display" id="stopwatchDisplay">00:00</div>
+        <span class="stopwatch-label">SESIÓN ACTIVA</span>
+    </div>
+</div>
+
+<div class="main">
+    <div id="rutinaPage" class="page active">
+        <div id="groupsView">
+            <div class="header-row">
+                <h2><span class="material-symbols-outlined">library_books</span> Biblioteca</h2>
+                <div id="exerciseCounter" class="counter-badge">0</div>
+            </div>
+            <div id="diaSelectorRow" class="dia-selector-row"></div>
+            <div class="group-grid" id="groupGrid"></div>
+        </div>
+        <div id="exerciseView" style="display:none;">
+            <button onclick="backToGroups()" style="border:none; background:none; color:var(--primary); font-weight:bold; margin-bottom:15px; display:flex; align-items:center; gap:8px;">
+                <span class="material-symbols-outlined">arrow_back</span> Atrás
+            </button>
+            <h3 id="selectedGroupName"></h3>
+            <p id="groupAdvice" style="font-size: 12px; color: var(--text2); margin-top: -10px; margin-bottom: 15px; font-style: italic;"></p>
+            <div id="exerciseList"></div>
+        </div>
+    </div>
+
+    <div id="hoyPage" class="page">
+        <div class="header-row">
+            <h2><span class="material-symbols-outlined">fitness_center</span> Hoy</h2>
+            <button onclick="clearHoy()" style="color:var(--danger); border:none; background:none; font-weight:bold;">Limpiar</button>
+        </div>
+        <div class="coach-card" id="coachPanel">
+            <div style="font-weight: bold; font-size: 13px; margin-bottom: 8px; display: flex; align-items: center; gap: 5px;">
+                <span class="material-symbols-outlined" style="font-size: 18px; color: var(--primary);">psychology</span> Coach Inteligente
+            </div>
+            <div id="coachMessage" style="font-size: 12px; line-height: 1.4;">...</div>
+            <div class="coach-status" id="coachTags"></div>
+        </div>
+        <div id="sessionProgress"></div>
+        <div id="todayList"></div>
+        <button class="btn-action" onclick="finalizarSesion()">FINALIZAR SESIÓN</button>
+    </div>
+
+    <div id="semanaPage" class="page">
+        <div class="header-row">
+            <h2><span class="material-symbols-outlined">calendar_view_week</span> Semana</h2>
+            <div style="display:flex; gap:8px;">
+                <button onclick="limpiarPlantillas()" style="color:var(--danger); border:none; background:none; font-size:11px; font-weight:bold;">RESETEAR</button>
+                <button onclick="abrirGenerarSemana()" style="background:var(--primary-light); color:var(--primary); border:none; padding:8px 12px; border-radius:10px; font-size:11px; font-weight:bold;">⚡ SEMANA</button>
+            </div>
+        </div>
+        <div id="weekPlanner"></div>
+    </div>
+
+    <div id="historialPage" class="page">
+        <div class="header-row">
+            <h2><span class="material-symbols-outlined">history</span> Log</h2>
+            <div style="display:flex; align-items:center; gap:8px;">
+                <button id="syncIcon" onclick="onSyncIconPress()" ontouchend="onSyncIconPress();event.preventDefault();" style="background:none;border:none;cursor:pointer;padding:12px 10px;color:#43A047;display:flex;align-items:center;min-width:44px;min-height:44px;"><span class="material-symbols-outlined" style="font-size:22px;">cloud_done</span></button>
+                <button onclick="toggleDarkMode()" id="darkModeBtn" style="background:none;border:none;cursor:pointer;padding:8px;color:var(--primary);display:flex;align-items:center;"><span class="material-symbols-outlined" style="font-size:22px;">dark_mode</span></button>
+                <button onclick="exportarDatos()" style="background:none;border:none;cursor:pointer;padding:8px;color:var(--primary);display:flex;align-items:center;" title="Exportar"><span class="material-symbols-outlined" style="font-size:22px;">upload</span></button>
+                <label style="cursor:pointer;padding:8px;color:var(--primary);display:flex;align-items:center;" title="Importar"><span class="material-symbols-outlined" style="font-size:22px;">download</span><input type="file" accept=".json" onchange="importarDatos(event)" style="display:none;"></label>
+                <button onclick="borrarTodoHistorial()" style="background:none;border:none;cursor:pointer;padding:8px;color:var(--danger);display:flex;align-items:center;" title="Borrar"><span class="material-symbols-outlined" style="font-size:22px;">delete_forever</span></button>
+            </div>
+        </div>
+
+        <div id="statsDashboard" class="coach-card" style="background: var(--primary-light); border: none; margin-bottom: 20px;">
+            <div style="font-weight: bold; margin-bottom: 10px; display: flex; align-items: center; gap: 5px;">
+                <span class="material-symbols-outlined">insights</span> Rendimiento
+            </div>
+            <div id="statsContent" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                </div>
+        </div>
+
+        <div id="calendarContainer"></div>
+                <div id="dayModal" class="day-modal" style="display:none;" onclick="closeDayModal(this,event)">
+            <div class="day-modal-sheet">
+                <div class="day-modal-header">
+                    <span id="dayModalTitle" class="day-modal-title"></span>
+                    <button class="day-modal-close" onclick="closeDayModal()">✕</button>
+                </div>
+                <div id="dayModalBody"></div>
+            </div>
+        </div>
+        <div id="historyList"></div>
+    </div>
+</div>
+
+<nav class="bottom-nav">
+    <button class="nav-btn active" id="btn-rutina" onclick="showPage('rutinaPage', this)">
+        <span class="material-symbols-outlined">format_list_bulleted</span>Biblioteca
+    </button>
+    <button class="nav-btn" id="btn-hoy" onclick="showPage('hoyPage', this)">
+        <span class="material-symbols-outlined">fitness_center</span>Hoy
+    </button>
+    <button class="nav-btn" id="btn-semana" onclick="showPage('semanaPage', this)">
+        <span class="material-symbols-outlined">calendar_month</span>Semana
+    </button>
+    <button class="nav-btn" id="btn-historial" onclick="showPage('historialPage', this)">
+        <span class="material-symbols-outlined">history</span>Log
+    </button>
+</nav>
+
+<!-- MODAL INFO EJERCICIO -->
+<div id="exInfoModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:9000;align-items:flex-end;justify-content:center;" onclick="cerrarInfoEjercicio(this,event)">
+    <div style="background:var(--surface);border-radius:24px 24px 0 0;padding:24px 20px 40px;width:100%;max-width:600px;animation:slideUp 0.22s ease;">
+        <div style="width:32px;height:4px;background:var(--outline);border-radius:2px;margin:0 auto 20px;"></div>
+        <h3 id="exInfoNombre" style="margin:0 0 12px;color:var(--primary);font-size:17px;"></h3>
+        <p id="exInfoDesc" style="margin:0 0 16px;color:var(--text);font-size:14px;line-height:1.6;"></p>
+        <div id="exInfoRecWrap" style="background:var(--primary-light);border-radius:10px;padding:10px 14px;margin-bottom:20px;">
+            <span style="font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:1px;">Recomendado</span>
+            <p id="exInfoRec" style="margin:4px 0 0;color:var(--primary);font-weight:600;font-size:14px;"></p>
+        </div>
+        <button onclick="document.getElementById('exInfoModal').style.display='none'" style="width:100%;background:var(--primary);color:white;border:none;border-radius:12px;padding:14px;font-size:15px;font-weight:bold;cursor:pointer;">Cerrar</button>
+    </div>
+</div>
+
+<!-- MODAL EDITAR/AÑADIR EJERCICIO -->
+<div id="editExModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:9000;align-items:flex-end;justify-content:center;" onclick="cerrarEditarEjercicio(this,event)">
+    <div style="background:var(--surface);border-radius:24px 24px 0 0;padding:24px 20px 40px;width:100%;max-width:600px;animation:slideUp 0.22s ease;">
+        <div style="width:32px;height:4px;background:var(--outline);border-radius:2px;margin:0 auto 20px;"></div>
+        <h3 style="margin:0 0 20px;color:var(--primary);font-size:17px;">Editar ejercicio</h3>
+        <div class="input-group" style="margin-bottom:12px;">
+            <label>Nombre</label>
+            <input id="editExNombre" type="text" placeholder="Nombre del ejercicio">
+        </div>
+        <div class="input-group" style="margin-bottom:12px;">
+            <label>Tipo</label>
+            <select id="editExTipo" style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--outline);background:var(--surface);color:var(--text);font-size:14px;">
+                <option value="T_B">🔥 Básico</option>
+                <option value="T_A">🎯 Aislamiento</option>
+                <option value="T_S">🛡️ Salud</option>
+            </select>
+        </div>
+        <div class="input-group" style="margin-bottom:12px;">
+            <label>Descripción</label>
+            <textarea id="editExInfo" placeholder="Cómo se hace..." style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--outline);background:var(--surface);color:var(--text);font-size:13px;min-height:70px;resize:none;box-sizing:border-box;"></textarea>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px;">
+            <div class="input-group">
+                <label>Series rec.</label>
+                <input id="editExRecSeries" type="text" placeholder="ej: 3-4">
+            </div>
+            <div class="input-group">
+                <label>Reps rec.</label>
+                <input id="editExRecReps" type="text" placeholder="ej: 8-12">
+            </div>
+        </div>
+        <button onclick="guardarEjercicio()" style="width:100%;background:var(--primary);color:white;border:none;border-radius:12px;padding:14px;font-size:15px;font-weight:bold;cursor:pointer;">Guardar</button>
+    </div>
+</div>
+
+<!-- SYNC MODAL -->
+<div id="syncModal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:99999;align-items:flex-end;justify-content:center;" onclick="if(event.target===this)cerrarSyncModal()">
+    <div class="day-modal-sheet" style="padding:24px 20px 40px;width:100%;max-width:600px;">
+        <div style="width:32px;height:4px;background:var(--outline);border-radius:2px;margin:0 auto 20px;"></div>
+        <div style="text-align:center;font-size:32px;margin-bottom:12px;">☁️</div>
+        <h3 style="text-align:center;margin:0 0 8px;font-size:17px;color:var(--primary);">Sincronización</h3>
+        <p id="syncTxt" style="text-align:center;color:var(--text2);font-size:13px;margin:0 0 24px;"></p>
+        <div style="display:flex;flex-direction:column;gap:10px;">
+            <button id="syncBtnGuardar" onclick="cerrarSyncModal();syncToSupabase();"
+                style="background:var(--primary);color:white;border:none;border-radius:12px;padding:14px;font-size:15px;font-weight:bold;cursor:pointer;width:100%;">
+                ↑ Guardar en la nube
+            </button>
+            <button id="syncBtnRestaurar" onclick="cerrarSyncModal();restaurarDesdeSupabase();"
+                style="background:var(--primary-light);color:var(--primary);border:none;border-radius:12px;padding:14px;font-size:15px;font-weight:bold;cursor:pointer;width:100%;">
+                ↓ Restaurar desde la nube
+            </button>
+            <button onclick="cerrarSyncModal();"
+                style="background:none;color:var(--text2);border:none;padding:10px;font-size:14px;cursor:pointer;width:100%;">
+                Cancelar
+            </button>
+        </div>
+    </div>
+</div>
+
+<script src="js/app.js"></script>
+
+
+<div id="intensityModal" class="day-modal" style="display:none;" onclick="cerrarSelectorIntensidad(this,event)">
+        <div class="day-modal-sheet">
+            <div class="day-modal-header">
+                <span class="day-modal-title" id="intensityModalTitle">¿Cómo te encuentras hoy?</span>
+                <button class="day-modal-close" onclick="cerrarSelectorIntensidad()">✕</button>
+            </div>
+            <div class="intensity-options">
+                <button class="intensity-btn intensity-suave" onclick="generarConIntensidad('suave')">
+                    <span class="intensity-emoji">🌿</span>
+                    <div class="intensity-info">
+                        <div class="intensity-title">Suave</div>
+                        <div class="intensity-desc">Pocos ejercicios, baja carga · ~20 min</div>
+                    </div>
+                </button>
+                <button class="intensity-btn intensity-normal" onclick="generarConIntensidad('normal')">
+                    <span class="intensity-emoji">💪</span>
+                    <div class="intensity-info">
+                        <div class="intensity-title">Normal</div>
+                        <div class="intensity-desc">Rutina equilibrada · ~30 min</div>
+                    </div>
+                </button>
+                <button class="intensity-btn intensity-intensa" onclick="generarConIntensidad('intensa')">
+                    <span class="intensity-emoji">🔥</span>
+                    <div class="intensity-info">
+                        <div class="intensity-title">Intensa</div>
+                        <div class="intensity-desc">Más volumen, doble básico · ~45 min</div>
+                    </div>
+                </button>
+            </div>
+        </div>
+    </div>
+
+<!-- STAT TOOLTIP FLOTANTE -->
+<div id="statTooltip" class="stat-tooltip" style="display:none;" onclick="cerrarStatTooltip()">
+    <div class="stat-tooltip-inner">
+        <div class="stat-tooltip-title" id="statTooltipTitle"></div>
+        <div class="stat-tooltip-desc" id="statTooltipDesc"></div>
+        <div class="stat-tooltip-consejo" id="statTooltipConsejo"></div>
+    </div>
+</div>
+<div id="statTooltipOverlay" class="stat-tooltip-overlay" style="display:none;" onclick="cerrarStatTooltip()"></div>
+
+</body>
+</html>
