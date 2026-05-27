@@ -30,11 +30,22 @@
 
 <div class="topbar">
     <div class="timer-row">
-        <div class="timer-display" id="timerDisplay">00:00</div>
-        <div style="display:flex; gap:6px;">
-            <button class="btn-pill" onclick="startTimer(60)">60s</button>
-            <button class="btn-pill" onclick="startTimer(90)">90s</button>
-            <button class="btn-pill" onclick="startTimer(120)">120s</button>
+        <div class="timer-display-wrap">
+            <div class="timer-display" id="timerDisplay">00:00</div>
+            <button class="timer-reset-btn" id="timerResetBtn" onclick="resetTimer()" title="Resetear">
+                <span class="material-symbols-outlined" style="font-size:16px;">stop</span>
+            </button>
+        </div>
+        <div class="timer-controls">
+            <div style="display:flex; gap:6px;">
+                <button class="btn-pill" onclick="startTimer(60)">60s</button>
+                <button class="btn-pill" onclick="startTimer(90)">90s</button>
+                <button class="btn-pill" onclick="startTimer(120)">120s</button>
+            </div>
+            <div class="timer-custom-row">
+                <input class="timer-custom-input" id="timerCustomInput" type="number" min="1" max="9999" placeholder="seg…" inputmode="numeric">
+                <button class="btn-pill btn-pill-go" onclick="startTimerCustom()">▶</button>
+            </div>
         </div>
     </div>
     <div class="stopwatch-row" id="stopwatchRow" style="display:none;">
@@ -216,19 +227,6 @@
 
 <script src="js/app.js"></script>
 
-<div id="statInfoModal" class="day-modal" style="display:none;" onclick="cerrarInfoStat(this,event)">
-    <div class="day-modal-sheet">
-        <div class="day-modal-header">
-            <span id="statInfoTitle" class="day-modal-title"></span>
-            <button class="day-modal-close" onclick="cerrarInfoStat()">✕</button>
-        </div>
-        <p id="statInfoDesc" class="stat-info-desc"></p>
-        <div class="stat-info-consejo">
-            <span class="stat-info-consejo-label">💡 Consejo</span>
-            <p id="statInfoConsejo" class="stat-info-consejo-text"></p>
-        </div>
-    </div>
-</div>
 
 <div id="intensityModal" class="day-modal" style="display:none;" onclick="cerrarSelectorIntensidad(this,event)">
         <div class="day-modal-sheet">
@@ -261,6 +259,16 @@
             </div>
         </div>
     </div>
+
+<!-- STAT TOOLTIP FLOTANTE -->
+<div id="statTooltip" class="stat-tooltip" style="display:none;" onclick="cerrarStatTooltip()">
+    <div class="stat-tooltip-inner">
+        <div class="stat-tooltip-title" id="statTooltipTitle"></div>
+        <div class="stat-tooltip-desc" id="statTooltipDesc"></div>
+        <div class="stat-tooltip-consejo" id="statTooltipConsejo"></div>
+    </div>
+</div>
+<div id="statTooltipOverlay" class="stat-tooltip-overlay" style="display:none;" onclick="cerrarStatTooltip()"></div>
 
 </body>
 </html>
