@@ -1455,7 +1455,13 @@ function updateStats() {
 }
 
 
-function initAudio() { if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); if (audioCtx.state === 'suspended') audioCtx.resume(); }
+let audioCtx = null;
+function initAudio() {
+    try {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+    } catch(e) {}
+}
 function playEndSound() {
     if (!audioCtx) return; const now = audioCtx.currentTime;
     [523.25, 659.25, 783.99].forEach((f, i) => {
