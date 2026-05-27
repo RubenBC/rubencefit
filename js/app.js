@@ -1359,18 +1359,7 @@ const STAT_INFO = {
     }
 };
 
-function abrirInfoStat(key) {
-    const info = STAT_INFO[key];
-    if (!info) return;
-    document.getElementById('statInfoTitle').innerText = info.titulo;
-    document.getElementById('statInfoDesc').innerText = info.desc;
-    document.getElementById('statInfoConsejo').innerText = info.consejo;
-    document.getElementById('statInfoModal').style.display = 'flex';
-}
-
-function cerrarInfoStat(el, e) {
-    if (!e || e.target === el) document.getElementById('statInfoModal').style.display = 'none';
-}
+// stat info modal removed — see tooltip functions below
 
 function updateStats() {
     const container = document.getElementById('statsContent');
@@ -1426,23 +1415,42 @@ function updateStats() {
     GRUPOS.filter(g=>g!=='Cardio'&&g!=='Drenaje').forEach(g=>gruposSesiones[g]=0);
     state.historial.filter(h=>last30.includes(h.fecha)).forEach(s=>{const gs=new Set();if(s.ejercicios)s.ejercicios.forEach(ex=>{if(gruposSesiones[ex.group]!==undefined)gs.add(ex.group);});gs.forEach(g=>gruposSesiones[g]++);});
     const maxGrupo=Math.max(...Object.values(gruposSesiones),1);
-    const gruposBars=Object.entries(gruposSesiones).sort((a,b)=>b[1]-a[1]).map(([g,n])=>`<div class="stat-group-row"><span class="stat-group-name">${g}</span><div class="stat-bar-bg" style="flex:1;"><div class="stat-bar-fill stat-bar-b" style="width:${Math.round(n/maxGrupo*100)}%;min-width:${n>0?'4px':'0'};"></div></div><span class="stat-group-n">${n}</span></div>`).join('');
+    // Material You — chips con barra tonal
+    const GRUPO_COLORS = ['#6750A4','#B5838D','#E07A5F','#3D405B','#81B29A','#F2CC8F','#118AB2','#06D6A0'];
+    const gruposBars=Object.entries(gruposSesiones).sort((a,b)=>b[1]-a[1]).map(([g,n],i)=>{
+        const pct=Math.round(n/maxGrupo*100);
+        const col=GRUPO_COLORS[i%GRUPO_COLORS.length];
+        const colAlpha=col+'26';
+        return `<div class="myu-group-row">
+            <div class="myu-group-label-wrap">
+                <span class="myu-group-dot" style="background:${col};"></span>
+                <span class="myu-group-name">${g}</span>
+            </div>
+            <div class="myu-group-track">
+                <div class="myu-group-fill" style="width:${pct}%;background:${col};"></div>
+            </div>
+            <span class="myu-group-count" style="color:${col};">${n}</span>
+        </div>`;
+    }).join('');
     const LINFATICOS_STAT=['Elevaciones de talones','Bomba de tobillo','Elevación de piernas en pared','Bicicleta en el aire','Marcha en el sitio'];
     let linfCount=0;
     state.historial.filter(h=>last7.includes(h.fecha)).forEach(s=>{if(s.ejercicios)s.ejercicios.forEach(ex=>{if(LINFATICOS_STAT.includes(ex.name))linfCount++;});});
     const linfColor=linfCount>=4?'#2E7D32':linfCount>=2?'#E65100':'var(--danger)';
     const linfLabel=linfCount>=4?'✓ Bien':linfCount>=2?'! Mejorable':'⚠ Bajo';
     container.innerHTML=`
-        <div class="stat-box stat-tappable" onclick="abrirInfoStat('racha')"><span class="stat-label">🔥 Racha actual</span><span class="stat-val">${racha}<small>días</small></span></div>
-        <div class="stat-box stat-tappable" onclick="abrirInfoStat('racha_max')"><span class="stat-label">🏆 Racha máxima</span><span class="stat-val">${maxRacha}<small>días</small></span></div>
-        <div class="stat-box stat-tappable" onclick="abrirInfoStat('descansos')"><span class="stat-label">😴 Descansos semana</span><span class="stat-val">${descSemana}<small>días</small></span></div>
-        <div class="stat-box stat-tappable" onclick="abrirInfoStat('tendencia')"><span class="stat-label">📈 Tendencia semanal</span><span class="stat-val" style="font-size:13px;color:${tendenciaColor};">${tendenciaIcon} ${sesSemana}ses<small style="color:${tendenciaColor};">${tendenciaTexto}</small></span></div>
-        <div class="stat-box stat-tappable" onclick="abrirInfoStat('cardio_semana')"><span class="stat-label">🚴 Cardio semana</span><span class="stat-val">${cardioSemana}<small>min</small></span></div>
-        <div class="stat-box stat-tappable" onclick="abrirInfoStat('cardio_mes')"><span class="stat-label">🚴 Cardio mes</span><span class="stat-val">${cardioMes}<small>min</small></span></div>
-        <div class="stat-box stat-tappable" onclick="abrirInfoStat('dias_descanso')"><span class="stat-label">⏱ Último entreno</span><span class="stat-val" style="color:${diasColor};">${diasDescanso}<small>días</small></span></div>
-        <div class="stat-box stat-tappable" onclick="abrirInfoStat('cardio_total')"><span class="stat-label">🚴 Cardio total</span><span class="stat-val">${cardioTotal}<small>min</small></span></div>
-        <div class="stat-box stat-tappable" onclick="abrirInfoStat('linfaticos_semana')" style="grid-column:1/span 2;"><span class="stat-label">🦵 Linfáticos semana <span class="stat-info-hint" style="color:${linfColor};">${linfLabel}</span></span><span class="stat-val">${linfCount}<small>ejercicios</small></span></div>
-        <div class="stat-box stat-full stat-tappable" onclick="abrirInfoStat('grupos_mes')"><span class="stat-label">Sesiones por grupo · 30 días</span><div class="stat-group-bars">${gruposBars}</div></div>
+        <div class="stat-box stat-tappable" onclick="abrirInfoStat('racha',event)"><span class="stat-label">🔥 Racha actual</span><span class="stat-val">${racha}<small>días</small></span></div>
+        <div class="stat-box stat-tappable" onclick="abrirInfoStat('racha_max',event)"><span class="stat-label">🏆 Racha máxima</span><span class="stat-val">${maxRacha}<small>días</small></span></div>
+        <div class="stat-box stat-tappable" onclick="abrirInfoStat('descansos',event)"><span class="stat-label">😴 Descansos semana</span><span class="stat-val">${descSemana}<small>días</small></span></div>
+        <div class="stat-box stat-tappable" onclick="abrirInfoStat('tendencia',event)"><span class="stat-label">📈 Tendencia semanal</span><span class="stat-val" style="font-size:13px;color:${tendenciaColor};">${tendenciaIcon} ${sesSemana}ses<small style="color:${tendenciaColor};">${tendenciaTexto}</small></span></div>
+        <div class="stat-box stat-tappable" onclick="abrirInfoStat('cardio_semana',event)"><span class="stat-label">🚴 Cardio semana</span><span class="stat-val">${cardioSemana}<small>min</small></span></div>
+        <div class="stat-box stat-tappable" onclick="abrirInfoStat('cardio_mes',event)"><span class="stat-label">🚴 Cardio mes</span><span class="stat-val">${cardioMes}<small>min</small></span></div>
+        <div class="stat-box stat-tappable" onclick="abrirInfoStat('dias_descanso',event)"><span class="stat-label">⏱ Último entreno</span><span class="stat-val" style="color:${diasColor};">${diasDescanso}<small>días</small></span></div>
+        <div class="stat-box stat-tappable" onclick="abrirInfoStat('cardio_total',event)"><span class="stat-label">🚴 Cardio total</span><span class="stat-val">${cardioTotal}<small>min</small></span></div>
+        <div class="stat-box stat-tappable" onclick="abrirInfoStat('linfaticos_semana',event)" style="grid-column:1/span 2;"><span class="stat-label">🦵 Linfáticos semana <span class="stat-info-hint" style="color:${linfColor};">${linfLabel}</span></span><span class="stat-val">${linfCount}<small>ejercicios</small></span></div>
+        <div class="stat-box stat-full stat-tappable" onclick="abrirInfoStat('grupos_mes',event)">
+            <span class="stat-label" style="font-size:10px;margin-bottom:10px;display:flex;align-items:center;gap:4px;"><span class="material-symbols-outlined" style="font-size:13px;">bar_chart</span> Sesiones por grupo · 30 días</span>
+            <div class="myu-groups-container">${gruposBars}</div>
+        </div>
     `;
 }
 
@@ -1459,14 +1467,81 @@ function playEndSound() {
 }
 
 let tInterval;
+let tRemaining = 0;
+
+function _timerSetDisplay(s) {
+    const disp = document.getElementById('timerDisplay');
+    if (!disp) return;
+    const m = Math.floor(s / 60), sc = s % 60;
+    disp.innerText = `${m < 10 ? '0' : ''}${m}:${sc < 10 ? '0' : ''}${sc}`;
+    disp.style.color = s <= 10 && s > 0 ? 'var(--danger)' : 'var(--primary)';
+}
+
 function startTimer(s) {
-    initAudio(); clearInterval(tInterval);
+    initAudio();
+    clearInterval(tInterval);
+    tRemaining = s;
+    _timerSetDisplay(tRemaining);           // muestra el valor inicial de inmediato
     tInterval = setInterval(() => {
-        s--; let m = Math.floor(s/60), sc = s%60;
-        const disp = document.getElementById('timerDisplay');
-        if(disp) disp.innerText = `${m<10?'0':''}${m}:${sc<10?'0':''}${sc}`;
-        if(s <= 0) { clearInterval(tInterval); playEndSound(); }
+        tRemaining--;
+        _timerSetDisplay(tRemaining);
+        if (tRemaining <= 0) {
+            clearInterval(tInterval);
+            playEndSound();
+            _timerSetDisplay(0);
+        }
     }, 1000);
+}
+
+function startTimerCustom() {
+    const inp = document.getElementById('timerCustomInput');
+    const val = parseInt(inp ? inp.value : 0, 10);
+    if (!val || val < 1) return;
+    inp.value = '';
+    startTimer(val);
+}
+
+function resetTimer() {
+    clearInterval(tInterval);
+    tRemaining = 0;
+    _timerSetDisplay(0);
+    const disp = document.getElementById('timerDisplay');
+    if (disp) disp.style.color = 'var(--primary)';
+}
+
+// ── Tooltip flotante para estadísticas ──────────────────────────────────────
+function abrirInfoStat(key, event) {
+    const info = STAT_INFO[key];
+    if (!info) return;
+    const tooltip = document.getElementById('statTooltip');
+    const overlay = document.getElementById('statTooltipOverlay');
+    if (!tooltip || !overlay) return;
+
+    document.getElementById('statTooltipTitle').innerText = info.titulo;
+    document.getElementById('statTooltipDesc').innerText = info.desc;
+    document.getElementById('statTooltipConsejo').innerText = info.consejo;
+
+    // Posicionar el tooltip cerca del elemento tocado
+    overlay.style.display = 'block';
+    tooltip.style.display = 'block';
+    tooltip.classList.remove('stat-tooltip-visible');
+    // pequeño delay para animar la entrada
+    requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+            tooltip.classList.add('stat-tooltip-visible');
+        });
+    });
+}
+
+function cerrarStatTooltip() {
+    const tooltip = document.getElementById('statTooltip');
+    const overlay = document.getElementById('statTooltipOverlay');
+    if (!tooltip || !overlay) return;
+    tooltip.classList.remove('stat-tooltip-visible');
+    setTimeout(() => {
+        tooltip.style.display = 'none';
+        overlay.style.display = 'none';
+    }, 200);
 }
 
 // ── Supabase ─────────────────────────────────────────────────────────────────
