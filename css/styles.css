@@ -1344,95 +1344,117 @@ h2 {
 /* =========================================================
    TEMPORIZADOR
 ========================================================= */
-.tmr-wrap {
+.tmr-card {
     display: flex;
-    flex-direction: row;
     align-items: center;
     justify-content: space-between;
-    gap: 10px;
+    gap: 12px;
 }
 
-.tmr-display-col {
+/* ── Display (izquierda) ─────────────────────────────── */
+.tmr-display-area {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    gap: 4px;
+    gap: 2px;
     flex-shrink: 0;
 }
 
-.tmr-reset-pill {
-    background: none;
-    border: 1px solid var(--outline);
+.tmr-label {
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 1.2px;
     color: var(--text2);
-    border-radius: 20px;
-    padding: 2px 10px;
-    font-size: 10px;
-    font-weight: 600;
-    letter-spacing: 0.5px;
     text-transform: uppercase;
-    cursor: pointer;
 }
 
-.tmr-reset-pill:active { background: var(--outline); }
+.timer-display {
+    font-family: 'Roboto Mono', monospace;
+    font-size: 36px;
+    font-weight: 600;
+    color: var(--primary);
+    letter-spacing: 1px;
+    cursor: pointer;
+    line-height: 1;
+    transition: opacity 0.15s;
+}
 
-.tmr-buttons-col {
+.timer-display:active { opacity: 0.6; }
+
+/* ── Acciones (derecha) ──────────────────────────────── */
+.tmr-actions {
     display: flex;
     flex-direction: column;
     align-items: flex-end;
     gap: 8px;
 }
 
-.tmr-presets {
+.tmr-row {
     display: flex;
+    align-items: center;
     gap: 7px;
 }
 
-.tmr-pill {
-    padding: 10px 18px;
+.tmr-preset {
+    background: var(--primary-light);
+    color: var(--primary);
+    border: none;
+    border-radius: 20px;
+    padding: 8px 16px;
     font-size: 14px;
-    min-height: 40px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.08s;
+    min-height: 38px;
 }
 
-.tmr-custom-row {
-    display: flex;
-    align-items: center;
-    gap: 8px;
+.tmr-preset:active {
+    background: #c8bfee;
+    transform: scale(0.96);
 }
 
 .tmr-input {
-    width: 110px;
-    height: 40px;
+    width: 120px;
+    height: 38px;
     border: 1.5px solid var(--outline);
     border-radius: 20px;
     background: transparent;
     color: var(--text);
     font-size: 14px;
-    padding: 0 14px;
+    font-weight: 500;
+    padding: 0 16px;
     outline: none;
     text-align: center;
     transition: border-color 0.15s;
+    -webkit-appearance: none;
 }
 
 .tmr-input:focus { border-color: var(--primary); }
-
-.tmr-input::placeholder {
-    color: var(--text2);
-    font-size: 12px;
-}
-
+.tmr-input::placeholder { color: var(--text2); font-size: 12px; }
 .tmr-input::-webkit-outer-spin-button,
 .tmr-input::-webkit-inner-spin-button { -webkit-appearance: none; }
 .tmr-input[type=number] { -moz-appearance: textfield; }
 
-.tmr-go-pill {
-    background: var(--primary) !important;
-    color: white !important;
-    padding: 10px 16px;
-    min-height: 40px;
+.tmr-go {
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 20px;
+    padding: 8px 18px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    min-height: 38px;
+    transition: opacity 0.15s;
+    letter-spacing: 0.5px;
 }
 
-body.dark-mode .tmr-input { background: transparent; }
-body.dark-mode .tmr-reset-pill { border-color: var(--outline); color: var(--text2); }
+.tmr-go:active { opacity: 0.75; }
+
+/* Dark mode */
+body.dark-mode .tmr-preset { background: #2D2640; color: #D0BCFF; }
+body.dark-mode .tmr-preset:active { background: #3a3254; }
+body.dark-mode .tmr-input { border-color: #49454F; }
 
 /* =========================================================
    SPLASH SCREEN
@@ -1693,9 +1715,6 @@ body.dark-mode .week-info-btn {
     letter-spacing: 1px;
 }
 
-/* =========================================================
-   TIMER — CUSTOM INPUT + RESET
-========================================================= */
 .timer-display-wrap {
     display: flex;
     align-items: center;
