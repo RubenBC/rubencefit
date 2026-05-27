@@ -1483,11 +1483,17 @@ function _timerSetDisplay(s) {
     disp.style.color = s <= 10 && s > 0 ? 'var(--danger)' : 'var(--primary)';
 }
 
+function setTimerLabel(txt) {
+    const el = document.querySelector('.tmr-label');
+    if (el) el.innerText = txt;
+}
+
 function startTimer(s) {
     initAudio();
     clearInterval(tInterval);
     tRemaining = s;
-    _timerSetDisplay(tRemaining);           // muestra el valor inicial de inmediato
+    setTimerLabel('EN CURSO');
+    _timerSetDisplay(tRemaining);
     tInterval = setInterval(() => {
         tRemaining--;
         _timerSetDisplay(tRemaining);
@@ -1495,6 +1501,7 @@ function startTimer(s) {
             clearInterval(tInterval);
             playEndSound();
             _timerSetDisplay(0);
+            setTimerLabel('DESCANSO');
         }
     }, 1000);
 }
@@ -1511,6 +1518,7 @@ function resetTimer() {
     clearInterval(tInterval);
     tRemaining = 0;
     _timerSetDisplay(0);
+    setTimerLabel('DESCANSO');
     const disp = document.getElementById('timerDisplay');
     if (disp) disp.style.color = 'var(--primary)';
 }
