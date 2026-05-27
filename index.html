@@ -29,27 +29,23 @@
 </div>
 
 <div class="topbar">
-    <div class="timer-row">
-        <div class="timer-left">
+    <div class="tmr-wrap">
+        <div class="tmr-display-col">
             <div class="timer-display" id="timerDisplay">00:00</div>
-            <button class="timer-stop-btn" onclick="resetTimer()" title="Detener">
-                <span class="material-symbols-outlined">stop_circle</span>
-            </button>
+            <button class="tmr-reset-pill" onclick="resetTimer()">reset</button>
         </div>
-        <div class="timer-right">
-            <div class="timer-presets">
-                <button class="btn-pill" onclick="startTimer(60)">60s</button>
-                <button class="btn-pill" onclick="startTimer(90)">90s</button>
-                <button class="btn-pill" onclick="startTimer(120)">120s</button>
+        <div class="tmr-buttons-col">
+            <div class="tmr-presets">
+                <button class="btn-pill tmr-pill" onclick="startTimer(60)">60s</button>
+                <button class="btn-pill tmr-pill" onclick="startTimer(90)">90s</button>
+                <button class="btn-pill tmr-pill" onclick="startTimer(120)">120s</button>
             </div>
-            <div class="timer-custom">
-                <input id="timerCustomInput" class="timer-custom-input"
+            <div class="tmr-custom-row">
+                <input id="timerCustomInput" class="tmr-input"
                     type="number" min="1" max="9999"
-                    placeholder="seg" inputmode="numeric"
+                    placeholder="segundos" inputmode="numeric"
                     onkeydown="if(event.key==='Enter')startTimerCustom()">
-                <button class="timer-go-btn" onclick="startTimerCustom()">
-                    <span class="material-symbols-outlined">play_arrow</span>
-                </button>
+                <button class="btn-pill tmr-pill tmr-go-pill" onclick="startTimerCustom()">IR</button>
             </div>
         </div>
     </div>
