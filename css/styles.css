@@ -1342,6 +1342,104 @@ h2 {
 }
 
 /* =========================================================
+   TEMPORIZADOR — MATERIAL YOU
+========================================================= */
+.tmr-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.tmr-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.tmr-stop {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: none;
+    background: var(--primary-light);
+    color: var(--primary);
+    cursor: pointer;
+    transition: background 0.15s;
+}
+
+.tmr-stop:active { background: var(--outline); }
+.tmr-stop .material-symbols-outlined { font-size: 18px; }
+
+.tmr-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 7px;
+}
+
+.tmr-pills {
+    display: flex;
+    gap: 8px;
+}
+
+.tmr-pills .btn-pill {
+    padding: 9px 18px;
+    font-size: 14px;
+}
+
+.tmr-custom {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.tmr-input {
+    width: 80px;
+    height: 36px;
+    border: 1.5px solid var(--outline);
+    border-radius: 20px;
+    background: transparent;
+    color: var(--text);
+    font-size: 14px;
+    font-weight: 500;
+    padding: 0 12px;
+    outline: none;
+    text-align: center;
+    transition: border-color 0.15s;
+}
+
+.tmr-input:focus { border-color: var(--primary); }
+.tmr-input::placeholder { color: var(--text2); font-size: 11px; }
+.tmr-input::-webkit-outer-spin-button,
+.tmr-input::-webkit-inner-spin-button { -webkit-appearance: none; }
+.tmr-input[type=number] { -moz-appearance: textfield; }
+
+.tmr-go {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: none;
+    background: var(--primary);
+    color: white;
+    cursor: pointer;
+    transition: opacity 0.15s;
+}
+
+.tmr-go:active { opacity: 0.7; }
+.tmr-go .material-symbols-outlined { font-size: 18px; }
+
+body.dark-mode .tmr-input { background: transparent; }
+body.dark-mode .tmr-stop { background: #2D2640; color: #D0BCFF; }
+
+/* =========================================================
    SPLASH SCREEN
 ========================================================= */
 #splashScreen {
@@ -1598,104 +1696,6 @@ body.dark-mode .week-info-btn {
     font-weight: 400;
     color: var(--outline);
     letter-spacing: 1px;
-}
-
-/* =========================================================
-   TIMER REDESIGN — MATERIAL YOU
-========================================================= */
-.timer-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-}
-
-.timer-left {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    flex-shrink: 0;
-}
-
-.timer-stop-btn {
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 4px;
-    color: var(--text2);
-    display: flex;
-    align-items: center;
-    opacity: 0.5;
-    transition: opacity 0.15s;
-    font-size: 20px;
-}
-
-.timer-stop-btn:active { opacity: 1; color: var(--danger); }
-.timer-stop-btn .material-symbols-outlined { font-size: 22px; }
-
-.timer-right {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 6px;
-}
-
-.timer-presets {
-    display: flex;
-    gap: 6px;
-}
-
-.timer-custom {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-}
-
-.timer-custom-input {
-    width: 64px;
-    border: 1.5px solid var(--outline);
-    border-radius: 20px;
-    background: var(--surface);
-    color: var(--text);
-    font-size: 13px;
-    padding: 5px 10px;
-    outline: none;
-    text-align: center;
-    transition: border-color 0.15s;
-}
-
-.timer-custom-input:focus { border-color: var(--primary); }
-
-.timer-custom-input::placeholder {
-    color: var(--text2);
-    font-size: 11px;
-}
-
-.timer-custom-input::-webkit-outer-spin-button,
-.timer-custom-input::-webkit-inner-spin-button { -webkit-appearance: none; }
-.timer-custom-input[type=number] { -moz-appearance: textfield; }
-
-.timer-go-btn {
-    background: var(--primary);
-    color: white;
-    border: none;
-    border-radius: 50%;
-    width: 32px;
-    height: 32px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: opacity 0.15s;
-}
-
-.timer-go-btn:active { opacity: 0.7; }
-.timer-go-btn .material-symbols-outlined { font-size: 18px; }
-
-body.dark-mode .timer-custom-input {
-    background: var(--surface2);
-    color: var(--text);
-    border-color: var(--outline);
 }
 
 /* =========================================================
