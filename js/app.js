@@ -15,7 +15,12 @@ const db = {
         {n:"Flexiones inclinadas",                 t:T_B, tip:"Sin equipamiento",  info:"Realiza flexiones con manos o pies elevados según la variante. Mantén el cuerpo recto y baja lentamente hasta acercar el pecho al apoyo o al suelo sin perder alineación.", recSeries:"3-4", recReps:"8-15"},
         {n:"Aperturas con mancuernas suelo",       t:T_A, tip:"Solo Mancuernas",   info:"Tumbado boca arriba, abre los brazos hacia los lados con ligera flexión de codos hasta notar estiramiento en el pecho. Vuelve cerrando en arco de forma controlada.", recSeries:"3", recReps:"10-15"},
         {n:"Cruce de pecho con goma",              t:T_A, tip:"Solo Gomas",         info:"Con la goma anclada lateralmente, lleva el brazo hacia el centro del pecho en movimiento semicircular. Mantén el torso estable y controla el regreso lentamente.", recSeries:"3-4", recReps:"12-20"}
-    ] },
+,
+        {n:"Press de pecho unilateral con mancuerna", t:T_B, tip:"Solo Mancuernas", info:"Tumbado boca arriba, trabaja un brazo cada vez manteniendo el otro en el pecho. Empuja la mancuerna hasta extender el brazo y baja lentamente controlando el movimiento.", recSeries:"3-4", recReps:"8-12"},
+        {n:"Flexiones con agarre ancho", t:T_B, tip:"Sin equipamiento", info:"Coloca las manos bastante más separadas que la anchura de los hombros. Baja controladamente hasta casi tocar el pecho en el suelo y empuja de forma estable.", recSeries:"3-4", recReps:"8-15"},
+        {n:"Flexiones lentas negativas", t:T_B, tip:"Sin equipamiento", info:"Realiza la bajada en 4-5 segundos, muy despacio, manteniendo el cuerpo rígido. Empuja de vuelta a ritmo normal. El trabajo excéntrico lento aumenta mucho la demanda muscular.", recSeries:"3-4", recReps:"5-10"},
+        {n:"Aperturas de pecho con goma de pie", t:T_A, tip:"Solo Gomas", info:"Con la goma anclada a la espalda a la altura del pecho, lleva ambos brazos al frente en un arco amplio hasta que las manos se junten. Regresa lentamente resistiendo la tensión.", recSeries:"3", recReps:"12-15"}
+        ] },
     "Espalda": { icon: "format_align_justify", advice: "Tracción vertical y horizontal.", data: [
         {n:"Remo unilateral con mancuerna",        t:T_B, tip:"Solo Mancuernas",   info:"Apoya una mano y una rodilla en una superficie estable. Lleva la mancuerna hacia la cadera manteniendo espalda recta y evitando girar el torso.", recSeries:"3-5", recReps:"6-12"},
         {n:"Remo con goma",                        t:T_B, tip:"Solo Gomas",         info:"Tira de la goma hacia el abdomen llevando los codos hacia atrás y manteniendo el pecho abierto. Regresa lentamente sin perder tensión.", recSeries:"3-4", recReps:"8-15"},
@@ -23,14 +28,24 @@ const db = {
         {n:"Remo inclinado con mancuernas",        t:T_B, tip:"Solo Mancuernas",   info:"Inclina el torso manteniendo espalda recta y rodillas ligeramente flexionadas. Lleva las mancuernas hacia el abdomen y baja lentamente sin balanceos.", recSeries:"3-4", recReps:"6-12"},
         {n:"Pullover con mancuerna",               t:T_A, tip:"Solo Mancuernas",   info:"Tumbado boca arriba, lleva la mancuerna desde encima del pecho hacia detrás de la cabeza con brazos semiestirados. Regresa de forma lenta y controlada.", recSeries:"3", recReps:"10-15"},
         {n:"Face pull con goma",                   t:T_A, tip:"Solo Gomas",         info:"Con la goma anclada a la altura de la cara, tira hacia ti abriendo los codos hacia los lados. Mantén hombros bajos y aprieta la parte alta de la espalda.", recSeries:"3-4", recReps:"12-20"}
-    ] },
+,
+        {n:"Peso muerto rumano con mancuernas", t:T_B, tip:"Solo Mancuernas", info:"De pie, inclina el torso hacia delante llevando las mancuernas por las piernas con la espalda recta y las rodillas ligeramente flexionadas. Vuelve apretando los glúteos.", recSeries:"3-4", recReps:"8-12"},
+        {n:"Remo con mancuernas en pronación", t:T_B, tip:"Solo Mancuernas", info:"Con agarre pronado (palmas hacia abajo), inclina el torso y tira de las mancuernas hacia el abdomen. Este agarre activa más el trapecio medio y el romboides.", recSeries:"3-4", recReps:"8-12"},
+        {n:"Pull apart con goma", t:T_B, tip:"Solo Gomas", info:"Sujeta la goma con ambas manos a la altura del pecho y tira de los extremos hacia atrás abriendo los brazos lateralmente. Aprieta la parte alta de la espalda al final.", recSeries:"3-4", recReps:"15-20"},
+        {n:"Encogimientos de hombros con mancuernas", t:T_A, tip:"Solo Mancuernas", info:"De pie con mancuernas a los lados, sube los hombros directamente hacia las orejas sin rotar ni mover los brazos. Mantén un segundo arriba y baja lentamente.", recSeries:"3-4", recReps:"12-15"}
+        ] },
     "Drenaje": { icon: "water_drop", advice: "Drenaje linfático y retorno venoso.", data: [
         {n:"Elevación de piernas en pared",  t:T_S, tip:"Sin equipamiento", info:"Túmbate boca arriba y apoya las piernas elevadas contra la pared. Relaja pies y tobillos manteniendo una respiración tranquila y postura cómoda.", recSeries:"2-4", recReps:"5-15 min"},
         {n:"Bomba de tobillo",               t:T_S, tip:"Sin equipamiento", info:"Con la pierna relajada, lleva la punta del pie hacia ti y luego hacia delante de forma continua. Mantén movimiento suave y constante sin tensión excesiva.", recSeries:"3-5", recReps:"20-40"},
         {n:"Elevaciones de talones",         t:T_S, tip:"Sin equipamiento", info:"Eleva lentamente los talones hasta quedar sobre la punta de los pies y baja de forma controlada. Evita rebotes y mantén apoyo estable.", recSeries:"3-4", recReps:"12-20"},
         {n:"Bicicleta en el aire",           t:T_S, tip:"Sin equipamiento", info:"Tumbado boca arriba, simula un pedaleo lento y continuo manteniendo un rango cómodo. Mantén respiración relajada y movimiento fluido.", recSeries:"2-3", recReps:"3-5 min"},
         {n:"Marcha en el sitio",             t:T_S, tip:"Sin equipamiento", info:"Camina sin desplazarte elevando suavemente las rodillas y apoyando el pie de forma controlada. Mantén ritmo cómodo y sin impacto.", recSeries:"1", recReps:"2-5 min"}
-    ] },
+,
+        {n:"Círculos de tobillo", t:T_S, tip:"Sin equipamiento", info:"Mueve el pie dibujando círculos lentos y completos, primero en un sentido y luego en el otro. Activa la bomba muscular del tobillo favoreciendo el retorno venoso.", recSeries:"3-5", recReps:"15-20 círculos"},
+        {n:"Deslizamiento de talón tumbado", t:T_S, tip:"Sin equipamiento", info:"Tumbado boca arriba, desliza el talón hacia las nalgas flexionando la rodilla lentamente y vuelve a la posición inicial. Mantén el movimiento fluido.", recSeries:"3", recReps:"10-15"},
+        {n:"Elevación de pantorrilla sentado", t:T_S, tip:"Sin equipamiento", info:"Sentado con la planta del pie apoyada, eleva los talones contrayendo la pantorrilla y baja lentamente. La contracción del sóleo actúa como bomba venosa.", recSeries:"3-4", recReps:"15-20"},
+        {n:"Respiración diafragmática", t:T_S, tip:"Sin equipamiento", info:"Tumbado o sentado, inhala profundamente hinchando el abdomen y exhala vaciándolo por completo. La presión abdominal generada moviliza el fluido linfático.", recSeries:"3-5", recReps:"8-10 respiraciones"}
+        ] },
     "Hombros": { icon: "accessibility_new", advice: "Cuidado del manguito rotador.", data: [
         {n:"Press militar con mancuernas",   t:T_B, tip:"Solo Mancuernas",   info:"Empuja las mancuernas desde la altura de los hombros hasta extender los brazos sobre la cabeza. Mantén abdomen firme y evita arquear la espalda.", recSeries:"3-5", recReps:"6-12"},
         {n:"Press Arnold",                   t:T_B, tip:"Solo Mancuernas",   info:"Empieza con palmas mirando hacia ti y rota las manos mientras elevas las mancuernas. Finaliza con brazos arriba y palmas hacia delante.", recSeries:"3-4", recReps:"8-12"},
@@ -38,7 +53,12 @@ const db = {
         {n:"Elevación lateral con impulso",  t:T_B, tip:"Mancuernas / Gomas",info:"Eleva los brazos lateralmente usando un ligero impulso controlado para mover más carga. Baja lentamente manteniendo tensión en los hombros.", recSeries:"3", recReps:"10-15"},
         {n:"Elevación lateral estricta",     t:T_A, tip:"Mancuernas / Gomas",info:"Sube los brazos lateralmente hasta la altura de los hombros sin balancear el cuerpo ni elevar los trapecios. Mantén control en la bajada.", recSeries:"3-4", recReps:"12-20"},
         {n:"Pájaros",                        t:T_A, tip:"Mancuernas / Gomas",info:"Inclina el torso hacia delante y abre los brazos hacia los lados trabajando el deltoide posterior. Mantén espalda recta y movimiento controlado.", recSeries:"3-4", recReps:"12-20"}
-    ] },
+,
+        {n:"Elevación frontal con mancuernas", t:T_B, tip:"Solo Mancuernas", info:"Levanta los brazos al frente hasta la altura de los hombros con codos ligeramente flexionados. Baja lentamente sin balancear el torso ni usar impulso.", recSeries:"3-4", recReps:"10-12"},
+        {n:"Press de hombros con goma", t:T_B, tip:"Solo Gomas", info:"Pisa la goma con los pies y empuja hacia arriba desde los hombros hasta extender los brazos sobre la cabeza. Controla la bajada sin perder tensión.", recSeries:"3-4", recReps:"10-15"},
+        {n:"Elevación lateral tumbado con mancuerna", t:T_B, tip:"Solo Mancuernas", info:"Túmbate de lado y eleva la mancuerna superior lateralmente hasta la altura del hombro. Elimina los trapecios del movimiento y aumenta el rango.", recSeries:"3", recReps:"12-15"},
+        {n:"Rotación externa con goma", t:T_A, tip:"Solo Gomas", info:"Con el codo pegado al costado y flexionado 90 grados, rota el antebrazo hacia afuera contra la resistencia de la goma. Cuida el manguito rotador.", recSeries:"3", recReps:"15-20"}
+        ] },
     "Bíceps": { icon: "fitness_center", advice: "Flexión de codo técnica.", data: [
         {n:"Curl alterno con mancuernas",    t:T_B, tip:"Solo Mancuernas",   info:"Flexiona un brazo cada vez llevando la mancuerna hacia el hombro sin mover el codo del costado. Baja lentamente antes de alternar.", recSeries:"3-4", recReps:"8-12"},
         {n:"Curl con goma",                  t:T_B, tip:"Solo Gomas",         info:"Pisa la goma y flexiona los codos llevando las manos hacia los hombros. Mantén tensión continua y evita balancear el torso.", recSeries:"3-4", recReps:"10-15"},
@@ -46,7 +66,12 @@ const db = {
         {n:"Curl concentrado",               t:T_B, tip:"Solo Mancuernas",   info:"Sentado, apoya el codo en la parte interna del muslo y eleva la mancuerna lentamente. Controla especialmente la bajada.", recSeries:"3", recReps:"8-12"},
         {n:"Curl con hombro retrasado",      t:T_A, tip:"Solo Mancuernas",   info:"Mantén el brazo ligeramente retrasado respecto al torso para aumentar el estiramiento del bíceps. Flexiona el codo sin mover el hombro.", recSeries:"3", recReps:"10-15"},
         {n:"Curl isométrico con goma",       t:T_A, tip:"Solo Gomas",         info:"Mantén el codo flexionado aproximadamente a 90 grados sosteniendo la tensión de la goma sin mover el brazo ni perder postura.", recSeries:"3", recReps:"20-40s"}
-    ] },
+,
+        {n:"Curl Zottman con mancuernas", t:T_B, tip:"Solo Mancuernas", info:"Sube la mancuerna con agarre supino (palmas arriba) y al llegar arriba gira las palmas hacia abajo para bajar. Trabaja el bíceps en la subida y el braquiorradial en la bajada.", recSeries:"3-4", recReps:"8-12"},
+        {n:"Curl con agarre ancho con mancuernas", t:T_B, tip:"Solo Mancuernas", info:"Sujeta las mancuernas con las manos algo más separadas de lo habitual. La posición abierta recluta más la cabeza corta del bíceps.", recSeries:"3-4", recReps:"10-12"},
+        {n:"Curl inverso con goma", t:T_B, tip:"Solo Gomas", info:"Pisa la goma con agarre pronado (palmas hacia abajo) y flexiona los codos manteniendo ese agarre en todo momento. Trabaja el braquial y el antebrazo.", recSeries:"3-4", recReps:"12-15"},
+        {n:"Curl pico de bíceps con mancuerna", t:T_A, tip:"Solo Mancuernas", info:"Al llegar a la cima del curl, gira la muñeca ligeramente hacia fuera y aprieta fuerte el bíceps durante 1-2 segundos antes de bajar para maximizar la contracción.", recSeries:"3", recReps:"12-15"}
+        ] },
     "Tríceps": { icon: "rebase_edit", advice: "Extensión de codo técnica.", data: [
         {n:"Fondos entre sillas",                      t:T_B, tip:"Sin equipamiento",  info:"Apoya las manos detrás del cuerpo sobre una silla estable. Baja flexionando los codos y empuja hasta extender los brazos sin bloquearlos bruscamente.", recSeries:"3-4", recReps:"6-15"},
         {n:"Press cerrado con mancuernas suelo",       t:T_B, tip:"Solo Mancuernas",   info:"Tumbado boca arriba, empuja las mancuernas manteniendo los codos pegados al cuerpo. Baja lentamente hasta tocar el suelo con los tríceps.", recSeries:"3-4", recReps:"6-12"},
@@ -54,7 +79,12 @@ const db = {
         {n:"Flexiones diamante",                       t:T_B, tip:"Sin equipamiento",  info:"Coloca las manos juntas bajo el pecho formando un triángulo. Baja controladamente manteniendo codos cerca del cuerpo y empuja de forma estable.", recSeries:"3", recReps:"8-15"},
         {n:"Extensión sobre cabeza",                   t:T_A, tip:"Solo Mancuernas",   info:"Con brazos elevados sobre la cabeza, baja la mancuerna detrás de ella flexionando solo los codos y vuelve extendiendo completamente.", recSeries:"3", recReps:"10-15"},
         {n:"Extensión unilateral con goma",            t:T_A, tip:"Solo Gomas",         info:"Trabaja un brazo cada vez extendiendo el codo contra la resistencia de la goma. Mantén el hombro estable y controla el regreso.", recSeries:"3", recReps:"12-20"}
-    ] },
+,
+        {n:"Patada de tríceps con mancuerna", t:T_B, tip:"Solo Mancuernas", info:"Inclina el torso hacia delante con la espalda recta, sube el codo a la altura de la cadera y extiende el brazo hacia atrás hasta bloquearlo. Baja controladamente.", recSeries:"3-4", recReps:"10-15"},
+        {n:"Press francés con mancuernas en suelo", t:T_B, tip:"Solo Mancuernas", info:"Tumbado boca arriba, sujeta las mancuernas sobre la frente con codos apuntando al techo y baja flexionando solo los codos. Extiende de vuelta sin bloquear bruscamente.", recSeries:"3-4", recReps:"8-12"},
+        {n:"Fondos de tríceps en suelo", t:T_B, tip:"Sin equipamiento", info:"Apoya las manos en el suelo detrás del cuerpo con los dedos hacia delante. Baja el cuerpo flexionando los codos y empuja de vuelta. Más seguro que los fondos en silla.", recSeries:"3-4", recReps:"10-15"},
+        {n:"Patada de tríceps con goma", t:T_A, tip:"Solo Gomas", info:"Con la goma anclada baja o pisándola, inclina el torso y extiende el brazo hacia atrás contra la resistencia. Mantén el codo fijo durante todo el recorrido.", recSeries:"3", recReps:"12-15"}
+        ] },
     "Core": { icon: "self_improvement", advice: "Estabilidad abdominal.", data: [
         {n:"Plancha",                      t:T_B, tip:"Sin equipamiento",  info:"Mantén el cuerpo recto apoyado sobre antebrazos y pies. Contrae abdomen y glúteos evitando hundir o elevar demasiado la cadera.", recSeries:"3", recReps:"30-60s"},
         {n:"Plancha con toque hombro",     t:T_B, tip:"Sin equipamiento",  info:"Desde plancha alta, toca el hombro contrario alternando brazos sin mover excesivamente la cadera ni rotar el torso.", recSeries:"3", recReps:"10-15"},
@@ -71,7 +101,12 @@ const db = {
         {n:"Bird dog",                     t:T_S, tip:"Sin equipamiento",  info:"En cuadrupedia, extiende brazo y pierna contrarios manteniendo espalda y pelvis estables durante todo el movimiento.", recSeries:"3", recReps:"8-10"},
         {n:"Superman controlado",          t:T_S, tip:"Sin equipamiento",  info:"Tumbado boca abajo, eleva ligeramente brazos y piernas del suelo sin forzar la zona lumbar ni el cuello.", recSeries:"3", recReps:"8-12"},
         {n:"Bird dog isométrico",          t:T_S, tip:"Sin equipamiento",  info:"Mantén la posición extendida del bird dog durante varios segundos sin perder alineación corporal ni estabilidad.", recSeries:"3", recReps:"10-15s"}
-    ] },
+,
+        {n:"Abdominales en bicicleta", t:T_B, tip:"Sin equipamiento", info:"Tumbado boca arriba, lleva el codo derecho a la rodilla izquierda alternando lados en un movimiento de pedaleo. Mantén la zona lumbar pegada al suelo.", recSeries:"3", recReps:"16-20"},
+        {n:"Plancha dinámica", t:T_B, tip:"Sin equipamiento", info:"Alterna entre la posición de plancha alta (en manos) y baja (en antebrazos) de forma controlada, sin rotar la cadera ni perder la alineación corporal.", recSeries:"3", recReps:"8-10"},
+        {n:"Giro ruso con mancuerna", t:T_B, tip:"Solo Mancuernas", info:"Sentado con el torso inclinado hacia atrás y los pies ligeramente elevados, gira el tronco llevando la mancuerna de lado a lado de forma controlada.", recSeries:"3", recReps:"16-20"},
+        {n:"Elevación de piernas tumbado", t:T_A, tip:"Sin equipamiento", info:"Tumbado boca arriba, eleva las piernas juntas y extendidas hasta los 90 grados manteniendo la zona lumbar pegada al suelo. Baja sin llegar a tocar el suelo.", recSeries:"3", recReps:"10-15"}
+        ] },
     "Cardio": { icon: "directions_run", advice: "Bajo impacto linfático.", data: [
         {n:"Pedaleo continuo suave",   t:T_S, tip:"Bicicleta", info:"Pedalea a ritmo cómodo y constante con resistencia baja o moderada. Debes poder mantener conversación sin dificultad respiratoria importante.", recSeries:"1", recReps:"20-45 min"},
         {n:"Pedaleo progresivo",       t:T_S, tip:"Bicicleta", info:"Comienza muy suave, aumenta ligeramente ritmo o resistencia en la parte central y reduce intensidad progresivamente al final.", recSeries:"1", recReps:"15-30 min"},
@@ -79,7 +114,12 @@ const db = {
         {n:"Intervalos suaves",        t:T_S, tip:"Bicicleta", info:"Combina periodos suaves y moderados aumentando ligeramente el esfuerzo sin llegar al agotamiento ni a la sensación de ahogo.", recSeries:"6-8", recReps:"3 min/bloque"},
         {n:"Intervalos moderados",     t:T_S, tip:"Bicicleta", info:"Realiza bloques alternando ritmo suave y moderado manteniendo siempre control respiratorio y sensación de esfuerzo sostenible.", recSeries:"3-4", recReps:"10 min/bloque"},
         {n:"Paseo largo en el parque", t:T_S, tip:"Sin equipamiento", info:"Camina a ritmo cómodo y continuo manteniendo zancada natural y respiración relajada para favorecer circulación y recuperación.", recSeries:"1", recReps:"30-60 min"}
-    ] }
+,
+        {n:"Pedaleo de recuperación", t:T_S, tip:"Bicicleta", info:"Pedaleo muy suave a resistencia mínima para favorecer la recuperación activa. Ideal el día siguiente a una sesión intensa o cuando el cuerpo está cargado.", recSeries:"1", recReps:"10-15 min"},
+        {n:"Marcha en el sitio con brazos", t:T_S, tip:"Sin equipamiento", info:"Camina sin desplazarte elevando las rodillas y movilizando los brazos con balanceo natural al ritmo de los pasos. Activa la circulación de todo el cuerpo.", recSeries:"1-2", recReps:"3-5 min"},
+        {n:"Pedaleo con resistencia alta", t:T_S, tip:"Bicicleta", info:"Aumenta la resistencia manteniendo un buen ritmo de pedaleo para trabajar más la musculatura de las piernas. Mantén siempre el control respiratorio.", recSeries:"1", recReps:"15-25 min"},
+        {n:"Stepping lateral suave", t:T_S, tip:"Sin equipamiento", info:"Da pasos laterales amplios alternando la dirección a ritmo cómodo y sin impacto. Activa la musculatura abductora y favorece la circulación linfática.", recSeries:"2-3", recReps:"2-4 min"}
+        ] }
 };
 
 const GRUPOS = Object.keys(db);
@@ -441,40 +481,45 @@ function buildMetricsHtml(ex, i) {
     const tipo = getEquipType(ex);
 
     if (tipo === 'cardio') {
+        const ro = ex.done ? 'readonly' : '';
+        const rc = ex.done ? 'input-done' : '';
         return `
             <div class="stats-grid cardio-grid">
-                <div class="input-group"><label>Tiempo (min)</label><input type="text" placeholder="00" value="${ex.series}" onchange="updateEx(${i}, 'series', this.value)"></div>
-                <div class="input-group"><label>Intensidad</label><input type="text" placeholder="Baja/Media" value="${ex.reps}" onchange="updateEx(${i}, 'reps', this.value)"></div>
+                <div class="input-group"><label>Tiempo (min)</label><input type="text" placeholder="${ex.recReps||'00'}" value="${ex.series}" onchange="updateEx(${i}, 'series', this.value)" ${ro} class="${rc}"></div>
+                <div class="input-group"><label>Intensidad</label><input type="text" placeholder="Baja/Media" value="${ex.reps}" onchange="updateEx(${i}, 'reps', this.value)" ${ro} class="${rc}"></div>
             </div>`;
     }
 
     if (tipo === 'bodyweight') {
-        // Sin peso — solo series y reps
+        const ro = ex.done ? 'readonly' : '';
+        const rc = ex.done ? 'input-done' : '';
         return `
             <div class="stats-grid">
-                <div class="input-group"><label>Series</label><input type="number" placeholder="${ex.recSeries||'0'}" value="${ex.series}" onchange="updateEx(${i}, 'series', this.value)" style="${!ex.series?'color:var(--text2)':''}" onfocus="this.style.color=''"></div>
-                <div class="input-group"><label>Reps</label><input type="number" placeholder="${ex.recReps||'0'}" value="${ex.reps}" onchange="updateEx(${i}, 'reps', this.value)" style="${!ex.reps?'color:var(--text2)':''}" onfocus="this.style.color=''"></div>
-                <div class="input-group"><label>Peso corporal</label><input type="text" placeholder="—" value="" disabled style="opacity:0.4; cursor:not-allowed;"></div>
+                <div class="input-group"><label>Series</label><input type="number" placeholder="${ex.recSeries||'—'}" value="${ex.series}" onchange="updateEx(${i}, 'series', this.value)" ${ro} class="${rc}"></div>
+                <div class="input-group"><label>Reps</label><input type="number" placeholder="${ex.recReps||'—'}" value="${ex.reps}" onchange="updateEx(${i}, 'reps', this.value)" ${ro} class="${rc}"></div>
+                <div class="input-group"><label>Peso corporal</label><input type="text" placeholder="—" disabled style="opacity:0.3;cursor:not-allowed;"></div>
             </div>`;
     }
 
     if (tipo === 'band') {
-        // Solo gomas — dureza de banda como texto
+        const ro = ex.done ? 'readonly' : '';
+        const rc = ex.done ? 'input-done' : '';
         return `
             <div class="stats-grid">
-                <div class="input-group"><label>Series</label><input type="number" placeholder="0" value="${ex.series}" onchange="updateEx(${i}, 'series', this.value)"></div>
-                <div class="input-group"><label>Reps</label><input type="number" placeholder="0" value="${ex.reps}" onchange="updateEx(${i}, 'reps', this.value)"></div>
-                <div class="input-group"><label>🪢 Dureza banda</label><input type="text" placeholder="Ligera/Media/Fuerte" value="${ex.peso}" onchange="updateEx(${i}, 'peso', this.value)"></div>
+                <div class="input-group"><label>Series</label><input type="number" placeholder="${ex.recSeries||'—'}" value="${ex.series}" onchange="updateEx(${i}, 'series', this.value)" ${ro} class="${rc}"></div>
+                <div class="input-group"><label>Reps</label><input type="number" placeholder="${ex.recReps||'—'}" value="${ex.reps}" onchange="updateEx(${i}, 'reps', this.value)" ${ro} class="${rc}"></div>
+                <div class="input-group"><label>🪢 Dureza banda</label><input type="text" placeholder="Ligera/Media/Fuerte" value="${ex.peso}" onchange="updateEx(${i}, 'peso', this.value)" ${ro} class="${rc}"></div>
             </div>`;
     }
 
     if (tipo === 'dumbbell') {
-        // Solo mancuernas — peso en kg numérico
+        const ro = ex.done ? 'readonly' : '';
+        const rc = ex.done ? 'input-done' : '';
         return `
             <div class="stats-grid">
-                <div class="input-group"><label>Series</label><input type="number" placeholder="0" value="${ex.series}" onchange="updateEx(${i}, 'series', this.value)"></div>
-                <div class="input-group"><label>Reps</label><input type="number" placeholder="0" value="${ex.reps}" onchange="updateEx(${i}, 'reps', this.value)"></div>
-                <div class="input-group"><label>Peso (kg)</label><input type="number" placeholder="0" value="${ex.peso}" onchange="updateEx(${i}, 'peso', this.value)"></div>
+                <div class="input-group"><label>Series</label><input type="number" placeholder="${ex.recSeries||'—'}" value="${ex.series}" onchange="updateEx(${i}, 'series', this.value)" ${ro} class="${rc}"></div>
+                <div class="input-group"><label>Reps</label><input type="number" placeholder="${ex.recReps||'—'}" value="${ex.reps}" onchange="updateEx(${i}, 'reps', this.value)" ${ro} class="${rc}"></div>
+                <div class="input-group"><label>Peso (kg)</label><input type="number" placeholder="0" value="${ex.peso}" onchange="updateEx(${i}, 'peso', this.value)" ${ro} class="${rc}"></div>
             </div>`;
     }
 
@@ -1455,13 +1500,7 @@ function updateStats() {
 }
 
 
-let audioCtx = null;
-function initAudio() {
-    try {
-        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        if (audioCtx.state === 'suspended') audioCtx.resume();
-    } catch(e) {}
-}
+function initAudio() { if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); if (audioCtx.state === 'suspended') audioCtx.resume(); }
 function playEndSound() {
     if (!audioCtx) return; const now = audioCtx.currentTime;
     [523.25, 659.25, 783.99].forEach((f, i) => {
@@ -1483,17 +1522,11 @@ function _timerSetDisplay(s) {
     disp.style.color = s <= 10 && s > 0 ? 'var(--danger)' : 'var(--primary)';
 }
 
-function setTimerLabel(txt) {
-    const el = document.querySelector('.tmr-label');
-    if (el) el.innerText = txt;
-}
-
 function startTimer(s) {
     initAudio();
     clearInterval(tInterval);
     tRemaining = s;
-    setTimerLabel('EN CURSO');
-    _timerSetDisplay(tRemaining);
+    _timerSetDisplay(tRemaining);           // muestra el valor inicial de inmediato
     tInterval = setInterval(() => {
         tRemaining--;
         _timerSetDisplay(tRemaining);
@@ -1501,7 +1534,6 @@ function startTimer(s) {
             clearInterval(tInterval);
             playEndSound();
             _timerSetDisplay(0);
-            setTimerLabel('DESCANSO');
         }
     }, 1000);
 }
@@ -1510,6 +1542,7 @@ function startTimerCustom() {
     const inp = document.getElementById('timerCustomInput');
     const val = parseInt(inp ? inp.value : 0, 10);
     if (!val || val < 1) return;
+    inp.value = '';
     startTimer(val);
 }
 
@@ -1517,7 +1550,6 @@ function resetTimer() {
     clearInterval(tInterval);
     tRemaining = 0;
     _timerSetDisplay(0);
-    setTimerLabel('DESCANSO');
     const disp = document.getElementById('timerDisplay');
     if (disp) disp.style.color = 'var(--primary)';
 }
@@ -1590,92 +1622,4 @@ async function loadFromSupabase() {
         const remoteUpdated = new Date(data[0].updated_at);
         const localUpdated  = new Date(state.lastSync || 0);
         if (remoteUpdated > localUpdated) {
-            Object.assign(state, data[0].state_data);
-            state.lastSync = data[0].updated_at;
-            save(); showPage(state.activeTab || 'rutinaPage');
-            showToast('☁️ Datos sincronizados desde la nube');
-        }
-    } catch(e) {}
-}
-
-function setSyncIcon(status) {
-    const btn = document.getElementById('syncIcon');
-    if (!btn) return;
-    const span = btn.querySelector('span');
-    if (!span) return;
-    const icons = { sync: 'sync', ok: 'cloud_done', error: 'cloud_off' };
-    const colors = { sync: 'var(--text2)', ok: '#43A047', error: '#E53935' };
-    span.innerText = icons[status];
-    btn.style.color = colors[status];
-    if (status === 'sync') span.classList.add('spin'); else span.classList.remove('spin');
-}
-
-async function restaurarDesdeSupabase() {
-    try {
-        setSyncIcon('sync');
-        showToast('Conectando con la nube...');
-        const res = await fetch(`${SUPABASE_URL}/rest/v1/ironlog_sync?device_id=eq.${getDeviceId()}&select=state_data,updated_at`,
-            { headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` } });
-        if (!res.ok) { setSyncIcon('error'); showToast(`❌ Error: ${res.status}`); return; }
-        const data = await res.json();
-        if (!data.length) { showToast('☁️ Sin datos en la nube para este dispositivo'); setSyncIcon('ok'); return; }
-        const sesiones = data[0].state_data?.historial?.length || 0;
-        Object.assign(state, data[0].state_data);
-        state.lastSync = data[0].updated_at;
-        save(); showPage(state.activeTab || 'rutinaPage');
-        setSyncIcon('ok');
-        showToast(`✅ Restauradas ${sesiones} sesiones`);
-    } catch(e) { setSyncIcon('error'); showToast(`❌ ${e.message||'Sin conexión'}`); }
-}
-
-function cerrarSyncModal() {
-    document.getElementById('syncModal').style.display = 'none';
-}
-
-function onSyncIconPress() {
-    const btn = document.getElementById('syncIcon');
-    if (btn) btn.style.opacity = '0.5';
-    setTimeout(() => { if (btn) btn.style.opacity = '1'; }, 300);
-    const hayDatos = state.historial && state.historial.length > 0;
-    document.getElementById('syncBtnGuardar').style.display = hayDatos ? 'block' : 'none';
-    document.getElementById('syncTxt').innerText = hayDatos
-        ? 'Elige qué quieres hacer con la nube'
-        : 'No hay sesiones locales';
-    document.getElementById('syncModal').style.display = 'flex';
-}
-
-function handleBackButton() {
-    const modales = ['exInfoModal','editExModal','intensidadModal','generarSemanaModal','statInfoModal','dayModal','syncModal'];
-    for (const id of modales) {
-        const el = document.getElementById(id);
-        if (el && el.style.display !== 'none' && el.style.display !== '') {
-            el.style.display = 'none';
-            return;
-        }
-    }
-    const exView = document.getElementById('exerciseView');
-    if (exView && exView.style.display !== 'none') { backToGroups(); return; }
-}
-
-window.addEventListener('popstate', () => {
-    handleBackButton();
-    history.pushState({ ironlog: true }, '');
-});
-
-window.onload = () => {
-    showPage(state.activeTab || 'rutinaPage');
-    if (localStorage.getItem('ironlog_dark') === '1') {
-        document.body.classList.add('dark-mode');
-        const btn = document.getElementById('darkModeBtn');
-        if (btn) btn.querySelector('span').innerText = 'light_mode';
-    }
-    history.pushState({ ironlog: true }, '');
-    loadFromSupabase();
-    const splash = document.getElementById('splashScreen');
-    if (splash) {
-        setTimeout(() => {
-            splash.style.opacity = '0';
-            setTimeout(() => splash.remove(), 600);
-        }, 2500);
-    }
-};
+            
