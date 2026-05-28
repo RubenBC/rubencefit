@@ -1510,7 +1510,6 @@ function startTimerCustom() {
     const inp = document.getElementById('timerCustomInput');
     const val = parseInt(inp ? inp.value : 0, 10);
     if (!val || val < 1) return;
-    inp.value = '';
     startTimer(val);
 }
 
