@@ -1927,3 +1927,16 @@ body.dark-mode .stat-tooltip {
 body.dark-mode .myu-group-name { color: #E6E1E5; }
 body.dark-mode .myu-group-track { background: #3B3740; }
 
+
+/* ── Inputs atenuados cuando ejercicio completado ── */
+input.input-done {
+    opacity: 0.45;
+    pointer-events: none;
+    background: transparent;
+}
+
+.input-group input::placeholder {
+    color: var(--text2);
+    font-style: italic;
+    opacity: 1;
+}
