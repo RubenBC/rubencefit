@@ -1507,25 +1507,44 @@ function initAudio() {
         if (audioCtx.state === 'suspended') audioCtx.resume();
     } catch(e) {}
 }
+function _beep(freq, startTime, dur) {
+    try {
+        const o = audioCtx.createOscillator();
+        const g = audioCtx.createGain();
+        o.type = 'sine';
+        o.frequency.value = freq;
+        g.gain.setValueAtTime(0.001, startTime);
+        g.gain.linearRampToValueAtTime(1.0, startTime + 0.02);
+        g.gain.exponentialRampToValueAtTime(0.001, startTime + dur);
+        o.connect(g);
+        g.connect(audioCtx.destination);
+        o.start(startTime);
+        o.stop(startTime + dur + 0.05);
+    } catch(e) {}
+}
+
 function _playTones() {
-    const now = audioCtx.currentTime;
-    [523.25, 659.25, 783.99].forEach((f, i) => {
-        const o = audioCtx.createOscillator(); const g = audioCtx.createGain();
-        o.type = 'triangle'; o.frequency.setValueAtTime(f, now + i*0.15);
-        g.gain.setValueAtTime(0, now + i*0.15); g.gain.linearRampToValueAtTime(0.8, now + i*0.15 + 0.05); g.gain.exponentialRampToValueAtTime(0.001, now + i*0.15 + 0.4);
-        o.connect(g); g.connect(audioCtx.destination); o.start(now + i*0.15); o.stop(now + i*0.15 + 0.5);
-    });
-    // Vibración como respaldo en móvil
-    if (navigator.vibrate) navigator.vibrate([200, 100, 200, 100, 400]);
+    try {
+        const now = audioCtx.currentTime;
+        _beep(523, now,       0.18);
+        _beep(659, now + 0.2, 0.18);
+        _beep(784, now + 0.4, 0.35);
+    } catch(e) {}
+    if (navigator.vibrate) navigator.vibrate([150, 80, 150, 80, 300]);
+    showToast('⏱ ¡Tiempo!');
 }
 
 function playEndSound() {
-    if (!audioCtx) { if (navigator.vibrate) navigator.vibrate([200, 100, 200, 100, 400]); return; }
-    if (audioCtx.state === 'suspended') {
-        audioCtx.resume().then(() => _playTones());
-    } else {
-        _playTones();
-    }
+    if (navigator.vibrate) navigator.vibrate([150, 80, 150, 80, 300]);
+    showToast('⏱ ¡Tiempo!');
+    try {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if (audioCtx.state === 'suspended') {
+            audioCtx.resume().then(() => _playTones());
+        } else {
+            _playTones();
+        }
+    } catch(e) {}
 }
 
 let tInterval;
