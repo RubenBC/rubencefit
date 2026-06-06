@@ -34,7 +34,7 @@ const db = {
         {n:"Pull apart con goma", t:T_B, tip:"Solo Gomas", info:"Sujeta la goma con ambas manos a la altura del pecho y tira de los extremos hacia atrás abriendo los brazos lateralmente. Aprieta la parte alta de la espalda al final.", recSeries:"3-4", recReps:"15-20"},
         {n:"Encogimientos de hombros con mancuernas", t:T_A, tip:"Solo Mancuernas", info:"De pie con mancuernas a los lados, sube los hombros directamente hacia las orejas sin rotar ni mover los brazos. Mantén un segundo arriba y baja lentamente.", recSeries:"3-4", recReps:"12-15"}
         ] },
-    "Drenaje": { icon: "water_drop", advice: "Drenaje linfático y retorno venoso.", data: [
+    "Salud": { icon: "spa", advice: "Linfático, movilidad y estiramientos.", data: [
         {n:"Elevación de piernas en pared",  t:T_S, tip:"Sin equipamiento", info:"Túmbate boca arriba y apoya las piernas elevadas contra la pared. Relaja pies y tobillos manteniendo una respiración tranquila y postura cómoda.", recSeries:"2-4", recReps:"5-15 min"},
         {n:"Bomba de tobillo",               t:T_S, tip:"Sin equipamiento", info:"Con la pierna relajada, lleva la punta del pie hacia ti y luego hacia delante de forma continua. Mantén movimiento suave y constante sin tensión excesiva.", recSeries:"3-5", recReps:"20-40"},
         {n:"Elevaciones de talones",         t:T_S, tip:"Sin equipamiento", info:"Eleva lentamente los talones hasta quedar sobre la punta de los pies y baja de forma controlada. Evita rebotes y mantén apoyo estable.", recSeries:"3-4", recReps:"12-20"},
@@ -44,8 +44,19 @@ const db = {
         {n:"Círculos de tobillo", t:T_S, tip:"Sin equipamiento", info:"Mueve el pie dibujando círculos lentos y completos, primero en un sentido y luego en el otro. Activa la bomba muscular del tobillo favoreciendo el retorno venoso.", recSeries:"3-5", recReps:"15-20 círculos"},
         {n:"Deslizamiento de talón tumbado", t:T_S, tip:"Sin equipamiento", info:"Tumbado boca arriba, desliza el talón hacia las nalgas flexionando la rodilla lentamente y vuelve a la posición inicial. Mantén el movimiento fluido.", recSeries:"3", recReps:"10-15"},
         {n:"Elevación de pantorrilla sentado", t:T_S, tip:"Sin equipamiento", info:"Sentado con la planta del pie apoyada, eleva los talones contrayendo la pantorrilla y baja lentamente. La contracción del sóleo actúa como bomba venosa.", recSeries:"3-4", recReps:"15-20"},
-        {n:"Respiración diafragmática", t:T_S, tip:"Sin equipamiento", info:"Tumbado o sentado, inhala profundamente hinchando el abdomen y exhala vaciándolo por completo. La presión abdominal generada moviliza el fluido linfático.", recSeries:"3-5", recReps:"8-10 respiraciones"}
-        ] },
+        {n:"Respiración diafragmática", t:T_S, tip:"Sin equipamiento", info:"Tumbado o sentado, inhala profundamente hinchando el abdomen y exhala vaciándolo por completo. La presión abdominal generada moviliza el fluido linfático.", recSeries:"3-5", recReps:"8-10 respiraciones"},
+        {n:"Postura del niño", t:T_S, tip:"Sin equipamiento", info:"Desde arrodillado, siéntate sobre los talones y estira los brazos al frente apoyando la frente en el suelo. Descomprime toda la columna y los hombros.", recSeries:"1", recReps:"60-90s"},
+        {n:"Gato-Vaca", t:T_S, tip:"Sin equipamiento", info:"En cuadrupedia, alterna arquear la espalda hacia arriba (gato) y hundirla hacia abajo (vaca) al ritmo de la respiración. Moviliza toda la columna.", recSeries:"1", recReps:"8-10 respiraciones"},
+        {n:"Cobra", t:T_S, tip:"Sin equipamiento", info:"Tumbado boca abajo, apoya las palmas junto al pecho y empuja para elevar el torso manteniendo las caderas en el suelo. Abre el pecho y estira los abdominales.", recSeries:"1", recReps:"30-45s"},
+        {n:"Esfinge", t:T_S, tip:"Sin equipamiento", info:"Como cobra pero apoyado en los antebrazos. Versión más suave que protege la zona lumbar.", recSeries:"1", recReps:"45-60s"},
+        {n:"Perro boca abajo", t:T_S, tip:"Sin equipamiento", info:"Desde cuadrupedia eleva las caderas formando una V invertida estirando brazos y piernas. Estira dorsal, isquiotibiales, pantorrillas y hombros a la vez.", recSeries:"1", recReps:"45-60s"},
+        {n:"Torsión tumbada", t:T_S, tip:"Sin equipamiento", info:"Tumbado boca arriba, lleva una rodilla al pecho y crúzala al lado contrario girando la cabeza al lado opuesto. Libera las lumbares y el dorsal.", recSeries:"1", recReps:"45s cada lado"},
+        {n:"Apertura de pecho con manos entrelazadas", t:T_S, tip:"Sin equipamiento", info:"Entrelaza las manos detrás de la espalda y abre el pecho hacia arriba separando los omóplatos. Ideal tras entrenar pecho u hombros.", recSeries:"1", recReps:"30-45s"},
+        {n:"Estiramiento de hombro cruzado", t:T_S, tip:"Sin equipamiento", info:"Lleva un brazo estirado al pecho y empújalo con el otro hacia el cuerpo. Estira el deltoides posterior y el manguito rotador.", recSeries:"1", recReps:"30s cada lado"},
+        {n:"Estiramiento de tríceps sobre la cabeza", t:T_S, tip:"Sin equipamiento", info:"Eleva un codo doblado sobre la cabeza y empuja el codo hacia abajo con la otra mano. Estira el tríceps y el dorsal lateral.", recSeries:"1", recReps:"30s cada lado"},
+        {n:"Paloma tumbado", t:T_S, tip:"Sin equipamiento", info:"Tumbado boca arriba, cruza un tobillo sobre la rodilla contraria y lleva ambas piernas hacia el pecho. Estira el piriforme y los glúteos.", recSeries:"1", recReps:"45-60s cada lado"},
+        {n:"Postura del niño lateral", t:T_S, tip:"Sin equipamiento", info:"Desde postura del niño, desplaza los brazos hacia un lado para intensificar el estiramiento del dorsal y las costillas de ese lado.", recSeries:"1", recReps:"45s cada lado"}
+    ] },
     "Hombros": { icon: "accessibility_new", advice: "Cuidado del manguito rotador.", data: [
         {n:"Press militar con mancuernas",   t:T_B, tip:"Solo Mancuernas",   info:"Empuja las mancuernas desde la altura de los hombros hasta extender los brazos sobre la cabeza. Mantén abdomen firme y evita arquear la espalda.", recSeries:"3-5", recReps:"6-12"},
         {n:"Press Arnold",                   t:T_B, tip:"Solo Mancuernas",   info:"Empieza con palmas mirando hacia ti y rota las manos mientras elevas las mancuernas. Finaliza con brazos arriba y palmas hacia delante.", recSeries:"3-4", recReps:"8-12"},
@@ -123,7 +134,7 @@ const db = {
 };
 
 const GRUPOS = Object.keys(db);
-const GRUPOS_SEMANA = GRUPOS.filter(g => g !== 'Drenaje'); // Piernas no aparece en planificación semanal
+const GRUPOS_SEMANA = GRUPOS.filter(g => g !== 'Salud'); // Piernas no aparece en planificación semanal
 
 function getEjerciciosDe(grupo) {
     const base = (db[grupo]?.data || []).map(ex => {
@@ -138,7 +149,7 @@ const DIAS_DISPLAY = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sá
 
 const P_PUSH = ["Pecho", "Hombros", "Tríceps"];
 const P_PULL = ["Espalda", "Bíceps"];
-const P_LEGS = ["Drenaje", "Core"];
+const P_LEGS = ["Salud", "Core"];
 
 let state = JSON.parse(localStorage.getItem('iron_log_v8.6')) || {
     hoy: [], historial: [], activeTab: 'rutinaPage',
@@ -852,7 +863,7 @@ function buildRutina(gruposSeleccionados, intensidad, recentExternal) {
     const getRandom = arr => arr[Math.floor(Math.random() * arr.length)];
 
     // Grupos sin Cardio, sin Core, sin Piernas
-    const gruposPrincipales = gruposSeleccionados.filter(g => g !== 'Cardio' && g !== 'Core' && g !== 'Drenaje');
+    const gruposPrincipales = gruposSeleccionados.filter(g => g !== 'Cardio' && g !== 'Core' && g !== 'Salud');
     let finalPool = [];
 
     // ── Básicos (1 por grupo, 2 en Intensa) ──────────────────────────────────
@@ -910,8 +921,8 @@ function buildRutina(gruposSeleccionados, intensidad, recentExternal) {
     // ── Linfático SIEMPRE (punto 1) ───────────────────────────────────────────
     const LINFATICOS = ['Elevaciones de talones','Bomba de tobillo','Elevación de piernas en pared','Bicicleta en el aire','Marcha en el sitio'];
     if (!finalPool.some(f => LINFATICOS.includes(f.n))) {
-        const lp = getEjerciciosDe('Drenaje').filter(e => LINFATICOS.includes(e.n));
-        if (lp.length > 0) finalPool.push({...getRandom(lp), group: 'Drenaje'});
+        const lp = getEjerciciosDe('Salud').filter(e => LINFATICOS.includes(e.n));
+        if (lp.length > 0) finalPool.push({...getRandom(lp), group: 'Salud'});
     }
 
     // ── Cardio por intensidad (punto 3) ──────────────────────────────────────
@@ -1019,21 +1030,70 @@ function compartirBackup() {
 }
 
 function finalizarSesion() {
-    if(state.hoy.length === 0) return;
-    if(confirm("¿Guardar en el Log?")) {
-        const durSec = state.sesionStartTime ? Math.floor((Date.now() - state.sesionStartTime) / 1000) : null;
-        state.historial.unshift({ 
-            fecha: new Date().toLocaleDateString(), 
-            hora: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
-            resumen: state.hoy.map(e => `${getIcon(e.t)}${e.name}`).join('; '),
-            ejercicios: JSON.parse(JSON.stringify(state.hoy)),
-            duracion: durSec
-        });
-        state.hoy = []; resetSesionStopwatch(); save(); showPage('historialPage');
-        mostrarToastBackup();
-        syncToSupabase();
-    }
+    if (state.hoy.length === 0) return;
+    document.getElementById('finalizarModal').style.display = 'flex';
 }
+function getEstiramientosDeCierre() {
+    const grupos = new Set(state.hoy.map(e => e.group));
+    const nombres = [];
+    if (grupos.has('Pecho'))                    nombres.push('Apertura de pecho con manos entrelazadas', 'Cobra');
+    if (grupos.has('Espalda'))                  nombres.push('Postura del niño', 'Perro boca abajo');
+    if (grupos.has('Hombros'))                  nombres.push('Estiramiento de hombro cruzado');
+    if (grupos.has('Core'))                     nombres.push('Gato-Vaca');
+    if (grupos.has('Tríceps') || grupos.has('Bíceps')) nombres.push('Estiramiento de tríceps sobre la cabeza');
+    if (nombres.length < 3)                     nombres.push('Torsión tumbada');
+    nombres.push('Elevación de piernas en pared'); // siempre al final
+    const uniqueNames = [...new Set(nombres)].slice(0, 5);
+    return uniqueNames.map(nombre => {
+        const ex = getEjerciciosDe('Salud').find(e => (e.n||e.name) === nombre);
+        if (!ex) return null;
+        return { name: nombre, group: 'Salud', t: T_S,
+            tip: ex.tip || 'Sin equipamiento', series: '', reps: '', peso: '',
+            nota: '', done: false, recSeries: ex.recSeries||'',
+            recReps: ex.recReps||'', usaBanda: false };
+    }).filter(Boolean);
+}
+
+function cerrarGuiaModal() {
+    const m = document.getElementById('guiaModal');
+    if (m) m.style.display = 'none';
+}
+
+function cerrarFinalizarModal() {
+    const m = document.getElementById('finalizarModal');
+    if (m) m.style.display = 'none';
+}
+
+function finalizarConEstiramientos() {
+    cerrarFinalizarModal();
+    const estiramientos = getEstiramientosDeCierre();
+    estiramientos.forEach(e => {
+        if (!state.hoy.find(x => x.name === e.name)) state.hoy.push(e);
+    });
+    save(); renderToday();
+    showToast(`🧘 ${estiramientos.length} estiramientos añadidos`);
+}
+
+function guardarSesionDirecta() {
+    cerrarFinalizarModal();
+    _guardarSesion();
+}
+
+function _guardarSesion() {
+    const durSec = state.sesionStartTime ? Math.floor((Date.now() - state.sesionStartTime) / 1000) : null;
+    state.historial.unshift({
+        fecha: new Date().toLocaleDateString(),
+        hora: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
+        resumen: state.hoy.map(e => `${getIcon(e.t)}${e.name}`).join('; '),
+        ejercicios: JSON.parse(JSON.stringify(state.hoy)),
+        duracion: durSec
+    });
+    state.hoy = []; resetSesionStopwatch(); save(); showPage('historialPage');
+    mostrarToastBackup();
+    syncToSupabase();
+}
+
+
 
 function mostrarToastBackup() {
     const existing = document.getElementById('toastBackup');
@@ -1457,7 +1517,7 @@ function updateStats() {
     const diasColor = diasDescanso>=3?'var(--danger)':diasDescanso>=2?'#E65100':'var(--primary)';
     const last30=[];for(let i=0;i<30;i++){const d=new Date(today);d.setDate(today.getDate()-i);last30.push(d.toLocaleDateString());}
     const gruposSesiones={};
-    GRUPOS.filter(g=>g!=='Cardio'&&g!=='Drenaje').forEach(g=>gruposSesiones[g]=0);
+    GRUPOS.filter(g=>g!=='Cardio').forEach(g=>gruposSesiones[g]=0);
     state.historial.filter(h=>last30.includes(h.fecha)).forEach(s=>{const gs=new Set();if(s.ejercicios)s.ejercicios.forEach(ex=>{if(gruposSesiones[ex.group]!==undefined)gs.add(ex.group);});gs.forEach(g=>gruposSesiones[g]++);});
     const maxGrupo=Math.max(...Object.values(gruposSesiones),1);
     // Material You — chips con barra tonal
@@ -1726,7 +1786,7 @@ function onSyncIconPress() {
 }
 
 function handleBackButton() {
-    const modales = ['exInfoModal','editExModal','intensidadModal','generarSemanaModal','statInfoModal','dayModal','syncModal'];
+    const modales = ['exInfoModal','editExModal','intensidadModal','generarSemanaModal','statInfoModal','dayModal','syncModal','finalizarModal','guiaModal'];
     for (const id of modales) {
         const el = document.getElementById(id);
         if (el && el.style.display !== 'none' && el.style.display !== '') {
