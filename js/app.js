@@ -301,7 +301,7 @@ function renderDiaSelector() {
 
 function setDia(dia) {
     bibliotecaDia = dia;
-    renderDiaSelector();
+    renderGroups();
     // Refresh exercise list if open
     const ev = document.getElementById('exerciseView');
     const gn = document.getElementById('selectedGroupName');
