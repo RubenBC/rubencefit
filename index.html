@@ -61,7 +61,11 @@
         <div id="groupsView">
             <div class="header-row">
                 <h2><span class="material-symbols-outlined">library_books</span> Biblioteca</h2>
-                <div id="exerciseCounter" class="counter-badge">0</div>
+                <div style="display:flex;align-items:center;gap:8px;">
+                    <button onclick="document.getElementById('guiaModal').style.display='flex'"
+                        style="background:var(--primary-light);color:var(--primary);border:none;border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-weight:bold;font-size:16px;">ⓘ</button>
+                    <div id="exerciseCounter" class="counter-badge">0</div>
+                </div>
             </div>
             <div id="diaSelectorRow" class="dia-selector-row"></div>
             <div class="group-grid" id="groupGrid"></div>
@@ -222,6 +226,89 @@
                 style="background:none;color:var(--text2);border:none;padding:10px;font-size:14px;cursor:pointer;width:100%;">
                 Cancelar
             </button>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL FINALIZAR SESIÓN -->
+<div id="finalizarModal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:99999;align-items:flex-end;justify-content:center;" onclick="if(event.target===this)cerrarFinalizarModal()">
+    <div class="day-modal-sheet" style="padding:24px 20px 40px;">
+        <div style="width:32px;height:4px;background:var(--outline);border-radius:2px;margin:0 auto 20px;"></div>
+        <h3 style="text-align:center;margin:0 0 6px;color:var(--primary);font-size:17px;">Finalizar sesión</h3>
+        <p style="text-align:center;color:var(--text2);font-size:13px;margin:0 0 22px;">¿Añadir estiramientos de cierre antes de guardar?</p>
+        <div style="display:flex;flex-direction:column;gap:10px;">
+            <button onclick="finalizarConEstiramientos()"
+                style="background:var(--primary);color:white;border:none;border-radius:12px;padding:14px;font-size:15px;font-weight:bold;cursor:pointer;">
+                🧘 Añadir estiramientos y guardar
+            </button>
+            <button onclick="guardarSesionDirecta()"
+                style="background:var(--primary-light);color:var(--primary);border:none;border-radius:12px;padding:14px;font-size:15px;font-weight:bold;cursor:pointer;">
+                💪 Guardar sin estiramientos
+            </button>
+            <button onclick="cerrarFinalizarModal()"
+                style="background:none;color:var(--text2);border:none;padding:10px;font-size:14px;cursor:pointer;">
+                Cancelar
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL GUÍA DE PLANIFICACIÓN -->
+<div id="guiaModal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:99999;align-items:flex-end;justify-content:center;" onclick="if(event.target===this)cerrarGuiaModal()">
+    <div class="day-modal-sheet" style="padding:20px 20px 40px;max-height:85vh;overflow-y:auto;">
+        <div style="width:32px;height:4px;background:var(--outline);border-radius:2px;margin:0 auto 16px;"></div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+            <h3 style="margin:0;color:var(--primary);font-size:16px;">📋 Guía de planificación</h3>
+            <button onclick="cerrarGuiaModal()" style="background:none;border:none;color:var(--text2);font-size:18px;cursor:pointer;">✕</button>
+        </div>
+
+        <!-- Grupos compatibles -->
+        <div class="guia-section">
+            <div class="guia-title">💪 Grupos que van bien juntos</div>
+            <div class="guia-combo guia-push">
+                <b>EMPUJE</b> — Pecho + Hombros + Tríceps
+                <span>Se activan juntos en los básicos de empuje. Máxima sinergia.</span>
+            </div>
+            <div class="guia-combo guia-pull">
+                <b>TIRÓN</b> — Espalda + Bíceps
+                <span>El bíceps ya trabaja en los remos. Se complementan perfectamente.</span>
+            </div>
+            <div class="guia-combo guia-mix">
+                <b>HÍBRIDO A</b> — Pecho + Bíceps
+                <span>Sin solapamiento. Útil si quieres dividir Empuje y Tirón en días distintos.</span>
+            </div>
+            <div class="guia-combo guia-mix">
+                <b>HÍBRIDO B</b> — Espalda + Tríceps
+                <span>Sin solapamiento. El tríceps descansa mientras la espalda tira.</span>
+            </div>
+            <div class="guia-combo guia-salud">
+                <b>CORE + SALUD</b> — Siempre se puede añadir a cualquier sesión
+                <span>Core al final de la sesión de fuerza, estiramientos como cierre.</span>
+            </div>
+        </div>
+
+        <!-- Volumen por tiempo -->
+        <div class="guia-section">
+            <div class="guia-title">⏱ Cuántos ejercicios según el tiempo</div>
+            <table class="guia-table">
+                <tr><th>Tiempo</th><th>Energía</th><th>Básicos</th><th>Aislados</th><th>Total</th></tr>
+                <tr><td>~25 min</td><td>🌿 Baja</td><td>2</td><td>0-1</td><td>2-3</td></tr>
+                <tr><td>~35 min</td><td>💪 Normal</td><td>3</td><td>1-2</td><td>4-5</td></tr>
+                <tr><td>~45 min</td><td>💪 Normal</td><td>3-4</td><td>2</td><td>5-7</td></tr>
+                <tr><td>~55 min</td><td>🔥 Alta</td><td>4-5</td><td>2-3</td><td>7-9</td></tr>
+            </table>
+            <p style="font-size:11px;color:var(--text2);margin:8px 0 0;">+ Cardio (20-45 min) siempre aparte de estos tiempos</p>
+        </div>
+
+        <!-- Reglas rápidas -->
+        <div class="guia-section">
+            <div class="guia-title">📌 Reglas rápidas</div>
+            <div class="guia-regla">🔥 Los <b>básicos siempre antes</b> que los aislados</div>
+            <div class="guia-regla">🚴 El <b>cardio al principio</b> si es suave (calentamiento) o <b>al final</b> si es largo</div>
+            <div class="guia-regla">🦵 Siempre <b>al menos 1 linfático</b> por sesión (bomba de tobillo, elevaciones...)</div>
+            <div class="guia-regla">🧘 Los <b>estiramientos siempre al final</b>, nunca en medio</div>
+            <div class="guia-regla">💤 Descansa <b>60-90s</b> entre series de básicos y <b>45-60s</b> entre aislados</div>
+            <div class="guia-regla">⚠️ No entrenes el <b>mismo grupo 2 días seguidos</b></div>
         </div>
     </div>
 </div>
