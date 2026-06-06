@@ -1864,9 +1864,19 @@ window.addEventListener('popstate', () => {
         const current = PAGES.indexOf(state.activeTab);
         if (current === -1) return;
         let next = current;
-        if (dx < 0 && current < PAGES.length - 1) next = current + 1; // izquierda → siguiente
-        else if (dx > 0 && current > 0) next = current - 1;            // derecha → anterior
-        if (next !== current) showPage(PAGES[next]);
+        let dir = '';
+        if (dx < 0 && current < PAGES.length - 1) { next = current + 1; dir = 'slide-in-right'; }
+        else if (dx > 0 && current > 0) { next = current - 1; dir = 'slide-in-left'; }
+        if (next !== current) {
+            showPage(PAGES[next]);
+            const pageEl = document.getElementById(PAGES[next]);
+            if (pageEl && dir) {
+                pageEl.classList.remove('slide-in-right', 'slide-in-left');
+                void pageEl.offsetWidth; // reinicia la animación
+                pageEl.classList.add(dir);
+                setTimeout(() => pageEl.classList.remove(dir), 300);
+            }
+        }
     }, { passive: true });
 })();
 
