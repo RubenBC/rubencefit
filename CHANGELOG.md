@@ -4,6 +4,18 @@ Aplicación personal de entrenamiento. A partir de la v1.0 sale de fase beta.
 
 ---
 
+## v1.2
+
+- Transición deslizante al cambiar de pestaña: la nueva página entra desde el lateral arrastrando en lugar de aparecer de golpe
+
+---
+
+## v1.2
+
+- Transición deslizante al cambiar de pestaña: la página entra desde el lado correcto según la dirección del gesto
+
+---
+
 ## v1.1
 
 - Navegación entre pestañas deslizando el dedo a izquierda o derecha (Biblioteca ↔ Hoy ↔ Semana ↔ Log)
