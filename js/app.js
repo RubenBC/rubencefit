@@ -1814,14 +1814,19 @@ window.addEventListener('popstate', () => {
 // Prevenir pull-to-refresh en PWA/navegador
 (function preventPullRefresh() {
     let startY = 0;
+    let atTop = false;
+    const getScrollTop = () => {
+        return (document.scrollingElement && document.scrollingElement.scrollTop) ||
+               document.documentElement.scrollTop || document.body.scrollTop || 0;
+    };
     document.addEventListener('touchstart', e => {
         startY = e.touches[0].clientY;
-    }, { passive: false });
+        atTop = getScrollTop() <= 0;
+    }, { passive: true });
     document.addEventListener('touchmove', e => {
+        if (!atTop) return;
         const y = e.touches[0].clientY;
-        const scrollTop = document.scrollingElement ? document.scrollingElement.scrollTop : (document.documentElement.scrollTop || document.body.scrollTop);
-        // Si estamos arriba del todo y se desliza hacia abajo, bloquear
-        if (scrollTop <= 0 && y > startY) {
+        if (y > startY && getScrollTop() <= 0) {
             e.preventDefault();
         }
     }, { passive: false });
