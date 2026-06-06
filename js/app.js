@@ -1832,6 +1832,44 @@ window.addEventListener('popstate', () => {
     }, { passive: false });
 })();
 
+// Navegación entre pestañas deslizando izquierda/derecha
+(function swipeNav() {
+    const PAGES = ['rutinaPage', 'hoyPage', 'semanaPage', 'historialPage'];
+    let startX = 0, startY = 0, tracking = false;
+    document.addEventListener('touchstart', e => {
+        if (e.touches.length !== 1) { tracking = false; return; }
+        startX = e.touches[0].clientX;
+        startY = e.touches[0].clientY;
+        tracking = true;
+    }, { passive: true });
+    document.addEventListener('touchend', e => {
+        if (!tracking) return;
+        tracking = false;
+        const endX = e.changedTouches[0].clientX;
+        const endY = e.changedTouches[0].clientY;
+        const dx = endX - startX;
+        const dy = endY - startY;
+        // Solo si el gesto es claramente horizontal y suficientemente largo
+        if (Math.abs(dx) < 70) return;
+        if (Math.abs(dx) < Math.abs(dy) * 1.8) return;
+        // No cambiar si hay un modal abierto
+        const modales = ['exInfoModal','editExModal','intensidadModal','statInfoModal','dayModal','syncModal','finalizarModal','guiaModal'];
+        for (const id of modales) {
+            const m = document.getElementById(id);
+            if (m && m.style.display && m.style.display !== 'none') return;
+        }
+        // No cambiar si estamos dentro de la vista de ejercicios en Biblioteca
+        const exView = document.getElementById('exerciseView');
+        if (exView && exView.style.display !== 'none') return;
+        const current = PAGES.indexOf(state.activeTab);
+        if (current === -1) return;
+        let next = current;
+        if (dx < 0 && current < PAGES.length - 1) next = current + 1; // izquierda → siguiente
+        else if (dx > 0 && current > 0) next = current - 1;            // derecha → anterior
+        if (next !== current) showPage(PAGES[next]);
+    }, { passive: true });
+})();
+
 window.onload = () => {
     // Garantizar que la splash desaparece siempre
     const _splash = document.getElementById('splashScreen');
