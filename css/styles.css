@@ -1940,3 +1940,80 @@ input.input-done {
     font-style: italic;
     opacity: 1;
 }
+
+/* =========================================================
+   GUÍA DE PLANIFICACIÓN
+========================================================= */
+.guia-section {
+    margin-bottom: 20px;
+}
+
+.guia-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--primary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 10px;
+}
+
+.guia-combo {
+    border-radius: 10px;
+    padding: 10px 12px;
+    margin-bottom: 7px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.guia-combo span {
+    display: block;
+    font-size: 11px;
+    font-weight: 400;
+    margin-top: 3px;
+    opacity: 0.8;
+}
+
+.guia-push  { background: #FFF3E0; color: #E65100; }
+.guia-pull  { background: #E3F2FD; color: #1565C0; }
+.guia-mix   { background: #F3E5F5; color: #6A1B9A; }
+.guia-salud { background: #E8F5E9; color: #2E7D32; }
+
+body.dark-mode .guia-push  { background: #2a1a00; color: #FFB74D; }
+body.dark-mode .guia-pull  { background: #0a1929; color: #64B5F6; }
+body.dark-mode .guia-mix   { background: #1a0a2e; color: #CE93D8; }
+body.dark-mode .guia-salud { background: #0a1f0a; color: #81C784; }
+
+.guia-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+    margin-bottom: 4px;
+}
+
+.guia-table th {
+    background: var(--primary-light);
+    color: var(--primary);
+    padding: 6px 8px;
+    text-align: center;
+    font-weight: 700;
+    font-size: 11px;
+}
+
+.guia-table td {
+    padding: 7px 8px;
+    text-align: center;
+    border-bottom: 1px solid var(--outline);
+    color: var(--text);
+    font-size: 12px;
+}
+
+.guia-table tr:last-child td { border-bottom: none; }
+
+.guia-regla {
+    font-size: 13px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--outline);
+    color: var(--text);
+}
+
+.guia-regla:last-child { border-bottom: none; }
