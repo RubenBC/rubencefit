@@ -4,6 +4,13 @@ Aplicación personal de entrenamiento. A partir de la v1.0 sale de fase beta.
 
 ---
 
+## v1.1
+
+- Navegación entre pestañas deslizando el dedo a izquierda o derecha (Biblioteca ↔ Hoy ↔ Semana ↔ Log)
+- Corregido: al cambiar de día en Biblioteca, los grupos se actualizan al instante sin salir del menú
+
+---
+
 ## v1.0 — Primera versión estable
 
 Salida de la fase beta. Resumen de todo lo que incluye la app a día de hoy.
