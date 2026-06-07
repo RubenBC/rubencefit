@@ -1863,20 +1863,10 @@ window.addEventListener('popstate', () => {
         if (exView && exView.style.display !== 'none') return;
         const current = PAGES.indexOf(state.activeTab);
         if (current === -1) return;
-        let next = current;
-        let dir = '';
-        if (dx < 0 && current < PAGES.length - 1) { next = current + 1; dir = 'slide-in-right'; }
-        else if (dx > 0 && current > 0) { next = current - 1; dir = 'slide-in-left'; }
-        if (next !== current) {
-            showPage(PAGES[next]);
-            const pageEl = document.getElementById(PAGES[next]);
-            if (pageEl && dir) {
-                pageEl.classList.remove('slide-in-right', 'slide-in-left');
-                void pageEl.offsetWidth; // reinicia la animación
-                pageEl.classList.add(dir);
-                setTimeout(() => pageEl.classList.remove(dir), 300);
-            }
-        }
+        let next = current, dir = null;
+        if (dx < 0 && current < PAGES.length - 1) { next = current + 1; dir = 'right'; }
+        else if (dx > 0 && current > 0) { next = current - 1; dir = 'left'; }
+        if (next !== current) showPage(PAGES[next], null, dir);
     }, { passive: true });
 })();
 
