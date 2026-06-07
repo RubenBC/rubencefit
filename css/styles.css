@@ -110,12 +110,19 @@ body {
 
 .page {
     display: none;
-    animation: fadeIn 0.25s ease;
 }
 
 .page.active {
     display: block;
+    animation: fadeIn 0.25s ease;
 }
+
+/* Cuando hay slide, anula el fadeIn para que no se solapen */
+.page.active.slide-in-right,
+.page.active.slide-in-left {
+    animation-name: slideInRight;
+}
+.page.active.slide-in-left { animation-name: slideInLeft; }
 
 /* ── Transiciones deslizantes entre pestañas ── */
 .page.slide-in-right { animation: slideInRight 0.3s cubic-bezier(0.22, 0.61, 0.36, 1); }
