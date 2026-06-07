@@ -4,6 +4,12 @@ Aplicación personal de entrenamiento. A partir de la v1.0 sale de fase beta.
 
 ---
 
+## v1.3
+
+- Corregido el parpadeo al deslizar entre pestañas (se solapaban dos animaciones)
+
+---
+
 ## v1.2
 
 - Transición deslizante al cambiar de pestaña: la nueva página entra desde el lateral arrastrando en lugar de aparecer de golpe
