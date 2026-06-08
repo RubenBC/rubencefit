@@ -172,7 +172,7 @@ if (!state.ejerciciosEditados) state.ejerciciosEditados = {};
 if (!state.lastSync) state.lastSync = null;
 
 let swInterval = null;
-let bibliotecaDia = 'hoy';
+let bibliotecaDia = (() => { const d = new Date().getDay(); return DIAS_LOGICA[d === 0 ? 6 : d - 1]; })();
 let diasEditando = new Set();
 let calYear = new Date().getFullYear();
 let calMonth = new Date().getMonth();
@@ -291,15 +291,14 @@ function renderDiaSelector() {
     if (!row) return;
     const hoy = new Date();
     const hoyIdx = hoy.getDay() === 0 ? 6 : hoy.getDay() - 1;
-    const chips = [
-        { key: 'hoy', label: 'Hoy', sub: DIAS_DISPLAY[hoyIdx] },
-        ...DIAS_LOGICA.map((d, i) => ({ key: d, label: DIAS_DISPLAY[i].slice(0,3), sub: d }))
-    ];
+    const hoyKey = DIAS_LOGICA[hoyIdx];
+    const chips = DIAS_LOGICA.map((d, i) => ({ key: d, label: DIAS_DISPLAY[i].slice(0,3) }));
     row.innerHTML = chips.map(c => {
-        const grupos = c.key === 'hoy' ? (state.semana[DIAS_LOGICA[hoyIdx]]||[]) : (state.semana[c.key]||[]);
+        const grupos = state.semana[c.key] || [];
         const tieneGrupos = grupos.length > 0;
         const activo = bibliotecaDia === c.key;
-        return `<div class="dia-chip${activo ? ' dia-chip-active' : ''}${!tieneGrupos && c.key !== 'hoy' ? ' dia-chip-rest' : ''}" onclick="setDia('${c.key}')">
+        const esHoy = c.key === hoyKey;
+        return `<div class="dia-chip${activo ? ' dia-chip-active' : ''}${esHoy ? ' dia-chip-today' : ''}${!tieneGrupos ? ' dia-chip-rest' : ''}" onclick="setDia('${c.key}')">
             <span class="dia-chip-label">${c.label}</span>
         </div>`;
     }).join('');
@@ -320,7 +319,6 @@ function getDiaLabel() {
 }
 
 function getGruposParaDia() {
-    if (bibliotecaDia === 'hoy') return null; // null = mostrar todos
     return state.semana[bibliotecaDia] || [];
 }
 
