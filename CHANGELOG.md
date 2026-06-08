@@ -4,6 +4,12 @@ Aplicación personal de entrenamiento. A partir de la v1.0 sale de fase beta.
 
 ---
 
+## v1.4
+
+- Transición de deslizamiento entre pestañas ahora fluida y sin parpadeo (animación reiniciada correctamente con reflow)
+
+---
+
 ## v1.3
 
 - Corregido el parpadeo al deslizar entre pestañas (se solapaban dos animaciones)
