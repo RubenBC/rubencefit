@@ -4,6 +4,13 @@ Aplicación personal de entrenamiento. A partir de la v1.0 sale de fase beta.
 
 ---
 
+## v1.5
+
+- Eliminado el chip "Hoy" del selector de días en Biblioteca
+- El día actual se resalta con un punto verde indicador y queda seleccionado por defecto al abrir la Biblioteca
+
+---
+
 ## v1.4
 
 - Transición de deslizamiento entre pestañas ahora fluida y sin parpadeo (animación reiniciada correctamente con reflow)
