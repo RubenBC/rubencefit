@@ -1252,6 +1252,28 @@ h2 {
     opacity: 0.45;
 }
 
+/* Día actual — punto de color indicador */
+.dia-chip-today {
+    position: relative;
+}
+.dia-chip-today::after {
+    content: '';
+    position: absolute;
+    top: 3px;
+    right: 6px;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #43A047;
+}
+.dia-chip-today .dia-chip-label {
+    color: #43A047;
+    font-weight: 700;
+}
+.dia-chip-today.dia-chip-active .dia-chip-label {
+    color: var(--primary);
+}
+
 .group-card-dim {
     opacity: 0.45;
 }
