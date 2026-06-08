@@ -263,12 +263,18 @@ function analyzeRoutine() {
     tags.innerHTML = `<span class="tag tag-basico">${counts[T_B]} B</span><span class="tag tag-aisla">${counts[T_A]} A</span><span class="tag tag-salud">${counts[T_S]} S</span>`;
 }
 
-function showPage(id, btn) {
+function showPage(id, btn, slideDir) {
     try { initAudio(); } catch(e) {}
     if(id === 'rutinaPage' && document.getElementById('rutinaPage').classList.contains('active')) backToGroups();
-    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active', 'slide-in-right', 'slide-in-left'));
     document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-    document.getElementById(id).classList.add('active');
+    const pageEl = document.getElementById(id);
+    if (slideDir) {
+        // Aplica la clase de slide y fuerza reflow ANTES de activar para que la animación arranque limpia
+        pageEl.classList.add(slideDir === 'right' ? 'slide-in-right' : 'slide-in-left');
+        void pageEl.offsetWidth;
+    }
+    pageEl.classList.add('active');
     if(btn) btn.classList.add('active'); else { const b = document.getElementById('btn-'+id.replace('Page','')); if(b) b.classList.add('active'); }
     state.activeTab = id; save();
     if (id === 'hoyPage' && state.sesionStartTime) startSesionStopwatch();
