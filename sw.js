@@ -1,4 +1,4 @@
-const CACHE_NAME = 'rubencefit-v1.5';
+const CACHE_NAME = 'rubencefit-v1.6';
 const STATIC_ASSETS = ['./icon.png','./ch3ca-logo.png','./manifest.json'];
 
 self.addEventListener('install', event => {
