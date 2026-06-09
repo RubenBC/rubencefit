@@ -4,6 +4,13 @@ Aplicación personal de entrenamiento. A partir de la v1.0 sale de fase beta.
 
 ---
 
+## v1.6
+
+- Añadidos puntos semanales junto a los mensuales en el calendario del Log
+- Nuevo botón ⓘ al lado de los puntos que abre una ventana explicando cómo se calculan
+
+---
+
 ## v1.5
 
 - Eliminado el chip "Hoy" del selector de días en Biblioteca
