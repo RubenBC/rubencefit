@@ -951,6 +951,46 @@ h2 {
     font-weight: 500;
 }
 
+.cal-puntos-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 3px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+.cal-puntos-chip {
+    font-size: 12px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: var(--shape-full);
+}
+.cal-puntos-mes {
+    background: var(--primary-light);
+    color: var(--primary);
+}
+.cal-puntos-sem {
+    background: #FFF3E0;
+    color: #E65100;
+}
+body.dark-mode .cal-puntos-sem {
+    background: #2a1a00;
+    color: #FFB74D;
+}
+.cal-puntos-info {
+    background: var(--surface2);
+    color: var(--text2);
+    border: none;
+    border-radius: 50%;
+    width: 22px;
+    height: 22px;
+    font-size: 13px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 .cal-grid {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
