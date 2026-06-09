@@ -1264,6 +1264,32 @@ function getSessionIntensity(sesion) {
     return Math.max(score, 1);
 }
 
+// Calcula los puntos de una sola sesión (mismo criterio que el total mensual)
+function abrirPuntosModal() {
+    const m = document.getElementById('puntosModal');
+    if (m) m.style.display = 'flex';
+}
+function cerrarPuntosModal() {
+    const m = document.getElementById('puntosModal');
+    if (m) m.style.display = 'none';
+}
+
+function getSessionPoints(sesion) {
+    let pts = 0;
+    if (!sesion.ejercicios) return 0;
+    sesion.ejercicios.forEach(ex => {
+        if (ex.group === 'Cardio') pts += (parseFloat(ex.series)||0)*2;
+        else if (ex.t === T_S) pts += 10;
+        else {
+            const tipo = getEquipType(ex);
+            const base = ex.t === T_B ? 40 : 30;
+            const mult = (tipo==='dumbbell'||tipo==='mixed') ? 1 : tipo==='band' ? 0.75 : 0.5;
+            pts += base * mult;
+        }
+    });
+    return pts;
+}
+
 function renderCalendar() {
     const container = document.getElementById('calendarContainer');
     if (!container) return;
@@ -1284,23 +1310,26 @@ function renderCalendar() {
         const ds = new Date(calYear, calMonth, d).toLocaleDateString();
         state.historial.forEach(s => {
             if (s.fecha === ds) {
-                const score = getSessionIntensity(s);
-                dayData[d] = (dayData[d] || 0) + score;
-                // Points: B=30, A=20, S=10, cardio=min*2
-                if (s.ejercicios) s.ejercicios.forEach(ex => {
-                    if (ex.group === 'Cardio') totalPuntos += (parseFloat(ex.series)||0)*2;
-                    else if (ex.t === T_S) totalPuntos += 10;
-                    else {
-                        const tipo = getEquipType(ex);
-                        const base = ex.t === T_B ? 40 : 30; // B=40, A=30
-                        const mult = (tipo==='dumbbell'||tipo==='mixed') ? 1 : tipo==='band' ? 0.75 : 0.5;
-                        totalPuntos += base * mult;
-                    }
-                });
+                dayData[d] = (dayData[d] || 0) + getSessionIntensity(s);
+                totalPuntos += getSessionPoints(s);
             }
         });
     }
     const maxInt = Math.max(...Object.values(dayData), 1);
+
+    // Puntos de la semana actual (lunes a domingo que contiene hoy)
+    let puntosSemana = 0;
+    const hoyD = new Date();
+    const diaSem = hoyD.getDay() === 0 ? 6 : hoyD.getDay() - 1; // 0=lunes
+    const lunes = new Date(hoyD); lunes.setDate(hoyD.getDate() - diaSem); lunes.setHours(0,0,0,0);
+    const domingo = new Date(lunes); domingo.setDate(lunes.getDate() + 6); domingo.setHours(23,59,59,999);
+    state.historial.forEach(s => {
+        const parts = s.fecha.split('/');
+        if (parts.length === 3) {
+            const fechaS = new Date(parseInt(parts[2]), parseInt(parts[1])-1, parseInt(parts[0]));
+            if (fechaS >= lunes && fechaS <= domingo) puntosSemana += getSessionPoints(s);
+        }
+    });
 
     const diasHdr = ['lun','mar','mié','jue','vie','sáb','dom'];
 
@@ -1308,7 +1337,11 @@ function renderCalendar() {
         <button class="cal-btn" onclick="calPrev()">&#8249;</button>
         <div class="cal-nav-center">
             <span class="cal-title">${MESES[calMonth].toLowerCase()} de ${calYear}</span>
-            <span class="cal-puntos">&#129293; ${Math.round(totalPuntos)} puntos</span>
+            <div class="cal-puntos-row">
+                <span class="cal-puntos-chip cal-puntos-mes">&#129293; ${Math.round(totalPuntos)} mes</span>
+                <span class="cal-puntos-chip cal-puntos-sem">&#128293; ${Math.round(puntosSemana)} semana</span>
+                <button class="cal-puntos-info" onclick="abrirPuntosModal()">&#9432;</button>
+            </div>
         </div>
         <button class="cal-btn" onclick="calNext()" ${isFuture ? 'disabled' : ''}>&#8250;</button>
     </div>
@@ -1857,7 +1890,7 @@ window.addEventListener('popstate', () => {
         if (Math.abs(dx) < 70) return;
         if (Math.abs(dx) < Math.abs(dy) * 1.8) return;
         // No cambiar si hay un modal abierto
-        const modales = ['exInfoModal','editExModal','intensidadModal','statInfoModal','dayModal','syncModal','finalizarModal','guiaModal'];
+        const modales = ['exInfoModal','editExModal','intensidadModal','statInfoModal','dayModal','syncModal','finalizarModal','guiaModal','puntosModal'];
         for (const id of modales) {
             const m = document.getElementById(id);
             if (m && m.style.display && m.style.display !== 'none') return;
