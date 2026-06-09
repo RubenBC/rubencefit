@@ -4,6 +4,12 @@ Aplicación personal de entrenamiento. A partir de la v1.0 sale de fase beta.
 
 ---
 
+## v1.7
+
+- Grupo Core rediseñado: de 19 a 25 ejercicios con crunches, elevaciones de piernas, tijeras, V-sit y crunch con goma
+
+---
+
 ## v1.6
 
 - Añadidos puntos semanales junto a los mensuales en el calendario del Log
