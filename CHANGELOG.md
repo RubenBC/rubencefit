@@ -4,6 +4,15 @@ Aplicación personal de entrenamiento. A partir de la v1.0 sale de fase beta.
 
 ---
 
+## v1.9
+
+- Reordenar ejercicios en Hoy arrastrando desde el asa (⠿) además de las flechas
+- Última marca visible en cada ejercicio de Hoy: "Anterior: 3×10 · 12 kg (fecha)" tomada del historial
+- La pestaña Semana muestra las fechas reales de la semana en curso, resalta el día actual con borde y etiqueta HOY, y marca con ✓ los días ya entrenados
+- Nuevo botón Duplicar en cada día con rutina para copiarla a otro día de la semana
+
+---
+
 ## v1.8
 
 - Al generar una rutina ahora se muestra una vista previa con los ejercicios y la duración estimada antes de cargarla
