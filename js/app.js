@@ -590,8 +590,9 @@ function renderToday() {
         const accentClass = ex.t === T_B ? 'today-card-basico' : ex.t === T_A ? 'today-card-aisla' : 'today-card-salud';
         const doneClass = ex.done ? 'today-card-done' : '';
         return `
-        <div class="routine-card ${accentClass} ${doneClass}">
+        <div class="routine-card ${accentClass} ${doneClass}" data-idx="${i}">
             <div class="today-card-header">
+                <span class="drag-handle material-symbols-outlined">drag_indicator</span>
                 <label class="ex-done-check">
                     <input type="checkbox" ${ex.done ? 'checked' : ''} onchange="toggleDone(${i})">
                     <span class="ex-done-icon"></span>
@@ -611,6 +612,7 @@ function renderToday() {
                 </div>
             </div>
             <div class="today-card-body">
+                ${getAnteriorHtml(ex)}
                 ${buildMetricsHtml(ex, i)}
                 <div class="notes-row">
                     <div class="input-group"><label>Notas de la sesión</label><input type="text" placeholder="..." value="${ex.nota}" onchange="updateEx(${i}, 'nota', this.value)"></div>
@@ -619,6 +621,44 @@ function renderToday() {
         </div>
     `}).join('');
     updateSessionProgress();
+    initTodaySortable();
+}
+
+let _todaySortable = null;
+function initTodaySortable() {
+    const list = document.getElementById('todayList');
+    if (!list || typeof Sortable === 'undefined') return;
+    if (_todaySortable) { _todaySortable.destroy(); _todaySortable = null; }
+    _todaySortable = new Sortable(list, {
+        handle: '.drag-handle',
+        animation: 180,
+        ghostClass: 'drag-ghost',
+        onEnd: (evt) => {
+            if (evt.oldIndex === evt.newIndex) return;
+            const item = state.hoy.splice(evt.oldIndex, 1)[0];
+            state.hoy.splice(evt.newIndex, 0, item);
+            save(); renderToday();
+        }
+    });
+}
+
+// Última marca registrada de un ejercicio (busca en historial, más reciente primero)
+function getAnteriorHtml(ex) {
+    for (const sesion of state.historial) {
+        if (!sesion.ejercicios) continue;
+        const prev = sesion.ejercicios.find(e => e.name === ex.name && (e.series || e.reps || e.peso));
+        if (prev) {
+            let txt;
+            if (ex.group === 'Cardio') {
+                txt = `${prev.series || '?'} min`;
+            } else {
+                txt = `${prev.series || '?'}×${prev.reps || '?'}`;
+                if (prev.peso) txt += ` · ${prev.peso}${/^[\d.,]+$/.test(String(prev.peso).trim()) ? ' kg' : ''}`;
+            }
+            return `<div class="ex-anterior"><span class="material-symbols-outlined">history</span> Anterior: <b>${txt}</b> <small>(${sesion.fecha})</small></div>`;
+        }
+    }
+    return '';
 }
 
 function moverEjercicio(i, dir) {
@@ -687,10 +727,19 @@ function getDayColor(selected) {
 function editarDia(dia) { diasEditando.add(dia); renderWeek(); }
 function guardarDia(dia) { diasEditando.delete(dia); renderWeek(); }
 
+let duplicandoDia = null;
+
 function renderWeek() {
     const planner = document.getElementById('weekPlanner');
     if (!planner) return;
+    // Semana actual: fechas reales lunes-domingo
+    const _hoy = new Date();
+    const _diaSem = _hoy.getDay() === 0 ? 6 : _hoy.getDay() - 1;
+    const _lunes = new Date(_hoy); _lunes.setDate(_hoy.getDate() - _diaSem);
     planner.innerHTML = DIAS_LOGICA.map((dia, idx) => {
+        const fechaDia = new Date(_lunes); fechaDia.setDate(_lunes.getDate() + idx);
+        const esHoy = idx === _diaSem;
+        const entrenado = state.historial.some(s => s.fecha === fechaDia.toLocaleDateString());
         const sel = state.semana[dia] || [];
         const info = getDayColor(sel);
         const plantilla = state.plantillaSemanal ? state.plantillaSemanal[dia] : null;
@@ -727,9 +776,15 @@ function renderWeek() {
                         <button class="week-btn-primary" style="background:var(--color-verde); color:#2d5a27; border:1px solid #a8d8a8;" onclick="guardarDia('${dia}')">✓ Guardar</button>
                     ` : `
                         <button class="week-btn-secondary" onclick="editarDia('${dia}')"><span class="material-symbols-outlined" style="font-size:14px;">edit</span> Editar</button>
+                        <button class="week-btn-secondary" onclick="toggleDuplicar('${dia}')"><span class="material-symbols-outlined" style="font-size:14px;">content_copy</span> Duplicar</button>
                         <button class="week-btn-primary" onclick="cargarPlantillaEnHoy('${dia}')">Cargar en Hoy →</button>
                     `}
-                </div>`;
+                </div>
+                ${duplicandoDia === dia ? `
+                <div class="duplicar-row">
+                    <span class="duplicar-label">Copiar a:</span>
+                    ${DIAS_LOGICA.filter(d => d !== dia).map(d => `<button class="duplicar-chip" onclick="duplicarDiaA('${dia}','${d}')">${d.slice(0,3)}</button>`).join('')}
+                </div>` : ''}`;
         } else if (sel.length > 0) {
             bodyHtml = `
                 <div class="week-plan-empty">
@@ -741,9 +796,12 @@ function renderWeek() {
         }
 
         return `
-        <div class="day-card">
+        <div class="day-card ${esHoy ? 'day-card-hoy' : ''}">
             <div class="day-header">
-                <div class="day-name">${DIAS_DISPLAY[idx]}</div>
+                <div class="day-name">${DIAS_DISPLAY[idx]} ${fechaDia.getDate()}
+                    ${esHoy ? '<span class="day-badge-hoy">HOY</span>' : ''}
+                    ${entrenado ? '<span class="day-badge-done">✓ Entrenado</span>' : ''}
+                </div>
                 <div style="display:flex;align-items:center;gap:7px;">
                     <span class="day-dot" style="background:${
                         info.c === 'var(--color-rojo)'      ? '#E53935' :
@@ -770,6 +828,22 @@ function renderWeek() {
             </div>
         </div>`;
     }).join('');
+}
+
+function toggleDuplicar(dia) {
+    duplicandoDia = duplicandoDia === dia ? null : dia;
+    renderWeek();
+}
+
+function duplicarDiaA(origen, destino) {
+    if (!state.plantillaSemanal || !state.plantillaSemanal[origen]) return;
+    if (!state.plantillaSemanal) state.plantillaSemanal = {};
+    state.plantillaSemanal[destino] = JSON.parse(JSON.stringify(state.plantillaSemanal[origen]));
+    // Copia también los grupos del día
+    state.semana[destino] = [...(state.semana[origen] || [])];
+    duplicandoDia = null;
+    save(); renderWeek();
+    showToast(`✓ Rutina del ${origen} copiada al ${destino}`);
 }
 
 function togglePreview(dia) { const p = document.getElementById(`preview-${dia}`); if(p) p.style.display = p.style.display === 'none' ? 'block' : 'none'; }
