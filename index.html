@@ -24,7 +24,7 @@
         <p class="splash-by">Diseñada y desarrollada por</p>
         <p class="splash-author">Rubén Bejarano Checa</p>
         <p class="splash-ai">Creada con asistencia de inteligencia artificial</p>
-        <p class="splash-version">v1.7</p>
+        <p class="splash-version">v1.8</p>
     </div>
 </div>
 
@@ -346,6 +346,33 @@
             <div class="guia-title">📅 Totales</div>
             <div class="guia-regla">🤍 <b>Mes</b>: suma de todos los puntos del mes que estás viendo</div>
             <div class="guia-regla">🔥 <b>Semana</b>: suma de la semana actual (lunes a domingo)</div>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL PREVIEW RUTINA GENERADA -->
+<div id="rutinaPreviewModal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:99999;align-items:flex-end;justify-content:center;" onclick="if(event.target===this)cerrarPreviewModal()">
+    <div class="day-modal-sheet" style="padding:20px 20px 40px;max-height:85vh;overflow-y:auto;">
+        <div style="width:32px;height:4px;background:var(--outline);border-radius:2px;margin:0 auto 16px;"></div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+            <h3 style="margin:0;color:var(--primary);font-size:16px;">Rutina generada — <span id="previewDia"></span></h3>
+            <button onclick="cerrarPreviewModal()" style="background:none;border:none;color:var(--text2);font-size:18px;cursor:pointer;">✕</button>
+        </div>
+        <div id="previewMin" style="font-size:13px;color:var(--text2);margin-bottom:16px;font-weight:600;"></div>
+        <div id="previewLista" style="display:flex;flex-direction:column;gap:6px;margin-bottom:20px;"></div>
+        <div style="display:flex;flex-direction:column;gap:10px;">
+            <button onclick="confirmarRutinaGenerada()"
+                style="background:var(--primary);color:white;border:none;border-radius:12px;padding:14px;font-size:15px;font-weight:bold;cursor:pointer;">
+                ✓ Cargar esta rutina
+            </button>
+            <button onclick="regenerarRutina()"
+                style="background:var(--primary-light);color:var(--primary);border:none;border-radius:12px;padding:14px;font-size:15px;font-weight:bold;cursor:pointer;">
+                🔄 Regenerar
+            </button>
+            <button onclick="cerrarPreviewModal()"
+                style="background:none;color:var(--text2);border:none;padding:10px;font-size:14px;cursor:pointer;">
+                Cancelar
+            </button>
         </div>
     </div>
 </div>
