@@ -4,6 +4,13 @@ Aplicación personal de entrenamiento. A partir de la v1.0 sale de fase beta.
 
 ---
 
+## v1.8
+
+- Al generar una rutina ahora se muestra una vista previa con los ejercicios y la duración estimada antes de cargarla
+- Botón para regenerar si no convence la propuesta, sin salir del modal
+
+---
+
 ## v1.7
 
 - Grupo Core rediseñado: de 19 a 25 ejercicios con crunches, elevaciones de piernas, tijeras, V-sit y crunch con goma
