@@ -2100,3 +2100,28 @@ body.dark-mode .guia-salud { background: #0a1f0a; color: #81C784; }
 }
 
 .guia-regla:last-child { border-bottom: none; }
+
+/* =========================================================
+   PREVIEW RUTINA GENERADA
+========================================================= */
+.preview-ex-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 10px;
+    background: var(--surface2);
+    border-radius: 10px;
+    font-size: 13px;
+    color: var(--text);
+}
+.preview-ex-item span {
+    flex: 1;
+    font-weight: 500;
+}
+.preview-ex-item small {
+    font-size: 11px;
+    color: var(--text2);
+    background: var(--outline);
+    padding: 2px 7px;
+    border-radius: 10px;
+}
