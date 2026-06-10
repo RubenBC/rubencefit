@@ -823,25 +823,77 @@ function cerrarSelectorIntensidad(el, e) {
     if (!e || e.target === el) document.getElementById('intensityModal').style.display = 'none';
 }
 
+function getEstimatedDuration(rutina) {
+    let min = 0;
+    rutina.forEach(ex => {
+        if (ex.group === 'Cardio')       min += 20;
+        else if (ex.t === T_B)           min += 7;
+        else if (ex.t === T_A)           min += 5;
+        else if (ex.t === T_S)           min += 2;
+    });
+    return Math.round(min);
+}
+
+// Contexto de la rutina generada pendiente de confirmar
+let _rutinaPreview = null;
+let _rutinaPreviewDia = null;
+
+function confirmarRutinaGenerada() {
+    cerrarPreviewModal();
+    if (!_rutinaPreview || !_rutinaPreviewDia) return;
+    const dia = _rutinaPreviewDia;
+    if (!state.plantillaSemanal) state.plantillaSemanal = {};
+    state.plantillaSemanal[dia] = JSON.parse(JSON.stringify(_rutinaPreview));
+    const d = new Date();
+    const hoyNombre = DIAS_LOGICA[d.getDay() === 0 ? 6 : d.getDay() - 1];
+    if (dia === hoyNombre) {
+        state.hoy = JSON.parse(JSON.stringify(_rutinaPreview));
+        save(); showPage('hoyPage');
+    } else {
+        save(); renderWeek();
+        showToast(`✓ Rutina del ${dia} guardada`);
+    }
+    _rutinaPreview = null; _rutinaPreviewDia = null;
+}
+
+function regenerarRutina() {
+    cerrarPreviewModal();
+    if (!_rutinaPreviewDia || !_rutinaPreviewIntensidad) return;
+    const grupos = state.semana[_rutinaPreviewDia] || [];
+    const rutina = buildRutina(grupos, _rutinaPreviewIntensidad, {});
+    mostrarPreviewRutina(rutina, _rutinaPreviewDia, _rutinaPreviewIntensidad);
+}
+
+function cerrarPreviewModal() {
+    const m = document.getElementById('rutinaPreviewModal');
+    if (m) m.style.display = 'none';
+}
+
+let _rutinaPreviewIntensidad = null;
+
+function mostrarPreviewRutina(rutina, dia, intensidad) {
+    _rutinaPreview = rutina;
+    _rutinaPreviewDia = dia;
+    _rutinaPreviewIntensidad = intensidad;
+    const min = getEstimatedDuration(rutina);
+    const iconos = {[T_B]:'🔥', [T_A]:'🎯', [T_S]:'🛡️'};
+    const lista = rutina.map(ex => {
+        const ic = ex.group === 'Cardio' ? '🚴' : (iconos[ex.t] || '•');
+        return `<div class="preview-ex-item">${ic} <span>${ex.name}</span><small>${ex.group}</small></div>`;
+    }).join('');
+    document.getElementById('previewDia').textContent = dia;
+    document.getElementById('previewMin').textContent = `⏱ ~${min} min estimados`;
+    document.getElementById('previewLista').innerHTML = lista;
+    document.getElementById('rutinaPreviewModal').style.display = 'flex';
+}
+
 function generarConIntensidad(intensidad) {
     cerrarSelectorIntensidad();
     if (intensityCtx.modo === 'semana') { generarSemanaCompleta(intensidad); return; }
     const dia = intensityCtx.dia;
     const grupos = state.semana[dia] || [];
     const rutina = buildRutina(grupos, intensidad, {});
-    if (!state.plantillaSemanal) state.plantillaSemanal = {};
-    state.plantillaSemanal[dia] = JSON.parse(JSON.stringify(rutina));
-
-    // Solo carga en Hoy si el día generado ES hoy
-    const d = new Date();
-    const hoyNombre = DIAS_LOGICA[d.getDay() === 0 ? 6 : d.getDay() - 1];
-    if (dia === hoyNombre) {
-        state.hoy = rutina;
-        save(); showPage('hoyPage');
-    } else {
-        save(); renderWeek();
-        showToast(`✓ Rutina del ${dia} guardada`);
-    }
+    mostrarPreviewRutina(rutina, dia, intensidad);
 }
 
 function getEjerciciosRecientesPorGrupo(numSesiones) {
