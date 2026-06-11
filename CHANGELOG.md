@@ -4,6 +4,13 @@ Aplicación personal de entrenamiento. A partir de la v1.0 sale de fase beta.
 
 ---
 
+## v2.3
+
+- El generador de rutinas ya no añade nada automáticamente: ni ejercicios de Salud ni el linfático garantizado. Solo genera lo que corresponde a los grupos elegidos para ese día
+- Los ejercicios de drenaje y estiramientos se añaden manualmente o seleccionando el grupo Piernas para el día
+
+---
+
 ## v2.2
 
 - Nueva opción ⓘ Información en el menú ⋮ de cada ejercicio en Hoy: muestra la descripción de ejecución y la dosis recomendada
