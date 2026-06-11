@@ -636,6 +636,7 @@ function renderToday() {
                         <button class="btn-icon" onclick="toggleExMenu(${i})"><span class="material-symbols-outlined">more_vert</span></button>
                         ${openExMenu === i ? `
                         <div class="ex-menu">
+                            <button onclick="openExMenu=null;renderToday();abrirInfoEjercicio('${ex.name.replace(/'/g, "\\'")}','${ex.group}')"><span class="material-symbols-outlined">info</span> Información</button>
                             <button onclick="openExMenu=null;swapExercise(${i})"><span class="material-symbols-outlined">cached</span> Cambiar</button>
                             <button class="ex-menu-danger" onclick="openExMenu=null;quitarDeHoy(${i})"><span class="material-symbols-outlined">delete</span> Quitar</button>
                         </div>` : ''}
