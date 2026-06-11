@@ -2211,3 +2211,114 @@ body.dark-mode .day-badge-done { background: #0a1f0a; color: #81C784; }
     font-weight: 600;
     cursor: pointer;
 }
+
+/* =========================================================
+   v2.0 — SIMPLIFICACIÓN DE INTERFAZ
+========================================================= */
+/* Temporizador colapsable */
+.tmr-compact {
+    display: none;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 4px;
+    cursor: pointer;
+    color: var(--primary);
+    font-weight: 700;
+    font-size: 14px;
+}
+.tmr-compact-hint {
+    font-size: 11px;
+    color: var(--text2);
+    font-weight: 500;
+}
+.topbar.tmr-collapsed .tmr-card { display: none; }
+.topbar.tmr-collapsed .tmr-compact { display: flex; }
+
+/* Tarjeta compacta de ejercicio completado */
+.today-card-mini {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px !important;
+}
+.today-card-mini .mini-name {
+    flex: 1;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text2);
+    text-decoration: line-through;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.today-card-mini .btn-icon { padding: 4px; }
+
+/* Menú ⋮ de ejercicio */
+.ex-menu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background: var(--surface);
+    border: 1px solid var(--outline);
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+    z-index: 50;
+    overflow: hidden;
+    min-width: 140px;
+}
+.ex-menu button {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    background: none;
+    border: none;
+    padding: 11px 14px;
+    font-size: 13px;
+    color: var(--text);
+    cursor: pointer;
+}
+.ex-menu button:active { background: var(--surface2); }
+.ex-menu .material-symbols-outlined { font-size: 17px; }
+.ex-menu-danger { color: var(--danger) !important; }
+
+/* Semana colapsable */
+.day-header-toggle { cursor: pointer; }
+.day-chevron {
+    font-size: 18px;
+    vertical-align: middle;
+    color: var(--text2);
+}
+.day-resumen {
+    font-size: 12px;
+    color: var(--text2);
+    padding: 2px 0 0 24px;
+}
+
+/* Hoja de Ajustes */
+.ajustes-list {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+.ajustes-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    background: var(--surface2);
+    border: none;
+    border-radius: 12px;
+    padding: 14px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text);
+    cursor: pointer;
+    text-align: left;
+}
+.ajustes-item .material-symbols-outlined {
+    font-size: 20px;
+    color: var(--primary);
+}
+.ajustes-danger { color: var(--danger); }
+.ajustes-danger .material-symbols-outlined { color: var(--danger); }
