@@ -1036,9 +1036,9 @@ function getEjerciciosRecientesPorGrupo(numSesiones) {
 
 function buildRutina(gruposSeleccionados, intensidad, recentExternal) {
     const config = {
-        suave:   { dosBasicos: false, totalAisla: 1, salud: 2, coreCount: 1, incluirCardio: true },
-        normal:  { dosBasicos: false, totalAisla: null, salud: 2, coreCount: 2, incluirCardio: true },
-        intensa: { dosBasicos: true,  totalAisla: null, salud: 2, coreCount: 2, incluirCardio: true }
+        suave:   { dosBasicos: false, totalAisla: 1, coreCount: 1, incluirCardio: true },
+        normal:  { dosBasicos: false, totalAisla: null, coreCount: 2, incluirCardio: true },
+        intensa: { dosBasicos: true,  totalAisla: null, coreCount: 2, incluirCardio: true }
     }[intensidad];
 
     // Cardio por intensidad (punto 3)
@@ -1080,14 +1080,6 @@ function buildRutina(gruposSeleccionados, intensidad, recentExternal) {
         });
     }
 
-    // ── Salud de grupos principales ───────────────────────────────────────────
-    const saludShuffled = [...gruposPrincipales.flatMap(g => getEjerciciosDe(g).filter(e => e.t === T_S).map(e => ({...e, group: g})))].sort(() => Math.random() - 0.5);
-    let saludSel = 0;
-    for (const ex of saludShuffled) {
-        if (saludSel >= config.salud) break;
-        if (!finalPool.find(f => f.n === ex.n)) { finalPool.push(ex); saludSel++; }
-    }
-
     // ── Core explícito (1 en Suave, 2 en Normal/Intensa) ─────────────────────
     if (gruposSeleccionados.includes('Core')) {
         const coreEjs = getEjerciciosDe('Core');
@@ -1121,13 +1113,6 @@ function buildRutina(gruposSeleccionados, intensidad, recentExternal) {
         }
     }
 
-    // ── Linfático SIEMPRE (punto 1) ───────────────────────────────────────────
-    const LINFATICOS = ['Bomba de tobillo (ankle pumps)','Piernas elevadas en la pared','Bicicleta en el aire','Elevación de talones sentado','Marcha sentado en silla','Círculos de tobillo'];
-    if (!finalPool.some(f => LINFATICOS.includes(f.n))) {
-        const lp = getEjerciciosDe('Piernas').filter(e => LINFATICOS.includes(e.n));
-        if (lp.length > 0) finalPool.push({...getRandom(lp), group: 'Piernas'});
-    }
-
     // ── Cardio por intensidad (punto 3) ──────────────────────────────────────
     if (config.incluirCardio && gruposSeleccionados.includes('Cardio')) {
         const cardioPool = intensidad === 'suave'
@@ -1140,6 +1125,7 @@ function buildRutina(gruposSeleccionados, intensidad, recentExternal) {
     }
 
     // ── Orden óptimo ──────────────────────────────────────────────────────────
+    const LINFATICOS = ['Bomba de tobillo (ankle pumps)','Piernas elevadas en la pared','Bicicleta en el aire','Elevación de talones sentado','Marcha sentado en silla','Círculos de tobillo'];
     const getScore = (ex) => {
         if (ex.group === 'Cardio') return 0;
         if (LINFATICOS.includes(ex.n || ex.name)) return 999;
@@ -1784,7 +1770,7 @@ function updateStats() {
             <span class="myu-group-count" style="color:${col};">${n}</span>
         </div>`;
     }).join('');
-    const LINFATICOS_STAT=['Elevaciones de talones','Bomba de tobillo','Elevación de piernas en pared','Bicicleta en el aire','Marcha en el sitio'];
+    const LINFATICOS_STAT=['Bomba de tobillo (ankle pumps)','Piernas elevadas en la pared','Bicicleta en el aire','Elevación de talones sentado','Marcha sentado en silla','Círculos de tobillo'];
     let linfCount=0;
     state.historial.filter(h=>last7.includes(h.fecha)).forEach(s=>{if(s.ejercicios)s.ejercicios.forEach(ex=>{if(LINFATICOS_STAT.includes(ex.name))linfCount++;});});
     const linfColor=linfCount>=4?'#2E7D32':linfCount>=2?'#E65100':'var(--danger)';
