@@ -4,6 +4,17 @@ Aplicación personal de entrenamiento. A partir de la v1.0 sale de fase beta.
 
 ---
 
+## v2.0 — Simplificación de interfaz
+
+- Temporizador colapsado a una línea fina fuera de la pestaña Hoy; se expande automáticamente al entrar en Hoy o tocándolo
+- Ejercicios completados en Hoy se compactan a una sola línea (toca la flecha para expandir y ver los datos)
+- Eliminadas las flechas ↑↓ de los ejercicios: el orden se cambia arrastrando desde el asa
+- Acciones Cambiar y Quitar agrupadas en un menú ⋮ por ejercicio
+- Días de la Semana colapsados por defecto con línea de resumen; el día actual aparece abierto. Toca el encabezado para desplegar
+- Las acciones del Log (nube, modo oscuro, exportar, importar, borrar) agrupadas en una hoja de Ajustes accesible desde el botón ⚙
+
+---
+
 ## v1.9
 
 - Reordenar ejercicios en Hoy arrastrando desde el asa (⠿) además de las flechas
