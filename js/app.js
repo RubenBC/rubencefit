@@ -250,6 +250,8 @@ function updateSessionProgress() {
 
 function toggleDone(i) {
     state.hoy[i].done = !state.hoy[i].done;
+    expandedDone.delete(i);
+    openExMenu = null;
     if (state.hoy[i].done && !state.sesionStartTime) startSesionStopwatch();
     save(); renderToday();
 }
@@ -282,6 +284,7 @@ function showPage(id, btn, slideDir) {
     pageEl.classList.add('active');
     if(btn) btn.classList.add('active'); else { const b = document.getElementById('btn-'+id.replace('Page','')); if(b) b.classList.add('active'); }
     state.activeTab = id; save();
+    setTimerExpanded(id === 'hoyPage');
     if (id === 'hoyPage' && state.sesionStartTime) startSesionStopwatch();
     else if (id !== 'hoyPage') stopSesionStopwatch();
     updateStopwatchVisibility();
@@ -580,6 +583,19 @@ function toggleBandaMode(i) {
     save(); renderToday();
 }
 
+let openExMenu = null;
+let expandedDone = new Set();
+
+function toggleExMenu(i) {
+    openExMenu = openExMenu === i ? null : i;
+    renderToday();
+}
+
+function toggleExpandDone(i) {
+    if (expandedDone.has(i)) expandedDone.delete(i); else expandedDone.add(i);
+    renderToday();
+}
+
 function renderToday() {
     const list = document.getElementById('todayList');
     if(!list) return;
@@ -589,6 +605,18 @@ function renderToday() {
         const tagClass = ex.t === T_B ? 'tag-basico' : ex.t === T_A ? 'tag-aisla' : 'tag-salud';
         const accentClass = ex.t === T_B ? 'today-card-basico' : ex.t === T_A ? 'today-card-aisla' : 'today-card-salud';
         const doneClass = ex.done ? 'today-card-done' : '';
+        // Tarjeta compacta si está completado y no expandido manualmente
+        if (ex.done && !expandedDone.has(i)) {
+            return `
+        <div class="routine-card today-card-mini ${accentClass}" data-idx="${i}">
+            <label class="ex-done-check">
+                <input type="checkbox" checked onchange="toggleDone(${i})">
+                <span class="ex-done-icon"></span>
+            </label>
+            <span class="mini-name">${getIcon(ex.t)}${ex.name}</span>
+            <button class="btn-icon" onclick="toggleExpandDone(${i})"><span class="material-symbols-outlined">expand_more</span></button>
+        </div>`;
+        }
         return `
         <div class="routine-card ${accentClass} ${doneClass}" data-idx="${i}">
             <div class="today-card-header">
@@ -603,11 +631,13 @@ function renderToday() {
                 </div>
                 <div style="display:flex; flex-direction:column; align-items:flex-end; gap:8px;">
                     <span class="tag ${tagClass}">${ex.t}</span>
-                    <div class="ex-actions">
-                        <button class="btn-icon" onclick="moverEjercicio(${i},-1)" ${i===0?'disabled':''}><span class="material-symbols-outlined">arrow_upward</span></button>
-                        <button class="btn-icon" onclick="moverEjercicio(${i},1)" ${i===state.hoy.length-1?'disabled':''}><span class="material-symbols-outlined">arrow_downward</span></button>
-                        <button class="btn-icon btn-swap" onclick="swapExercise(${i})" title="Cambiar"><span class="material-symbols-outlined">cached</span></button>
-                        <button class="btn-icon btn-delete" onclick="quitarDeHoy(${i})"><span class="material-symbols-outlined">delete</span></button>
+                    <div class="ex-actions" style="position:relative;">
+                        <button class="btn-icon" onclick="toggleExMenu(${i})"><span class="material-symbols-outlined">more_vert</span></button>
+                        ${openExMenu === i ? `
+                        <div class="ex-menu">
+                            <button onclick="openExMenu=null;swapExercise(${i})"><span class="material-symbols-outlined">cached</span> Cambiar</button>
+                            <button class="ex-menu-danger" onclick="openExMenu=null;quitarDeHoy(${i})"><span class="material-symbols-outlined">delete</span> Quitar</button>
+                        </div>` : ''}
                     </div>
                 </div>
             </div>
@@ -728,6 +758,13 @@ function editarDia(dia) { diasEditando.add(dia); renderWeek(); }
 function guardarDia(dia) { diasEditando.delete(dia); renderWeek(); }
 
 let duplicandoDia = null;
+let diasAbiertosSemana = null; // se inicializa con el día actual abierto
+
+function toggleDiaSemana(dia) {
+    if (diasAbiertosSemana.has(dia)) diasAbiertosSemana.delete(dia);
+    else diasAbiertosSemana.add(dia);
+    renderWeek();
+}
 
 function renderWeek() {
     const planner = document.getElementById('weekPlanner');
@@ -736,9 +773,11 @@ function renderWeek() {
     const _hoy = new Date();
     const _diaSem = _hoy.getDay() === 0 ? 6 : _hoy.getDay() - 1;
     const _lunes = new Date(_hoy); _lunes.setDate(_hoy.getDate() - _diaSem);
+    if (diasAbiertosSemana === null) diasAbiertosSemana = new Set([DIAS_LOGICA[_diaSem]]);
     planner.innerHTML = DIAS_LOGICA.map((dia, idx) => {
         const fechaDia = new Date(_lunes); fechaDia.setDate(_lunes.getDate() + idx);
         const esHoy = idx === _diaSem;
+        const abierto = diasAbiertosSemana.has(dia);
         const entrenado = state.historial.some(s => s.fecha === fechaDia.toLocaleDateString());
         const sel = state.semana[dia] || [];
         const info = getDayColor(sel);
@@ -797,8 +836,10 @@ function renderWeek() {
 
         return `
         <div class="day-card ${esHoy ? 'day-card-hoy' : ''}">
-            <div class="day-header">
-                <div class="day-name">${DIAS_DISPLAY[idx]} ${fechaDia.getDate()}
+            <div class="day-header day-header-toggle" onclick="toggleDiaSemana('${dia}')">
+                <div class="day-name">
+                    <span class="material-symbols-outlined day-chevron">${abierto ? 'expand_less' : 'expand_more'}</span>
+                    ${DIAS_DISPLAY[idx]} ${fechaDia.getDate()}
                     ${esHoy ? '<span class="day-badge-hoy">HOY</span>' : ''}
                     ${entrenado ? '<span class="day-badge-done">✓ Entrenado</span>' : ''}
                 </div>
@@ -812,6 +853,7 @@ function renderWeek() {
                     <div class="day-status">${info.s}</div>
                 </div>
             </div>
+            ${abierto ? `
             <div class="selected-labels" style="margin-bottom:${tieneRutina?'8':'4'}px;">
                 ${labelsHtml}
             </div>
@@ -825,7 +867,8 @@ function renderWeek() {
                         <input type="checkbox" ${sel.includes(g)?'checked':''} onchange="toggleWeek('${dia}','${g}')"> ${g}
                     </label>
                 `).join('')}
-            </div>
+            </div>` : `
+            <div class="day-resumen">${tieneRutina ? plantilla.length + ' ejercicios planificados' : (sel.length > 0 ? sel.join(' · ') + ' — sin planificar' : 'Descanso')}</div>`}
         </div>`;
     }).join('');
 }
@@ -1396,6 +1439,15 @@ function getSessionIntensity(sesion) {
 }
 
 // Calcula los puntos de una sola sesión (mismo criterio que el total mensual)
+function abrirAjustesModal() {
+    const m = document.getElementById('ajustesModal');
+    if (m) m.style.display = 'flex';
+}
+function cerrarAjustesModal() {
+    const m = document.getElementById('ajustesModal');
+    if (m) m.style.display = 'none';
+}
+
 function abrirPuntosModal() {
     const m = document.getElementById('puntosModal');
     if (m) m.style.display = 'flex';
@@ -1793,12 +1845,22 @@ let tInterval;
 let tRemaining = 0;
 
 function _timerSetDisplay(s) {
-    const disp = document.getElementById('timerDisplay');
-    if (!disp) return;
     const m = Math.floor(s / 60), sc = s % 60;
-    disp.innerText = `${m < 10 ? '0' : ''}${m}:${sc < 10 ? '0' : ''}${sc}`;
-    disp.style.color = s <= 10 && s > 0 ? 'var(--danger)' : 'var(--primary)';
+    const txt = `${m < 10 ? '0' : ''}${m}:${sc < 10 ? '0' : ''}${sc}`;
+    const color = s <= 10 && s > 0 ? 'var(--danger)' : 'var(--primary)';
+    const disp = document.getElementById('timerDisplay');
+    if (disp) { disp.innerText = txt; disp.style.color = color; }
+    const mini = document.getElementById('timerDisplayMini');
+    if (mini) { mini.innerText = txt; mini.style.color = color; }
 }
+
+let timerExpanded = false;
+function setTimerExpanded(v) {
+    timerExpanded = v;
+    const tb = document.querySelector('.topbar');
+    if (tb) tb.classList.toggle('tmr-collapsed', !v);
+}
+function toggleTimerExpand() { setTimerExpanded(!timerExpanded); }
 
 function setTimerLabel(txt) {
     const el = document.querySelector('.tmr-label');
@@ -2021,7 +2083,7 @@ window.addEventListener('popstate', () => {
         if (Math.abs(dx) < 70) return;
         if (Math.abs(dx) < Math.abs(dy) * 1.8) return;
         // No cambiar si hay un modal abierto
-        const modales = ['exInfoModal','editExModal','intensidadModal','statInfoModal','dayModal','syncModal','finalizarModal','guiaModal','puntosModal'];
+        const modales = ['exInfoModal','editExModal','intensidadModal','statInfoModal','dayModal','syncModal','finalizarModal','guiaModal','puntosModal','ajustesModal'];
         for (const id of modales) {
             const m = document.getElementById(id);
             if (m && m.style.display && m.style.display !== 'none') return;
