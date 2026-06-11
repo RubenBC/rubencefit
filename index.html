@@ -24,14 +24,20 @@
         <p class="splash-by">Diseñada y desarrollada por</p>
         <p class="splash-author">Rubén Bejarano Checa</p>
         <p class="splash-ai">Creada con asistencia de inteligencia artificial</p>
-        <p class="splash-version">v1.9</p>
+        <p class="splash-version">v2.0</p>
     </div>
 </div>
 
-<div class="topbar">
+<div class="topbar tmr-collapsed">
+    <div class="tmr-compact" onclick="toggleTimerExpand()">
+        <span class="material-symbols-outlined" style="font-size:16px;">timer</span>
+        <span id="timerDisplayMini">00:00</span>
+        <span class="tmr-compact-hint">Temporizador</span>
+        <span class="material-symbols-outlined" style="font-size:18px;margin-left:auto;">expand_more</span>
+    </div>
     <div class="tmr-card">
-        <div class="tmr-display-area">
-            <span class="tmr-label">DESCANSO</span>
+        <div class="tmr-display-area" onclick="toggleTimerExpand()">
+            <span class="tmr-label">DESCANSO <span class="material-symbols-outlined" style="font-size:14px;vertical-align:middle;">expand_less</span></span>
             <div class="timer-display" id="timerDisplay" onclick="resetTimer()" title="Toca para resetear">00:00</div>
         </div>
         <div class="tmr-actions">
@@ -111,13 +117,7 @@
     <div id="historialPage" class="page">
         <div class="header-row">
             <h2><span class="material-symbols-outlined">history</span> Log</h2>
-            <div style="display:flex; align-items:center; gap:8px;">
-                <button id="syncIcon" onclick="onSyncIconPress()" ontouchend="onSyncIconPress();event.preventDefault();" style="background:none;border:none;cursor:pointer;padding:12px 10px;color:#43A047;display:flex;align-items:center;min-width:44px;min-height:44px;"><span class="material-symbols-outlined" style="font-size:22px;">cloud_done</span></button>
-                <button onclick="toggleDarkMode()" id="darkModeBtn" style="background:none;border:none;cursor:pointer;padding:8px;color:var(--primary);display:flex;align-items:center;"><span class="material-symbols-outlined" style="font-size:22px;">dark_mode</span></button>
-                <button onclick="exportarDatos()" style="background:none;border:none;cursor:pointer;padding:8px;color:var(--primary);display:flex;align-items:center;" title="Exportar"><span class="material-symbols-outlined" style="font-size:22px;">upload</span></button>
-                <label style="cursor:pointer;padding:8px;color:var(--primary);display:flex;align-items:center;" title="Importar"><span class="material-symbols-outlined" style="font-size:22px;">download</span><input type="file" accept=".json" onchange="importarDatos(event)" style="display:none;"></label>
-                <button onclick="borrarTodoHistorial()" style="background:none;border:none;cursor:pointer;padding:8px;color:var(--danger);display:flex;align-items:center;" title="Borrar"><span class="material-symbols-outlined" style="font-size:22px;">delete_forever</span></button>
-            </div>
+            <button onclick="abrirAjustesModal()" style="background:var(--primary-light);color:var(--primary);border:none;border-radius:50%;width:36px;height:36px;display:flex;align-items:center;justify-content:center;cursor:pointer;"><span class="material-symbols-outlined" style="font-size:20px;">settings</span></button>
         </div>
 
         <div id="statsDashboard" class="coach-card" style="background: var(--primary-light); border: none; margin-bottom: 20px;">
@@ -372,6 +372,37 @@
             <button onclick="cerrarPreviewModal()"
                 style="background:none;color:var(--text2);border:none;padding:10px;font-size:14px;cursor:pointer;">
                 Cancelar
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL AJUSTES Y DATOS -->
+<div id="ajustesModal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:99999;align-items:flex-end;justify-content:center;" onclick="if(event.target===this)cerrarAjustesModal()">
+    <div class="day-modal-sheet" style="padding:20px 20px 40px;">
+        <div style="width:32px;height:4px;background:var(--outline);border-radius:2px;margin:0 auto 16px;"></div>
+        <h3 style="margin:0 0 16px;color:var(--primary);font-size:16px;">⚙️ Ajustes y datos</h3>
+        <div class="ajustes-list">
+            <button class="ajustes-item" id="syncIcon" onclick="onSyncIconPress()">
+                <span class="material-symbols-outlined" style="color:#43A047;">cloud_done</span>
+                <span>Sincronización en la nube</span>
+            </button>
+            <button class="ajustes-item" onclick="toggleDarkMode()" id="darkModeBtn">
+                <span class="material-symbols-outlined">dark_mode</span>
+                <span>Modo oscuro</span>
+            </button>
+            <button class="ajustes-item" onclick="exportarDatos()">
+                <span class="material-symbols-outlined">upload</span>
+                <span>Exportar backup (JSON)</span>
+            </button>
+            <label class="ajustes-item">
+                <span class="material-symbols-outlined">download</span>
+                <span>Importar backup</span>
+                <input type="file" accept=".json" onchange="importarDatos(event)" style="display:none;">
+            </label>
+            <button class="ajustes-item ajustes-danger" onclick="borrarTodoHistorial()">
+                <span class="material-symbols-outlined">delete_forever</span>
+                <span>Borrar todo el historial</span>
             </button>
         </div>
     </div>
