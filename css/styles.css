@@ -2322,3 +2322,105 @@ body.dark-mode .day-badge-done { background: #0a1f0a; color: #81C784; }
 }
 .ajustes-danger { color: var(--danger); }
 .ajustes-danger .material-symbols-outlined { color: var(--danger); }
+
+/* =========================================================
+   v2.4 — HOY VACÍO, BLOQUES RÁPIDOS, STATS COLAPSABLES
+========================================================= */
+.hoy-empty {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 24px 4px;
+}
+.hoy-empty-msg {
+    text-align: center;
+    color: var(--text2);
+    font-size: 14px;
+    margin: 0 0 10px;
+}
+.hoy-empty-btn {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--outline);
+    border-radius: 14px;
+    padding: 16px;
+    cursor: pointer;
+    text-align: left;
+    color: var(--text);
+}
+.hoy-empty-btn .material-symbols-outlined {
+    font-size: 24px;
+    color: var(--primary);
+}
+.hoy-empty-btn span:last-child {
+    display: flex;
+    flex-direction: column;
+    font-size: 14px;
+    font-weight: 700;
+}
+.hoy-empty-btn small {
+    font-size: 11px;
+    font-weight: 400;
+    color: var(--text2);
+    margin-top: 2px;
+}
+.hoy-empty-primary {
+    background: var(--primary-light);
+    border-color: var(--primary);
+}
+
+.bloques-rapidos {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+.bloque-chip {
+    background: var(--surface);
+    border: 1.5px dashed var(--outline);
+    color: var(--primary);
+    border-radius: var(--shape-full);
+    padding: 7px 14px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.stats-card {
+    background: var(--surface);
+    border: 1px solid var(--outline);
+    border-radius: 14px;
+    margin-bottom: 10px;
+    overflow: hidden;
+    grid-column: 1 / span 2;
+}
+.stats-card-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 13px 14px;
+    cursor: pointer;
+}
+.stats-card-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+    flex: 1;
+}
+.stats-card-resumen {
+    font-size: 11px;
+    color: var(--text2);
+    font-weight: 500;
+}
+.stats-card-chevron {
+    font-size: 18px;
+    color: var(--text2);
+}
+.stats-card-body {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    padding: 0 12px 12px;
+}
