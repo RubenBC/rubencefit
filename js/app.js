@@ -9,145 +9,146 @@ function getIcon(t) {
 
 const db = {
     "Pecho": { icon: "expand_less", advice: "Control de hombros y apertura.", data: [
-        {n:"Flexiones",                            t:T_B, tip:"Sin equipamiento",  info:"Mantén el cuerpo alineado desde hombros hasta tobillos, con abdomen y glúteos contraídos. Baja flexionando los codos hasta acercar el pecho al suelo y empuja de forma controlada sin hundir la zona lumbar.", recSeries:"4", recReps:"8-20"},
-        {n:"Press de pecho plano con mancuernas", t:T_B, tip:"Solo Mancuernas", info:"Tumbado en el banco plano, empuja las mancuernas desde la altura del pecho hasta extender los brazos arriba. Baja controladamente notando el estiramiento del pecho. El banco permite rango completo imposible en el suelo.", recSeries:"3-4", recReps:"6-12"},
-        {n:"Press de pecho inclinado con mancuernas", t:T_B, tip:"Solo Mancuernas", info:"Con el banco inclinado 30-45°, empuja las mancuernas hacia arriba. Enfatiza la parte alta del pecho (porción clavicular). Baja lentamente sin perder la tensión.", recSeries:"3-4", recReps:"8-12"},
-        {n:"Press de pecho con goma",              t:T_B, tip:"Solo Gomas",         info:"Con la goma anclada detrás del cuerpo, empuja al frente como en un press de pecho. Mantén hombros estables y controla el regreso sin perder tensión en la goma.", recSeries:"3-4", recReps:"8-15"},
-        {n:"Flexiones inclinadas",                 t:T_B, tip:"Sin equipamiento",  info:"Realiza flexiones con manos o pies elevados según la variante. Mantén el cuerpo recto y baja lentamente hasta acercar el pecho al apoyo o al suelo sin perder alineación.", recSeries:"3-4", recReps:"8-15"},
-        {n:"Aperturas con mancuernas en banco", t:T_A, tip:"Solo Mancuernas", info:"Tumbado en el banco, abre los brazos hacia los lados con ligera flexión de codos hasta notar buen estiramiento del pecho. El banco permite que los brazos bajen por debajo del torso, rango imposible en suelo. Cierra en arco controlado.", recSeries:"3", recReps:"10-15"},
-        {n:"Cruce de pecho con goma",              t:T_A, tip:"Solo Gomas",         info:"Con la goma anclada lateralmente, lleva el brazo hacia el centro del pecho en movimiento semicircular. Mantén el torso estable y controla el regreso lentamente.", recSeries:"3-4", recReps:"12-20"}
-,
-        {n:"Press de pecho unilateral con mancuerna", t:T_B, tip:"Solo Mancuernas", info:"Tumbado boca arriba, trabaja un brazo cada vez manteniendo el otro en el pecho. Empuja la mancuerna hasta extender el brazo y baja lentamente controlando el movimiento.", recSeries:"3-4", recReps:"8-12"},
-        {n:"Flexiones con agarre ancho", t:T_B, tip:"Sin equipamiento", info:"Coloca las manos bastante más separadas que la anchura de los hombros. Baja controladamente hasta casi tocar el pecho en el suelo y empuja de forma estable.", recSeries:"3-4", recReps:"8-15"},
-        {n:"Flexiones lentas negativas", t:T_B, tip:"Sin equipamiento", info:"Realiza la bajada en 4-5 segundos, muy despacio, manteniendo el cuerpo rígido. Empuja de vuelta a ritmo normal. El trabajo excéntrico lento aumenta mucho la demanda muscular.", recSeries:"3-4", recReps:"5-10"},
-        {n:"Aperturas de pecho con goma de pie", t:T_A, tip:"Solo Gomas", info:"Con la goma anclada a la espalda a la altura del pecho, lleva ambos brazos al frente en un arco amplio hasta que las manos se junten. Regresa lentamente resistiendo la tensión.", recSeries:"3", recReps:"12-15"}
-        ] },
+        {n:"Press de banca con mancuernas", t:T_B, tip:"Mancuernas + Banco", info:"Tumbado en el banco plano, empuja las mancuernas desde la altura del pecho hasta extender los brazos arriba y baja controlando. Trabaja el pectoral mayor completo, con apoyo del deltoides anterior y el tríceps. El rey de los empujes horizontales.", recSeries:"3-4", recReps:"6-12"},
+        {n:"Press inclinado con mancuernas", t:T_B, tip:"Mancuernas + Banco", info:"Igual que el press plano pero con el banco a 30-45°. El ángulo desplaza el trabajo a la porción clavicular (pecho superior) y aumenta la participación del deltoides anterior.", recSeries:"3-4", recReps:"8-12"},
+        {n:"Press declinado con mancuernas", t:T_B, tip:"Mancuernas + Banco", info:"Con el banco ligeramente declinado, empuja las mancuernas perpendiculares al suelo. Enfatiza la porción esternal baja del pectoral y suele permitir mover algo más de peso.", recSeries:"3", recReps:"8-12"},
+        {n:"Press de pecho con agarre neutro", t:T_B, tip:"Mancuernas + Banco", info:"Press en banco plano con las palmas enfrentadas y los codos pegados al cuerpo. Trabaja el pectoral con la mínima tensión sobre el hombro: la mejor opción los días que la articulación molesta.", recSeries:"3", recReps:"8-12"},
+        {n:"Aperturas con mancuernas en banco", t:T_A, tip:"Mancuernas + Banco", info:"Tumbado, abre los brazos en arco con ligera flexión de codo hasta sentir el estiramiento del pecho y cierra como abrazando un barril. Aísla el pectoral eliminando al tríceps; el banco permite que los brazos bajen más allá del torso.", recSeries:"3", recReps:"10-15"},
+        {n:"Pullover con mancuerna", t:T_A, tip:"Mancuernas + Banco", info:"Tumbado en el banco, baja una mancuerna en arco por detrás de la cabeza con brazos casi rectos y vuelve. Trabaja el pectoral en su fibra esternal y expande la caja torácica; el dorsal asiste.", recSeries:"3", recReps:"10-15"},
+        {n:"Flexiones", t:T_B, tip:"Sin equipamiento", info:"Cuerpo recto, manos algo más anchas que los hombros, baja el pecho al suelo y empuja. Pectoral, deltoides anterior y tríceps con el core estabilizando todo el tiempo.", recSeries:"3-4", recReps:"8-20"},
+        {n:"Flexiones inclinadas (manos elevadas)", t:T_B, tip:"Sin equipamiento", info:"Flexiones con las manos sobre el banco o una mesa. La inclinación reduce el peso a mover y desplaza el énfasis al pecho inferior. Ideal para acumular volumen sin fatiga excesiva.", recSeries:"3", recReps:"10-20"},
+        {n:"Flexiones declinadas (pies elevados)", t:T_B, tip:"Sin equipamiento", info:"Flexiones con los pies sobre el banco. Aumenta la carga y enfoca el pecho superior y los hombros. La versión más exigente de la flexión clásica.", recSeries:"3", recReps:"8-15"},
+        {n:"Cruce de pecho con banda elástica", t:T_A, tip:"Solo Gomas", info:"Con la banda anclada a la espalda o a un punto fijo, junta las manos al frente cruzando ligeramente. Replica el cruce de poleas: contracción máxima del pectoral en el cierre, donde las mancuernas pierden tensión.", recSeries:"3", recReps:"12-20"},
+        {n:"Press de pecho con banda de pie", t:T_B, tip:"Solo Gomas", info:"De pie con la banda pasando por la espalda, empuja al frente como un press. La tensión crece al final del recorrido, justo donde el press con mancuerna se relaja. Buen finisher o alternativa sin banco.", recSeries:"3", recReps:"10-15"},
+        {n:"Estiramiento de pectoral en pared", t:T_S, tip:"Estiramiento", info:"Antebrazo apoyado en la pared en ángulo de 90°, gira el cuerpo hacia el lado contrario hasta notar el estiramiento. Estira el pectoral y el deltoides anterior.", recSeries:"1", recReps:"30-45s"},
+        {n:"Apertura de pecho con manos entrelazadas", t:T_S, tip:"Estiramiento", info:"Entrelaza las manos detrás de la espalda y abre el pecho elevando los brazos y separando los omóplatos. Estira pectoral y bíceps. Ideal tras los presses.", recSeries:"1", recReps:"30-45s"},
+        {n:"Postura de la cobra", t:T_S, tip:"Estiramiento", info:"Tumbado boca abajo, empuja con las manos elevando el torso con la cadera en el suelo. Estira pecho y abdomen y moviliza la columna.", recSeries:"1", recReps:"30-45s"},
+        {n:"Estiramiento de pecho tumbado con brazo en cruz", t:T_S, tip:"Estiramiento", info:"Boca abajo con un brazo extendido en cruz, rueda el cuerpo hacia ese lado dejando el brazo atrás. Estiramiento profundo del pectoral fibra a fibra.", recSeries:"1", recReps:"30-45s/lado"}
+    ] },
     "Espalda": { icon: "format_align_justify", advice: "Tracción vertical y horizontal.", data: [
-        {n:"Remo unilateral con mancuerna",        t:T_B, tip:"Solo Mancuernas",   info:"Apoya una mano y una rodilla en una superficie estable. Lleva la mancuerna hacia la cadera manteniendo espalda recta y evitando girar el torso.", recSeries:"3-5", recReps:"6-12"},
-        {n:"Remo con goma",                        t:T_B, tip:"Solo Gomas",         info:"Tira de la goma hacia el abdomen llevando los codos hacia atrás y manteniendo el pecho abierto. Regresa lentamente sin perder tensión.", recSeries:"3-4", recReps:"8-15"},
-        {n:"Jalón al pecho con goma",              t:T_B, tip:"Solo Gomas",         info:"Con la goma anclada arriba, tira hacia la parte alta del pecho bajando los codos. Mantén el torso estable y evita inclinarte demasiado hacia atrás.", recSeries:"3-4", recReps:"8-15"},
-        {n:"Remo inclinado con mancuernas",        t:T_B, tip:"Solo Mancuernas",   info:"Inclina el torso manteniendo espalda recta y rodillas ligeramente flexionadas. Lleva las mancuernas hacia el abdomen y baja lentamente sin balanceos.", recSeries:"3-4", recReps:"6-12"},
-        {n:"Pullover con mancuerna",               t:T_A, tip:"Solo Mancuernas",   info:"Tumbado boca arriba, lleva la mancuerna desde encima del pecho hacia detrás de la cabeza con brazos semiestirados. Regresa de forma lenta y controlada.", recSeries:"3", recReps:"10-15"},
-        {n:"Face pull con goma",                   t:T_A, tip:"Solo Gomas",         info:"Con la goma anclada a la altura de la cara, tira hacia ti abriendo los codos hacia los lados. Mantén hombros bajos y aprieta la parte alta de la espalda.", recSeries:"3-4", recReps:"12-20"}
-,
-        {n:"Peso muerto rumano con mancuernas", t:T_B, tip:"Solo Mancuernas", info:"De pie, inclina el torso hacia delante llevando las mancuernas por las piernas con la espalda recta y las rodillas ligeramente flexionadas. Vuelve apretando los glúteos.", recSeries:"3-4", recReps:"8-12"},
-        {n:"Remo con mancuernas en pronación", t:T_B, tip:"Solo Mancuernas", info:"Con agarre pronado (palmas hacia abajo), inclina el torso y tira de las mancuernas hacia el abdomen. Este agarre activa más el trapecio medio y el romboides.", recSeries:"3-4", recReps:"8-12"},
-        {n:"Pull apart con goma", t:T_B, tip:"Solo Gomas", info:"Sujeta la goma con ambas manos a la altura del pecho y tira de los extremos hacia atrás abriendo los brazos lateralmente. Aprieta la parte alta de la espalda al final.", recSeries:"3-4", recReps:"15-20"},
-        {n:"Encogimientos de hombros con mancuernas", t:T_A, tip:"Solo Mancuernas", info:"De pie con mancuernas a los lados, sube los hombros directamente hacia las orejas sin rotar ni mover los brazos. Mantén un segundo arriba y baja lentamente.", recSeries:"3-4", recReps:"12-15"},
-        {n:"Remo en araña con mancuerna", t:T_B, tip:"Solo Mancuernas", info:"Túmbate boca abajo sobre el banco inclinado con el pecho apoyado. Rema con las mancuernas hacia las caderas. El apoyo elimina el balanceo y aísla perfectamente la espalda.", recSeries:"3-4", recReps:"8-12"},
-        {n:"Pullover con mancuerna en banco", t:T_B, tip:"Solo Mancuernas", info:"Tumbado en el banco, sujeta una mancuerna con ambas manos sobre el pecho y bájala en arco por detrás de la cabeza. Estira y activa el dorsal con rango completo.", recSeries:"3", recReps:"10-15"}
-        ] },
-    "Salud": { icon: "spa", advice: "Linfático, movilidad y estiramientos.", data: [
-        {n:"Elevación de piernas en pared",  t:T_S, tip:"Sin equipamiento", info:"Túmbate boca arriba y apoya las piernas elevadas contra la pared. Relaja pies y tobillos manteniendo una respiración tranquila y postura cómoda.", recSeries:"2-4", recReps:"5-15 min"},
-        {n:"Bomba de tobillo",               t:T_S, tip:"Sin equipamiento", info:"Con la pierna relajada, lleva la punta del pie hacia ti y luego hacia delante de forma continua. Mantén movimiento suave y constante sin tensión excesiva.", recSeries:"3-5", recReps:"20-40"},
-        {n:"Elevaciones de talones",         t:T_S, tip:"Sin equipamiento", info:"Eleva lentamente los talones hasta quedar sobre la punta de los pies y baja de forma controlada. Evita rebotes y mantén apoyo estable.", recSeries:"3-4", recReps:"12-20"},
-        {n:"Bicicleta en el aire",           t:T_S, tip:"Sin equipamiento", info:"Tumbado boca arriba, simula un pedaleo lento y continuo manteniendo un rango cómodo. Mantén respiración relajada y movimiento fluido.", recSeries:"2-3", recReps:"3-5 min"},
-        {n:"Marcha en el sitio",             t:T_S, tip:"Sin equipamiento", info:"Camina sin desplazarte elevando suavemente las rodillas y apoyando el pie de forma controlada. Mantén ritmo cómodo y sin impacto.", recSeries:"1", recReps:"2-5 min"}
-,
-        {n:"Círculos de tobillo", t:T_S, tip:"Sin equipamiento", info:"Mueve el pie dibujando círculos lentos y completos, primero en un sentido y luego en el otro. Activa la bomba muscular del tobillo favoreciendo el retorno venoso.", recSeries:"3-5", recReps:"15-20 círculos"},
-        {n:"Deslizamiento de talón tumbado", t:T_S, tip:"Sin equipamiento", info:"Tumbado boca arriba, desliza el talón hacia las nalgas flexionando la rodilla lentamente y vuelve a la posición inicial. Mantén el movimiento fluido.", recSeries:"3", recReps:"10-15"},
-        {n:"Elevación de pantorrilla sentado", t:T_S, tip:"Sin equipamiento", info:"Sentado con la planta del pie apoyada, eleva los talones contrayendo la pantorrilla y baja lentamente. La contracción del sóleo actúa como bomba venosa.", recSeries:"3-4", recReps:"15-20"},
-        {n:"Respiración diafragmática", t:T_S, tip:"Sin equipamiento", info:"Tumbado o sentado, inhala profundamente hinchando el abdomen y exhala vaciándolo por completo. La presión abdominal generada moviliza el fluido linfático.", recSeries:"3-5", recReps:"8-10 respiraciones"},
-        {n:"Postura del niño", t:T_S, tip:"Sin equipamiento", info:"Desde arrodillado, siéntate sobre los talones y estira los brazos al frente apoyando la frente en el suelo. Descomprime toda la columna y los hombros.", recSeries:"1", recReps:"60-90s"},
-        {n:"Gato-Vaca", t:T_S, tip:"Sin equipamiento", info:"En cuadrupedia, alterna arquear la espalda hacia arriba (gato) y hundirla hacia abajo (vaca) al ritmo de la respiración. Moviliza toda la columna.", recSeries:"1", recReps:"8-10 respiraciones"},
-        {n:"Cobra", t:T_S, tip:"Sin equipamiento", info:"Tumbado boca abajo, apoya las palmas junto al pecho y empuja para elevar el torso manteniendo las caderas en el suelo. Abre el pecho y estira los abdominales.", recSeries:"1", recReps:"30-45s"},
-        {n:"Esfinge", t:T_S, tip:"Sin equipamiento", info:"Como cobra pero apoyado en los antebrazos. Versión más suave que protege la zona lumbar.", recSeries:"1", recReps:"45-60s"},
-        {n:"Perro boca abajo", t:T_S, tip:"Sin equipamiento", info:"Desde cuadrupedia eleva las caderas formando una V invertida estirando brazos y piernas. Estira dorsal, isquiotibiales, pantorrillas y hombros a la vez.", recSeries:"1", recReps:"45-60s"},
-        {n:"Torsión tumbada", t:T_S, tip:"Sin equipamiento", info:"Tumbado boca arriba, lleva una rodilla al pecho y crúzala al lado contrario girando la cabeza al lado opuesto. Libera las lumbares y el dorsal.", recSeries:"1", recReps:"45s cada lado"},
-        {n:"Apertura de pecho con manos entrelazadas", t:T_S, tip:"Sin equipamiento", info:"Entrelaza las manos detrás de la espalda y abre el pecho hacia arriba separando los omóplatos. Ideal tras entrenar pecho u hombros.", recSeries:"1", recReps:"30-45s"},
-        {n:"Estiramiento de hombro cruzado", t:T_S, tip:"Sin equipamiento", info:"Lleva un brazo estirado al pecho y empújalo con el otro hacia el cuerpo. Estira el deltoides posterior y el manguito rotador.", recSeries:"1", recReps:"30s cada lado"},
-        {n:"Estiramiento de tríceps sobre la cabeza", t:T_S, tip:"Sin equipamiento", info:"Eleva un codo doblado sobre la cabeza y empuja el codo hacia abajo con la otra mano. Estira el tríceps y el dorsal lateral.", recSeries:"1", recReps:"30s cada lado"},
-        {n:"Paloma tumbado", t:T_S, tip:"Sin equipamiento", info:"Tumbado boca arriba, cruza un tobillo sobre la rodilla contraria y lleva ambas piernas hacia el pecho. Estira el piriforme y los glúteos.", recSeries:"1", recReps:"45-60s cada lado"},
-        {n:"Postura del niño lateral", t:T_S, tip:"Sin equipamiento", info:"Desde postura del niño, desplaza los brazos hacia un lado para intensificar el estiramiento del dorsal y las costillas de ese lado.", recSeries:"1", recReps:"45s cada lado"}
+        {n:"Remo con mancuerna a una mano", t:T_B, tip:"Mancuernas + Banco", info:"Rodilla y mano apoyadas en el banco, espalda neutra, rema la mancuerna hacia la cadera. Dorsal ancho, romboides y trapecio medio con cero carga lumbar gracias al apoyo.", recSeries:"3-4", recReps:"8-12"},
+        {n:"Remo inclinado con dos mancuernas", t:T_B, tip:"Solo Mancuernas", info:"De pie, torso inclinado 45° con espalda recta, rema ambas mancuernas a la vez hacia el abdomen. Trabaja toda la espalda y obliga a los erectores y al core a sostener la postura: el remo más completo.", recSeries:"3-4", recReps:"8-12"},
+        {n:"Remo con pecho apoyado en banco inclinado", t:T_B, tip:"Mancuernas + Banco", info:"Tumbado boca abajo sobre el banco inclinado, rema las mancuernas. El apoyo elimina el impulso y la carga lumbar: aislamiento puro de dorsal y romboides, ideal para ir pesado con técnica perfecta.", recSeries:"3-4", recReps:"8-12"},
+        {n:"Remo renegado (renegade row)", t:T_B, tip:"Solo Mancuernas", info:"En posición de plancha alta con las manos sobre las mancuernas, rema una alternativamente sin rotar la cadera. Espalda y core anti-rotación en un solo movimiento muy exigente.", recSeries:"3", recReps:"6-10/lado"},
+        {n:"Peso muerto rumano con mancuernas", t:T_B, tip:"Solo Mancuernas", info:"De pie, baja las mancuernas pegadas a las piernas empujando la cadera atrás con rodillas semiflexionadas y espalda neutra. Cadena posterior completa: erectores, glúteo e isquios, con agarre y trapecios sosteniendo.", recSeries:"3-4", recReps:"8-12"},
+        {n:"Pullover con mancuerna para dorsal", t:T_A, tip:"Mancuernas + Banco", info:"Igual que el pullover de pecho pero con codos más flexionados y enfoque consciente en tirar con los dorsales. Trabaja el dorsal en estiramiento máximo, su rango más productivo.", recSeries:"3", recReps:"10-15"},
+        {n:"Encogimientos de hombros con mancuernas", t:T_A, tip:"Solo Mancuernas", info:"De pie con las mancuernas a los lados, eleva los hombros hacia las orejas y baja lento. Aísla el trapecio superior.", recSeries:"3", recReps:"12-15"},
+        {n:"Jalón al pecho con banda elástica", t:T_B, tip:"Solo Gomas", info:"Banda anclada arriba (puerta o barra), tira de ella hacia el pecho llevando los codos abajo y atrás. Replica el jalón de polea: dorsal ancho en su función de tracción vertical, imposible con mancuernas.", recSeries:"3-4", recReps:"10-15"},
+        {n:"Face pull con banda", t:T_A, tip:"Solo Gomas", info:"Banda anclada a la altura de la cara, tira hacia el rostro separando las manos y rotando externamente al final. Deltoides posterior, romboides y manguito rotador: el ejercicio de salud de hombro por excelencia.", recSeries:"3", recReps:"15-20"},
+        {n:"Band pull apart", t:T_A, tip:"Solo Gomas", info:"Brazos extendidos al frente con la banda agarrada, sepárala hasta tocar el pecho juntando las escápulas. Deltoides posterior y romboides; antídoto directo de la postura encorvada.", recSeries:"3", recReps:"15-20"},
+        {n:"Remo sentado con banda elástica", t:T_B, tip:"Solo Gomas", info:"Sentado en el suelo con piernas extendidas y la banda en los pies, rema hacia el abdomen. Tracción horizontal con tensión creciente; dorsal y romboides sin ninguna carga axial.", recSeries:"3", recReps:"10-15"},
+        {n:"Superman", t:T_S, tip:"Sin equipamiento", info:"Boca abajo, eleva simultáneamente brazos y piernas unos centímetros y baja controlado. Fortalece erectores espinales y glúteo de forma segura, equilibrando tanto trabajo de empuje.", recSeries:"3", recReps:"10-12"},
+        {n:"Postura del niño", t:T_S, tip:"Estiramiento", info:"Sentado sobre los talones con los brazos extendidos al frente y la frente en el suelo. Descomprime toda la columna, el dorsal y los hombros.", recSeries:"1", recReps:"60-90s"},
+        {n:"Perro boca abajo", t:T_S, tip:"Estiramiento", info:"Desde cuadrupedia eleva las caderas formando una V invertida. Estira dorsal, isquios, gemelos y hombros a la vez.", recSeries:"1", recReps:"45-60s"},
+        {n:"Torsión espinal tumbado", t:T_S, tip:"Estiramiento", info:"Boca arriba, lleva una rodilla al pecho y crúzala al lado contrario girando la cabeza al lado opuesto. Libera lumbares y dorsal.", recSeries:"1", recReps:"45s/lado"},
+        {n:"Gato-vaca", t:T_S, tip:"Estiramiento", info:"En cuadrupedia, alterna arquear la espalda hacia arriba y hundirla hacia abajo al ritmo de la respiración. Moviliza la columna vértebra a vértebra.", recSeries:"1", recReps:"8-10 resp."}
     ] },
     "Hombros": { icon: "accessibility_new", advice: "Cuidado del manguito rotador.", data: [
-        {n:"Press militar con mancuernas",   t:T_B, tip:"Solo Mancuernas",   info:"Empuja las mancuernas desde la altura de los hombros hasta extender los brazos sobre la cabeza. Mantén abdomen firme y evita arquear la espalda.", recSeries:"3-5", recReps:"6-12"},
-        {n:"Press Arnold",                   t:T_B, tip:"Solo Mancuernas",   info:"Empieza con palmas mirando hacia ti y rota las manos mientras elevas las mancuernas. Finaliza con brazos arriba y palmas hacia delante.", recSeries:"3-4", recReps:"8-12"},
-        {n:"Push press",                     t:T_B, tip:"Solo Mancuernas",   info:"Realiza una ligera flexión de piernas y utiliza ese impulso para ayudar a elevar las mancuernas por encima de la cabeza. Controla la bajada lentamente.", recSeries:"3-4", recReps:"5-8"},
-        {n:"Elevación lateral con impulso",  t:T_B, tip:"Mancuernas / Gomas",info:"Eleva los brazos lateralmente usando un ligero impulso controlado para mover más carga. Baja lentamente manteniendo tensión en los hombros.", recSeries:"3", recReps:"10-15"},
-        {n:"Elevación lateral estricta",     t:T_A, tip:"Mancuernas / Gomas",info:"Sube los brazos lateralmente hasta la altura de los hombros sin balancear el cuerpo ni elevar los trapecios. Mantén control en la bajada.", recSeries:"3-4", recReps:"12-20"},
-        {n:"Pájaros",                        t:T_A, tip:"Mancuernas / Gomas",info:"Inclina el torso hacia delante y abre los brazos hacia los lados trabajando el deltoide posterior. Mantén espalda recta y movimiento controlado.", recSeries:"3-4", recReps:"12-20"}
-,
-        {n:"Elevación frontal con mancuernas", t:T_B, tip:"Solo Mancuernas", info:"Levanta los brazos al frente hasta la altura de los hombros con codos ligeramente flexionados. Baja lentamente sin balancear el torso ni usar impulso.", recSeries:"3-4", recReps:"10-12"},
-        {n:"Press de hombros con goma", t:T_B, tip:"Solo Gomas", info:"Pisa la goma con los pies y empuja hacia arriba desde los hombros hasta extender los brazos sobre la cabeza. Controla la bajada sin perder tensión.", recSeries:"3-4", recReps:"10-15"},
-        {n:"Elevación lateral tumbado con mancuerna", t:T_B, tip:"Solo Mancuernas", info:"Túmbate de lado y eleva la mancuerna superior lateralmente hasta la altura del hombro. Elimina los trapecios del movimiento y aumenta el rango.", recSeries:"3", recReps:"12-15"},
-        {n:"Rotación externa con goma", t:T_A, tip:"Solo Gomas", info:"Con el codo pegado al costado y flexionado 90 grados, rota el antebrazo hacia afuera contra la resistencia de la goma. Cuida el manguito rotador.", recSeries:"3", recReps:"15-20"},
-        {n:"Press militar sentado en banco", t:T_B, tip:"Solo Mancuernas", info:"Sentado en el banco con respaldo vertical, empuja las mancuernas desde los hombros hasta arriba. El respaldo da estabilidad y seguridad para la zona lumbar.", recSeries:"3-4", recReps:"6-12"},
-        {n:"Pájaros en banco inclinado", t:T_A, tip:"Solo Mancuernas", info:"Túmbate boca abajo en el banco inclinado y abre los brazos hacia los lados trabajando el deltoides posterior. El apoyo del pecho aísla perfectamente sin usar impulso.", recSeries:"3-4", recReps:"12-20"}
-        ] },
-    "Bíceps": { icon: "fitness_center", advice: "Flexión de codo técnica.", data: [
-        {n:"Curl alterno con mancuernas",    t:T_B, tip:"Solo Mancuernas",   info:"Flexiona un brazo cada vez llevando la mancuerna hacia el hombro sin mover el codo del costado. Baja lentamente antes de alternar.", recSeries:"3-4", recReps:"8-12"},
-        {n:"Curl con goma",                  t:T_B, tip:"Solo Gomas",         info:"Pisa la goma y flexiona los codos llevando las manos hacia los hombros. Mantén tensión continua y evita balancear el torso.", recSeries:"3-4", recReps:"10-15"},
-        {n:"Curl martillo",                  t:T_B, tip:"Solo Mancuernas",   info:"Mantén agarre neutro con las palmas mirándose entre sí durante todo el recorrido. Eleva las mancuernas controladamente y baja despacio.", recSeries:"3-4", recReps:"8-12"},
-        {n:"Curl concentrado",               t:T_B, tip:"Solo Mancuernas",   info:"Sentado, apoya el codo en la parte interna del muslo y eleva la mancuerna lentamente. Controla especialmente la bajada.", recSeries:"3", recReps:"8-12"},
-        {n:"Curl con hombro retrasado",      t:T_A, tip:"Solo Mancuernas",   info:"Mantén el brazo ligeramente retrasado respecto al torso para aumentar el estiramiento del bíceps. Flexiona el codo sin mover el hombro.", recSeries:"3", recReps:"10-15"},
-        {n:"Curl isométrico con goma",       t:T_A, tip:"Solo Gomas",         info:"Mantén el codo flexionado aproximadamente a 90 grados sosteniendo la tensión de la goma sin mover el brazo ni perder postura.", recSeries:"3", recReps:"20-40s"}
-,
-        {n:"Curl Zottman con mancuernas", t:T_B, tip:"Solo Mancuernas", info:"Sube la mancuerna con agarre supino (palmas arriba) y al llegar arriba gira las palmas hacia abajo para bajar. Trabaja el bíceps en la subida y el braquiorradial en la bajada.", recSeries:"3-4", recReps:"8-12"},
-        {n:"Curl con agarre ancho con mancuernas", t:T_B, tip:"Solo Mancuernas", info:"Sujeta las mancuernas con las manos algo más separadas de lo habitual. La posición abierta recluta más la cabeza corta del bíceps.", recSeries:"3-4", recReps:"10-12"},
-        {n:"Curl inverso con goma", t:T_B, tip:"Solo Gomas", info:"Pisa la goma con agarre pronado (palmas hacia abajo) y flexiona los codos manteniendo ese agarre en todo momento. Trabaja el braquial y el antebrazo.", recSeries:"3-4", recReps:"12-15"},
-        {n:"Curl pico de bíceps con mancuerna", t:T_A, tip:"Solo Mancuernas", info:"Al llegar a la cima del curl, gira la muñeca ligeramente hacia fuera y aprieta fuerte el bíceps durante 1-2 segundos antes de bajar para maximizar la contracción.", recSeries:"3", recReps:"12-15"},
-        {n:"Curl en banco inclinado", t:T_B, tip:"Solo Mancuernas", info:"Sentado en el banco inclinado hacia atrás con los brazos colgando, flexiona los codos. La posición da un estiramiento máximo del bíceps muy efectivo.", recSeries:"3-4", recReps:"8-12"},
-        {n:"Curl predicador con mancuerna en banco", t:T_A, tip:"Solo Mancuernas", info:"Apoya el tríceps en el respaldo inclinado del banco y flexiona el codo aislando completamente el bíceps. Controla especialmente la bajada.", recSeries:"3", recReps:"10-12"}
-        ] },
-    "Tríceps": { icon: "rebase_edit", advice: "Extensión de codo técnica.", data: [
-        {n:"Fondos entre sillas",                      t:T_B, tip:"Sin equipamiento",  info:"Apoya las manos detrás del cuerpo sobre una silla estable. Baja flexionando los codos y empuja hasta extender los brazos sin bloquearlos bruscamente.", recSeries:"3-4", recReps:"6-15"},
-        {n:"Press cerrado con mancuernas en banco", t:T_B, tip:"Solo Mancuernas", info:"Tumbado en el banco con las mancuernas juntas y codos pegados al cuerpo, empuja hacia arriba enfocando el tríceps. El banco da rango completo que el suelo corta.", recSeries:"3-4", recReps:"6-12"},
-        {n:"Extensión de tríceps con goma",            t:T_B, tip:"Solo Gomas",         info:"Con goma anclada arriba, extiende los brazos hacia abajo manteniendo los codos pegados al cuerpo. Regresa lentamente sin perder tensión.", recSeries:"3-4", recReps:"10-15"},
-        {n:"Flexiones diamante",                       t:T_B, tip:"Sin equipamiento",  info:"Coloca las manos juntas bajo el pecho formando un triángulo. Baja controladamente manteniendo codos cerca del cuerpo y empuja de forma estable.", recSeries:"3", recReps:"8-15"},
-        {n:"Extensión sobre cabeza",                   t:T_A, tip:"Solo Mancuernas",   info:"Con brazos elevados sobre la cabeza, baja la mancuerna detrás de ella flexionando solo los codos y vuelve extendiendo completamente.", recSeries:"3", recReps:"10-15"},
-        {n:"Extensión unilateral con goma",            t:T_A, tip:"Solo Gomas",         info:"Trabaja un brazo cada vez extendiendo el codo contra la resistencia de la goma. Mantén el hombro estable y controla el regreso.", recSeries:"3", recReps:"12-20"}
-,
-        {n:"Patada de tríceps con mancuerna", t:T_B, tip:"Solo Mancuernas", info:"Inclina el torso hacia delante con la espalda recta, sube el codo a la altura de la cadera y extiende el brazo hacia atrás hasta bloquearlo. Baja controladamente.", recSeries:"3-4", recReps:"10-15"},
-        {n:"Press francés con mancuernas en banco", t:T_B, tip:"Solo Mancuernas", info:"Tumbado en el banco, sujeta las mancuernas sobre la frente con codos apuntando al techo y baja flexionando solo los codos. El banco permite bajar las mancuernas por detrás de la cabeza para mayor rango.", recSeries:"3-4", recReps:"8-12"},
-        {n:"Fondos de tríceps en suelo", t:T_B, tip:"Sin equipamiento", info:"Apoya las manos en el suelo detrás del cuerpo con los dedos hacia delante. Baja el cuerpo flexionando los codos y empuja de vuelta. Más seguro que los fondos en silla.", recSeries:"3-4", recReps:"10-15"},
-        {n:"Patada de tríceps con goma", t:T_A, tip:"Solo Gomas", info:"Con la goma anclada baja o pisándola, inclina el torso y extiende el brazo hacia atrás contra la resistencia. Mantén el codo fijo durante todo el recorrido.", recSeries:"3", recReps:"12-15"},
-        {n:"Extensión de tríceps overhead en banco", t:T_A, tip:"Solo Mancuernas", info:"Sentado en el banco con respaldo, sujeta una mancuerna con ambas manos sobre la cabeza y baja flexionando los codos. El respaldo estabiliza y permite ir más pesado.", recSeries:"3", recReps:"10-15"}
-        ] },
-    "Core": { icon: "crop_square", advice: "Estabilidad antes que fuerza. Activa el core en cada rep.", data: [
-        {n:"Crunch básico",              t:T_B, tip:"Sin equipamiento",  info:"Tumbado boca arriba con rodillas flexionadas, eleva los omóplatos del suelo contrayendo el abdomen sin tirar del cuello. Baja lentamente.", recSeries:"3-4", recReps:"12-20"},
-        {n:"Crunch inverso",             t:T_B, tip:"Sin equipamiento",  info:"Tumbado boca arriba, eleva las rodillas al pecho levantando la cadera del suelo. Enfatiza el recto inferior del abdomen.", recSeries:"3-4", recReps:"12-15"},
-        {n:"Crunch con goma",            t:T_A, tip:"Solo Gomas",        info:"Ancla la goma detrás de la cabeza y flexiona el torso hacia las rodillas resistiendo la tensión elástica. Mayor rango útil que el crunch libre.", recSeries:"3", recReps:"12-15"},
-        {n:"Sit-up completo",            t:T_B, tip:"Sin equipamiento",  info:"Desde tumbado, incorpora el torso hasta sentarte. Movimiento completo que activa toda la pared abdominal. Ancla los pies si es necesario.", recSeries:"3-4", recReps:"10-15"},
-        {n:"Elevación de piernas tumbado",t:T_A, tip:"Sin equipamiento", info:"Tumbado boca arriba, eleva las piernas estiradas hasta 90° y bájalas lentamente sin que toquen el suelo. Mantén la zona lumbar pegada al suelo.", recSeries:"3", recReps:"10-15"},
-        {n:"Elevación de piernas en banco",t:T_A,tip:"Solo Mancuernas",  info:"Sentado al borde del banco con las manos agarradas a los laterales, eleva las rodillas al pecho. Activa el recto abdominal inferior sin comprometer la espalda.", recSeries:"3", recReps:"10-15"},
-        {n:"Tijeras",                    t:T_A, tip:"Sin equipamiento",  info:"Tumbado boca arriba, alterna la elevación de cada pierna manteniendo la zona lumbar pegada al suelo. Trabaja el recto inferior y los flexores de cadera.", recSeries:"3", recReps:"20 alternos"},
-        {n:"Abdominales en bicicleta",   t:T_B, tip:"Sin equipamiento",  info:"Tumbado boca arriba, lleva codo y rodilla contrarios hacia el centro en un movimiento rotatorio alternado. Activa el oblicuo y el recto a la vez.", recSeries:"3-4", recReps:"20 alternos"},
-        {n:"Giro ruso con mancuerna",    t:T_A, tip:"Solo Mancuernas",   info:"Sentado con el torso inclinado hacia atrás, rota de lado a lado sosteniendo la mancuerna. Trabaja los oblicuos y la estabilidad lumbar.", recSeries:"3", recReps:"16-20 alternos"},
-        {n:"Rotación de torso con goma", t:T_A, tip:"Solo Gomas",        info:"De pie o sentado, con la goma anclada a un lado, rota el torso en contra de la resistencia. Activa oblicuos sin comprimir la columna.", recSeries:"3", recReps:"12 cada lado"},
-        {n:"Plancha",                    t:T_B, tip:"Sin equipamiento",  info:"Apoya antebrazos y puntas de los pies. Mantén el cuerpo recto como una tabla, contrayendo abdomen y glúteos.", recSeries:"3-4", recReps:"30-60s"},
-        {n:"Plancha lateral",            t:T_B, tip:"Sin equipamiento",  info:"Apóyate en un antebrazo y el lateral del pie. Eleva la cadera formando una línea recta. Trabaja el oblicuo y el cuadrado lumbar.", recSeries:"3", recReps:"30-45s cada lado"},
-        {n:"Plancha con toque hombro",   t:T_B, tip:"Sin equipamiento",  info:"En posición de plancha alta, toca el hombro contrario alternando brazos sin rotar la cadera. Añade inestabilidad y anti-rotación.", recSeries:"3", recReps:"12-16 alternos"},
-        {n:"Plancha extendida",          t:T_B, tip:"Sin equipamiento",  info:"Como la plancha normal pero con los brazos extendidos más allá de los hombros. Aumenta el brazo de palanca y la intensidad.", recSeries:"3", recReps:"20-40s"},
-        {n:"Plancha dinámica",           t:T_B, tip:"Sin equipamiento",  info:"Alterna entre la posición de plancha alta (brazos extendidos) y plancha baja (antebrazos). Mantén las caderas estables durante todo el movimiento.", recSeries:"3", recReps:"8-12 ciclos"},
-        {n:"Hollow hold",               t:T_B, tip:"Sin equipamiento",  info:"Tumbado boca arriba, eleva ligeramente brazos y piernas del suelo manteniendo la zona lumbar pegada. Posición de hueco que activa todo el core profundo.", recSeries:"3-4", recReps:"20-40s"},
-        {n:"V-sit",                     t:T_A, tip:"Sin equipamiento",  info:"Sentado, eleva las piernas y el torso formando una V. Mantén la posición con el abdomen contraído. Versión de alto nivel del hollow hold.", recSeries:"3", recReps:"10-20s"},
-        {n:"Dead bug",                  t:T_S, tip:"Sin equipamiento",  info:"Tumbado boca arriba con brazos y rodillas a 90°, extiende brazo y pierna contrarios hacia el suelo sin que toquen. Activa el core profundo y mejora la coordinación.", recSeries:"3", recReps:"8-10 cada lado"},
-        {n:"Bird dog",                  t:T_S, tip:"Sin equipamiento",  info:"En cuadrupedia, extiende brazo y pierna contrarios manteniendo la columna neutra. Estabilidad espinal y coordinación.", recSeries:"3", recReps:"8-10 cada lado"},
-        {n:"Bird dog isométrico",       t:T_S, tip:"Sin equipamiento",  info:"Igual que el bird dog pero manteniendo la posición extendida durante varios segundos. Mayor demanda de estabilidad.", recSeries:"3", recReps:"5-8 cada lado 5s"},
-        {n:"Superman controlado",       t:T_S, tip:"Sin equipamiento",  info:"Tumbado boca abajo, eleva simultáneamente brazos y piernas del suelo. Fortalece la cadena posterior lumbar de forma segura.", recSeries:"3", recReps:"10-12"},
-        {n:"Marcha tumbado",            t:T_S, tip:"Sin equipamiento",  info:"Tumbado boca arriba, alterna la elevación de cada rodilla al pecho con la zona lumbar pegada al suelo. Activa el transverso sin impacto.", recSeries:"2-3", recReps:"10-12 cada lado"},
-        {n:"Pallof press con goma",     t:T_S, tip:"Solo Gomas",        info:"De pie con la goma anclada a un lado, extiende los brazos al frente resistiendo la rotación. Activa toda la musculatura anti-rotacional.", recSeries:"3", recReps:"10-12 cada lado"},
-        {n:"Pallof isométrico",         t:T_S, tip:"Solo Gomas",        info:"Como el pallof press pero manteniendo los brazos extendidos durante varios segundos. Alta activación del core lateral sin movimiento.", recSeries:"3", recReps:"20-30s cada lado"},
-        {n:"Copenhagen plank suave",    t:T_A, tip:"Sin equipamiento",  info:"Apoya el tobillo en una silla o banco bajo y mantén la cadera elevada de lado. Versión adaptada del Copenhagen que fortalece el aductor y el core lateral sin carga.", recSeries:"2-3", recReps:"20-30s cada lado"}
+        {n:"Press militar con mancuernas sentado", t:T_B, tip:"Mancuernas + Banco", info:"Sentado con respaldo vertical, empuja las mancuernas desde los hombros hasta arriba. Deltoides anterior y medio con tríceps; el respaldo protege la lumbar y permite ir pesado.", recSeries:"3-4", recReps:"6-12"},
+        {n:"Press Arnold", t:T_B, tip:"Mancuernas + Banco", info:"Empieza con las palmas mirándote y rota las muñecas durante el empuje hasta acabar con las palmas al frente. La rotación recorre las tres cabezas del deltoide en un solo movimiento.", recSeries:"3", recReps:"8-12"},
+        {n:"Push press con mancuernas", t:T_B, tip:"Solo Mancuernas", info:"Press de pie con un pequeño impulso de piernas para iniciar. Permite manejar más peso del que moverías estricto; deltoides completo más cadena de potencia.", recSeries:"3", recReps:"6-10"},
+        {n:"Elevaciones laterales con mancuernas", t:T_A, tip:"Solo Mancuernas", info:"De pie, eleva las mancuernas a los lados hasta la horizontal con codos semiflexionados. El constructor del deltoides medio, el que da amplitud al hombro.", recSeries:"3-4", recReps:"12-20"},
+        {n:"Elevación lateral tumbado en banco inclinado", t:T_A, tip:"Mancuernas + Banco", info:"Tumbado de lado sobre el banco inclinado, eleva la mancuerna del brazo libre. Elimina el trapecio y el impulso por completo: tensión pura en el deltoides medio desde el primer grado.", recSeries:"3", recReps:"10-15"},
+        {n:"Elevaciones frontales con mancuernas", t:T_A, tip:"Solo Mancuernas", info:"Eleva las mancuernas al frente hasta la altura de los ojos, alternando o a la vez. Aísla el deltoides anterior.", recSeries:"3", recReps:"10-15"},
+        {n:"Pájaros en banco inclinado", t:T_A, tip:"Mancuernas + Banco", info:"Pecho apoyado boca abajo en el banco inclinado, abre los brazos a los lados. Deltoides posterior sin posibilidad de impulso lumbar.", recSeries:"3-4", recReps:"12-20"},
+        {n:"Pájaros de pie con mancuernas", t:T_A, tip:"Solo Mancuernas", info:"Torso inclinado al frente, abre los brazos a los lados con codos suaves. Deltoides posterior y romboides; versión libre que también pide estabilidad.", recSeries:"3", recReps:"12-20"},
+        {n:"Elevaciones laterales con banda", t:T_A, tip:"Solo Gomas", info:"Pisa la banda y eleva los brazos a los lados. La resistencia crece arriba, donde la mancuerna afloja: combina perfecto con las elevaciones con peso.", recSeries:"3", recReps:"15-20"},
+        {n:"Rotación externa con banda", t:T_S, tip:"Solo Gomas", info:"Codo pegado al cuerpo a 90°, rota el antebrazo hacia afuera contra la banda. Infraespinoso y redondo menor: el seguro de vida del hombro, especialmente con tanto press.", recSeries:"3", recReps:"15-20"},
+        {n:"Press de hombros con banda de pie", t:T_B, tip:"Solo Gomas", info:"Pisa la banda y empuja las asas sobre la cabeza. Tensión continua y creciente; buena alternativa ligera o para finalizar.", recSeries:"3", recReps:"10-15"},
+        {n:"Estiramiento de hombro cruzado", t:T_S, tip:"Estiramiento", info:"Lleva un brazo estirado al pecho y empújalo con el otro hacia el cuerpo. Estira deltoides posterior y manguito rotador.", recSeries:"1", recReps:"30s/lado"},
+        {n:"Brazos de águila", t:T_S, tip:"Estiramiento", info:"Cruza los antebrazos al frente enrollándolos y eleva los codos. Estira deltoides y la zona entre los omóplatos.", recSeries:"1", recReps:"30-45s"},
+        {n:"Péndulo de hombro (Codman)", t:T_S, tip:"Estiramiento", info:"Torso inclinado con apoyo, deja el brazo colgar muerto y dibuja círculos suaves. Descomprime la articulación sin esfuerzo muscular.", recSeries:"1", recReps:"30-45s/lado"},
+        {n:"Estiramiento de hombros en marco de puerta", t:T_S, tip:"Estiramiento", info:"Antebrazos apoyados en el marco de la puerta, da un paso al frente. Abre el pecho y el hombro anterior.", recSeries:"1", recReps:"30-45s"}
     ] },
-    "Cardio": { icon: "directions_run", advice: "Bajo impacto linfático.", data: [
-        {n:"Pedaleo continuo suave",   t:T_S, tip:"Bicicleta", info:"Pedalea a ritmo cómodo y constante con resistencia baja o moderada. Debes poder mantener conversación sin dificultad respiratoria importante.", recSeries:"1", recReps:"20-45 min"},
-        {n:"Pedaleo progresivo",       t:T_S, tip:"Bicicleta", info:"Comienza muy suave, aumenta ligeramente ritmo o resistencia en la parte central y reduce intensidad progresivamente al final.", recSeries:"1", recReps:"15-30 min"},
-        {n:"Pedaleo con pausas activas",t:T_S, tip:"Bicicleta", info:"Alterna varios minutos de pedaleo cómodo con pausas breves caminando o moviendo tobillos antes de continuar.", recSeries:"1", recReps:"20-35 min"},
-        {n:"Intervalos suaves",        t:T_S, tip:"Bicicleta", info:"Combina periodos suaves y moderados aumentando ligeramente el esfuerzo sin llegar al agotamiento ni a la sensación de ahogo.", recSeries:"6-8", recReps:"3 min/bloque"},
-        {n:"Intervalos moderados",     t:T_S, tip:"Bicicleta", info:"Realiza bloques alternando ritmo suave y moderado manteniendo siempre control respiratorio y sensación de esfuerzo sostenible.", recSeries:"3-4", recReps:"10 min/bloque"},
-        {n:"Paseo largo en el parque", t:T_S, tip:"Sin equipamiento", info:"Camina a ritmo cómodo y continuo manteniendo zancada natural y respiración relajada para favorecer circulación y recuperación.", recSeries:"1", recReps:"30-60 min"}
-,
-        {n:"Pedaleo de recuperación", t:T_S, tip:"Bicicleta", info:"Pedaleo muy suave a resistencia mínima para favorecer la recuperación activa. Ideal el día siguiente a una sesión intensa o cuando el cuerpo está cargado.", recSeries:"1", recReps:"10-15 min"},
-        {n:"Marcha en el sitio con brazos", t:T_S, tip:"Sin equipamiento", info:"Camina sin desplazarte elevando las rodillas y movilizando los brazos con balanceo natural al ritmo de los pasos. Activa la circulación de todo el cuerpo.", recSeries:"1-2", recReps:"3-5 min"},
-        {n:"Pedaleo con resistencia alta", t:T_S, tip:"Bicicleta", info:"Aumenta la resistencia manteniendo un buen ritmo de pedaleo para trabajar más la musculatura de las piernas. Mantén siempre el control respiratorio.", recSeries:"1", recReps:"15-25 min"},
-        {n:"Stepping lateral suave", t:T_S, tip:"Sin equipamiento", info:"Da pasos laterales amplios alternando la dirección a ritmo cómodo y sin impacto. Activa la musculatura abductora y favorece la circulación linfática.", recSeries:"2-3", recReps:"2-4 min"}
-        ] }
+    "Bíceps": { icon: "fitness_center", advice: "Flexión de codo técnica.", data: [
+        {n:"Curl de bíceps alterno con mancuernas", t:T_B, tip:"Solo Mancuernas", info:"De pie, flexiona un codo cada vez supinando la muñeca al subir. El curl fundamental: bíceps braquial completo con máxima concentración por brazo.", recSeries:"3-4", recReps:"8-12"},
+        {n:"Curl martillo", t:T_B, tip:"Solo Mancuernas", info:"Curl con las palmas enfrentadas durante todo el recorrido. Desplaza el trabajo al braquial y braquiorradial: más grosor de brazo y antebrazo.", recSeries:"3-4", recReps:"8-12"},
+        {n:"Curl concentrado", t:T_A, tip:"Solo Mancuernas", info:"Sentado, codo apoyado en la cara interna del muslo, flexiona estricto. Aislamiento total del bíceps sin posibilidad de balanceo; ideal para el pico.", recSeries:"3", recReps:"10-12"},
+        {n:"Curl predicador con mancuerna en banco", t:T_A, tip:"Mancuernas + Banco", info:"Tríceps apoyado sobre el respaldo inclinado del banco, flexiona el codo. El apoyo elimina toda ayuda del hombro; la bajada controlada es donde está la ganancia.", recSeries:"3", recReps:"10-12"},
+        {n:"Curl en banco inclinado", t:T_B, tip:"Mancuernas + Banco", info:"Sentado en el banco inclinado hacia atrás con los brazos colgando, flexiona. Los brazos quedan tras el torso: estiramiento máximo del bíceps, su posición de mayor crecimiento.", recSeries:"3", recReps:"8-12"},
+        {n:"Curl araña en banco inclinado", t:T_A, tip:"Mancuernas + Banco", info:"Pecho apoyado boca abajo en el banco inclinado, brazos colgando verticales, flexiona. Tensión constante de principio a fin sin ningún impulso posible.", recSeries:"3", recReps:"10-12"},
+        {n:"Curl Zottman", t:T_B, tip:"Solo Mancuernas", info:"Sube en supinación (curl normal) y baja en pronación (curl inverso). Bíceps en la subida, antebrazo y braquiorradial en la bajada: dos ejercicios en uno.", recSeries:"3", recReps:"8-12"},
+        {n:"Curl de arrastre (drag curl)", t:T_A, tip:"Solo Mancuernas", info:"Arrastra las mancuernas pegadas al cuerpo llevando los codos hacia atrás al subir. Quita el deltoides de la ecuación y maximiza la contracción pico del bíceps.", recSeries:"3", recReps:"10-12"},
+        {n:"Curl 21 (21s)", t:T_A, tip:"Solo Mancuernas", info:"7 repeticiones de la mitad inferior + 7 de la mitad superior + 7 completas, sin descanso. Bomba metabólica brutal y trabajo de rangos parciales.", recSeries:"2-3", recReps:"21"},
+        {n:"Curl inverso con mancuernas", t:T_A, tip:"Solo Mancuernas", info:"Curl con las palmas hacia abajo. Braquiorradial y extensores del antebrazo: el eslabón que suele faltar y mejora el agarre.", recSeries:"3", recReps:"10-15"},
+        {n:"Curl de bíceps con banda elástica", t:T_B, tip:"Solo Gomas", info:"Pisa la banda y flexiona los codos. La resistencia crece en la contracción máxima, complementando la curva de fuerza de la mancuerna.", recSeries:"3", recReps:"12-15"},
+        {n:"Estiramiento de bíceps en pared", t:T_S, tip:"Estiramiento", info:"Palma apoyada en la pared con el brazo extendido atrás, gira el cuerpo al lado contrario. Estira bíceps y antebrazo.", recSeries:"1", recReps:"30s/lado"},
+        {n:"Estiramiento de bíceps con manos entrelazadas atrás", t:T_S, tip:"Estiramiento", info:"Manos entrelazadas tras la espalda con brazos rectos, elévalos suavemente. Estira bíceps y pecho a la vez.", recSeries:"1", recReps:"30-45s"},
+        {n:"Estiramiento de antebrazos con palmas invertidas", t:T_S, tip:"Estiramiento", info:"En cuadrupedia, apoya las palmas con los dedos apuntando a las rodillas y lleva el peso atrás. Estira los flexores del antebrazo.", recSeries:"1", recReps:"30-45s"},
+        {n:"Estiramiento de muñeca y antebrazo", t:T_S, tip:"Estiramiento", info:"Brazo extendido al frente, tira de los dedos hacia ti con la otra mano, con la palma hacia arriba y hacia abajo. Antebrazo completo.", recSeries:"1", recReps:"30s/lado"}
+    ] },
+    "Tríceps": { icon: "rebase_edit", advice: "Extensión de codo técnica.", data: [
+        {n:"Press francés con mancuernas en banco", t:T_B, tip:"Mancuernas + Banco", info:"Tumbado, baja las mancuernas hacia las orejas flexionando solo los codos y extiende. La cabeza larga del tríceps trabaja en estiramiento; el banco permite bajar por detrás de la cabeza.", recSeries:"3-4", recReps:"8-12"},
+        {n:"Extensión de tríceps sobre la cabeza con mancuerna", t:T_B, tip:"Mancuernas + Banco", info:"Sentado, sujeta una mancuerna con ambas manos sobre la cabeza y baja por detrás de la nuca. Máximo estiramiento de la cabeza larga, la que más masa aporta al brazo.", recSeries:"3", recReps:"10-15"},
+        {n:"Extensión de tríceps a una mano sobre la cabeza", t:T_A, tip:"Solo Mancuernas", info:"Versión unilateral de la extensión sobre la cabeza. Permite corregir desequilibrios y concentrarte en cada brazo.", recSeries:"3", recReps:"10-12/lado"},
+        {n:"Patada de tríceps con mancuerna", t:T_A, tip:"Solo Mancuernas", info:"Torso inclinado, codo fijo pegado al cuerpo, extiende el antebrazo atrás. Contracción pico del tríceps; el peso debe ser moderado para no romper la técnica.", recSeries:"3", recReps:"12-15"},
+        {n:"Press cerrado con mancuernas en banco", t:T_B, tip:"Mancuernas + Banco", info:"Press con las mancuernas juntas y los codos pegados al cuerpo. El empuje más cargable para el tríceps, con asistencia del pecho.", recSeries:"3-4", recReps:"8-12"},
+        {n:"Press Tate con mancuernas", t:T_A, tip:"Mancuernas + Banco", info:"Tumbado, con las mancuernas sobre el pecho y palmas al frente, baja los codos abriéndolos hacia los lados hasta que las mancuernas tocan el pecho y extiende. Ataca la cabeza lateral desde un ángulo único.", recSeries:"3", recReps:"10-12"},
+        {n:"Fondos de tríceps en banco", t:T_B, tip:"Peso corporal + Banco", info:"Manos en el borde del banco, piernas al frente, baja flexionando los codos y empuja. Tríceps completo con peso corporal; cuanto más lejos los pies, más duro.", recSeries:"3-4", recReps:"10-15"},
+        {n:"Flexiones diamante", t:T_B, tip:"Sin equipamiento", info:"Flexiones con las manos juntas formando un diamante bajo el pecho. La variante de flexión que más activa el tríceps según la electromiografía.", recSeries:"3", recReps:"8-15"},
+        {n:"Extensión de tríceps con banda", t:T_A, tip:"Solo Gomas", info:"Banda anclada arriba, empuja hacia abajo con los codos fijos al cuerpo. Replica el jalón de polea: tensión constante que la mancuerna no da en este patrón.", recSeries:"3", recReps:"12-15"},
+        {n:"Patada de tríceps con banda", t:T_A, tip:"Solo Gomas", info:"Igual que con mancuerna pero la banda mantiene la tensión en toda la extensión, incluida la contracción final donde la mancuerna ya no resiste.", recSeries:"3", recReps:"12-20"},
+        {n:"Estiramiento de tríceps sobre la cabeza", t:T_S, tip:"Estiramiento", info:"Eleva un codo doblado tras la cabeza y empújalo hacia abajo con la otra mano. Estira la cabeza larga del tríceps y el dorsal.", recSeries:"1", recReps:"30s/lado"},
+        {n:"Estiramiento de tríceps cruzado por la espalda", t:T_S, tip:"Estiramiento", info:"Una mano baja por detrás de la cabeza y la otra sube por la espalda intentando tocarse. Estira tríceps y hombro a la vez.", recSeries:"1", recReps:"30s/lado"},
+        {n:"Postura del niño con brazos extendidos", t:T_S, tip:"Estiramiento", info:"Postura del niño con los brazos muy estirados al frente y las palmas en el suelo. Estira tríceps, dorsal y hombros.", recSeries:"1", recReps:"45-60s"},
+        {n:"Estiramiento de tríceps con codo en pared", t:T_S, tip:"Estiramiento", info:"Codo apoyado en la pared por encima de la cabeza, deja caer el torso suavemente hacia ella. Estiramiento pasivo profundo del tríceps.", recSeries:"1", recReps:"30-45s/lado"}
+    ] },
+    "Core": { icon: "crop_square", advice: "Estabilidad antes que fuerza. Activa el core en cada rep.", data: [
+        {n:"Crunch abdominal", t:T_B, tip:"Sin equipamiento", info:"Rodillas flexionadas, eleva los omóplatos del suelo contrayendo el abdomen sin tirar del cuello. Recto abdominal, porción superior.", recSeries:"3-4", recReps:"12-20"},
+        {n:"Crunch inverso", t:T_B, tip:"Sin equipamiento", info:"Lleva las rodillas al pecho despegando la cadera del suelo. Recto abdominal inferior, la zona que el crunch normal apenas toca.", recSeries:"3-4", recReps:"12-15"},
+        {n:"Crunch en banco declinado", t:T_B, tip:"Peso corporal + Banco", info:"Crunch con el banco declinado y los pies sujetos. Mayor rango y resistencia que en el suelo; progresable inclinando más.", recSeries:"3", recReps:"10-15"},
+        {n:"Elevación de piernas tumbado", t:T_A, tip:"Sin equipamiento", info:"Eleva las piernas rectas a 90° y bájalas sin que toquen el suelo, con la lumbar siempre pegada. Recto inferior y flexores de cadera.", recSeries:"3", recReps:"10-15"},
+        {n:"Plancha abdominal", t:T_B, tip:"Sin equipamiento", info:"Antebrazos y puntas de pies, cuerpo como una tabla, glúteo y abdomen apretados. Anti-extensión: el core resistiendo, que es su función real.", recSeries:"3-4", recReps:"30-60s"},
+        {n:"Plancha lateral", t:T_B, tip:"Sin equipamiento", info:"De lado sobre un antebrazo, cadera elevada en línea recta. Oblicuos y cuadrado lumbar; estabilidad lateral pura.", recSeries:"3", recReps:"30-45s/lado"},
+        {n:"Plancha con toque de hombros", t:T_B, tip:"Sin equipamiento", info:"Plancha alta tocando el hombro contrario alternativamente sin que la cadera rote. Anti-rotación dinámica.", recSeries:"3", recReps:"12-16 alt."},
+        {n:"Hollow hold", t:T_B, tip:"Sin equipamiento", info:"Boca arriba, brazos y piernas elevados unos centímetros con la lumbar sellada al suelo. La posición gimnástica que enseña al core a trabajar como una unidad.", recSeries:"3-4", recReps:"20-40s"},
+        {n:"Escaladores (mountain climbers)", t:T_B, tip:"Sin equipamiento", info:"En plancha alta, lleva las rodillas al pecho alternando con ritmo. Core dinámico que además sube pulsaciones sin ningún impacto.", recSeries:"3", recReps:"20-30 alt."},
+        {n:"Giro ruso con mancuerna", t:T_A, tip:"Solo Mancuernas", info:"Sentado con el torso inclinado atrás, rota la mancuerna de lado a lado. Oblicuos con carga en rotación.", recSeries:"3", recReps:"16-20 alt."},
+        {n:"Inclinaciones laterales con mancuerna", t:T_A, tip:"Solo Mancuernas", info:"De pie con una mancuerna en una mano, inclínate hacia ese lado y vuelve con el oblicuo contrario. Oblicuos y cuadrado lumbar con carga progresable.", recSeries:"3", recReps:"12-15/lado"},
+        {n:"Dead bug", t:T_S, tip:"Sin equipamiento", info:"Boca arriba con brazos y rodillas a 90°, extiende brazo y pierna contrarios sin que la lumbar se despegue. Core profundo y coordinación; el ejercicio de control motor por excelencia.", recSeries:"3", recReps:"8-10/lado"},
+        {n:"Bird dog", t:T_S, tip:"Sin equipamiento", info:"En cuadrupedia, extiende brazo y pierna contrarios manteniendo la columna inmóvil. Estabilidad espinal y glúteo; el complemento del dead bug.", recSeries:"3", recReps:"8-10/lado"},
+        {n:"Pallof press con banda", t:T_S, tip:"Solo Gomas", info:"De pie con la banda anclada a un lado, extiende los brazos al frente resistiendo que te rote. Anti-rotación isométrica: el core como freno, que es su trabajo principal en la vida real.", recSeries:"3", recReps:"10-12/lado"},
+        {n:"Postura de la esfinge", t:T_S, tip:"Estiramiento", info:"Boca abajo apoyado en los antebrazos con el pecho elevado. Estira el abdomen suavemente, amable con la lumbar.", recSeries:"1", recReps:"45-60s"},
+        {n:"Postura del niño lateral", t:T_S, tip:"Estiramiento", info:"Desde la postura del niño, desplaza los brazos hacia un lado. Estira oblicuos y dorsal del lado alejado.", recSeries:"1", recReps:"45s/lado"},
+        {n:"Torsión lumbar tumbado", t:T_S, tip:"Estiramiento", info:"Boca arriba con rodillas juntas flexionadas, déjalas caer a un lado con los hombros en el suelo. Estira oblicuos y zona lumbar.", recSeries:"1", recReps:"45s/lado"},
+        {n:"Postura de la cobra (core)", t:T_S, tip:"Estiramiento", info:"Boca abajo, extiende los brazos elevando el torso. El abdomen completo en estiramiento tras el trabajo de flexión.", recSeries:"1", recReps:"30-45s"}
+    ] },
+    "Piernas": { icon: "directions_walk", advice: "Drenaje linfático y bomba muscular. Sin fuerza pura.", data: [
+        {n:"Bomba de tobillo (ankle pumps)", t:T_S, tip:"Sin equipamiento", info:"Tumbado o sentado, flexiona y extiende los tobillos rítmicamente como acelerando. El gemelo actúa de bomba periférica empujando el fluido linfático hacia arriba: el ejercicio número uno del drenaje.", recSeries:"3", recReps:"15-20"},
+        {n:"Círculos de tobillo", t:T_S, tip:"Sin equipamiento", info:"Dibuja círculos amplios con los pies en ambos sentidos. Moviliza el tobillo y activa la musculatura baja de la pierna en todos los planos.", recSeries:"3", recReps:"10/dirección"},
+        {n:"Piernas elevadas en la pared", t:T_S, tip:"Sin equipamiento", info:"Tumbado con las piernas verticales apoyadas en la pared. La gravedad drena pasivamente; la respiración abdominal profunda mientras tanto multiplica el efecto.", recSeries:"1", recReps:"5-15 min"},
+        {n:"Bicicleta en el aire", t:T_S, tip:"Sin equipamiento", info:"Tumbado boca arriba, pedalea en el aire con las piernas elevadas. Bomba muscular activa con la pierna en alto: drenaje y movilidad de cadera y rodilla a la vez.", recSeries:"3", recReps:"20-30s"},
+        {n:"Deslizamiento de talones tumbado", t:T_S, tip:"Sin equipamiento", info:"Tumbado, desliza el talón por el suelo flexionando y extendiendo la rodilla. Movilidad de rodilla con activación suave, sin ninguna carga.", recSeries:"3", recReps:"10-12/pierna"},
+        {n:"Elevación de pierna recta tumbado", t:T_S, tip:"Sin equipamiento", info:"Tumbado, eleva una pierna estirada hasta 45° y baja lento. Activa el cuádriceps sin carga articular; clásico absoluto de fisioterapia.", recSeries:"3", recReps:"8-10/pierna"},
+        {n:"Abducción de cadera tumbado de lado", t:T_S, tip:"Sin equipamiento", info:"Tumbado de lado, eleva la pierna superior estirada y baja controlado. Glúteo medio sin carga; estabiliza la pelvis y bombea.", recSeries:"3", recReps:"10-12/lado"},
+        {n:"Elevación de talones sentado", t:T_S, tip:"Sin equipamiento", info:"Sentado, eleva los talones del suelo y baja. Activa el gemelo como bomba sin cargar el peso corporal en la pierna.", recSeries:"3", recReps:"15-20"},
+        {n:"Marcha sentado en silla", t:T_S, tip:"Sin equipamiento", info:"Sentado, marcha en el sitio elevando las rodillas alternativamente. Flexores de cadera y bombeo rítmico de toda la pierna.", recSeries:"3", recReps:"30-45s"},
+        {n:"Flexo-extensión de rodilla sentado", t:T_S, tip:"Sin equipamiento", info:"Sentado, extiende una rodilla hasta estirar la pierna y baja. Cuádriceps suave y movilidad de rodilla.", recSeries:"3", recReps:"12-15/pierna"},
+        {n:"Puente de glúteos", t:T_S, tip:"Sin equipamiento", info:"Tumbado con rodillas flexionadas, eleva la cadera apretando el glúteo. Glúteo y cadena posterior con la pierna descargada; además eleva las piernas respecto al tronco.", recSeries:"3", recReps:"12-15"},
+        {n:"Apertura y cierre de piernas tumbado", t:T_S, tip:"Sin equipamiento", info:"Tumbado con las piernas elevadas, ábrelas y ciérralas controladamente. Aductores y abductores suaves con drenaje por elevación.", recSeries:"3", recReps:"12-15"},
+        {n:"Respiración diafragmática", t:T_S, tip:"Sin equipamiento", info:"Inhala hinchando el abdomen, exhala vaciándolo del todo. El diafragma es la bomba linfática central del cuerpo: cada respiración profunda succiona fluido del sistema hacia el conducto torácico.", recSeries:"3-5", recReps:"8-10 resp."},
+        {n:"Automasaje de drenaje linfático en pierna", t:T_S, tip:"Sin equipamiento", info:"Con las manos, presiona suavemente desde el tobillo hacia la rodilla y de la rodilla al muslo, siempre en dirección al corazón. Asiste manualmente al sistema linfático; presión suave, nunca dolor.", recSeries:"1", recReps:"5-10 min"},
+        {n:"Mariposa", t:T_S, tip:"Estiramiento", info:"Sentado con las plantas de los pies juntas, deja caer las rodillas abiertas hacia el suelo. Estira aductores y cadera.", recSeries:"1", recReps:"45-60s"},
+        {n:"Estiramiento de isquiotibiales tumbado con toalla", t:T_S, tip:"Estiramiento", info:"Tumbado, pasa una toalla por el pie y eleva la pierna recta tirando suavemente. Estira los isquios sin cargar la lumbar.", recSeries:"1", recReps:"45s/pierna"},
+        {n:"Figura 4 tumbado (paloma tumbado)", t:T_S, tip:"Estiramiento", info:"Tumbado, cruza un tobillo sobre la rodilla contraria y lleva ambas piernas al pecho. Estira piriforme y glúteo sin cargar la pierna.", recSeries:"1", recReps:"45-60s/lado"},
+        {n:"Estiramiento de gemelos en pared", t:T_S, tip:"Estiramiento", info:"Manos en la pared, una pierna atrás con el talón clavado en el suelo. Estira gemelo y sóleo.", recSeries:"1", recReps:"30-45s/pierna"}
+    ] },
+    "Cardio": { icon: "directions_run", advice: "Bajo impacto, bombeo linfático.", data: [
+        {n:"Pedaleo suave continuo", t:T_S, tip:"Bicicleta", info:"Ritmo cómodo en el que puedes hablar sin ahogarte. Base aeróbica y bombeo continuo de piernas: el cardio más amable con el linfedema.", recSeries:"1", recReps:"20-45 min"},
+        {n:"Pedaleo continuo moderado", t:T_S, tip:"Bicicleta", info:"Ritmo que permite hablar con frases cortas. Zona 2-3: quema grasa eficiente y mejora cardiovascular sin estrés.", recSeries:"1", recReps:"20-40 min"},
+        {n:"Intervalos suaves en bicicleta", t:T_S, tip:"Bicicleta", info:"Alterna minutos suaves con minutos moderados (ej. 3 suaves + 1 moderado). Estímulo cardiovascular superior sin llegar nunca al fallo respiratorio.", recSeries:"3-4", recReps:"10 min/bloque"},
+        {n:"Paseo por el parque", t:T_S, tip:"Sin equipamiento", info:"Caminata a ritmo natural. Cada paso es una contracción del gemelo que bombea la linfa; el ejercicio más infravalorado que existe.", recSeries:"1", recReps:"30-60 min"},
+        {n:"Paseo rápido", t:T_S, tip:"Sin equipamiento", info:"Ritmo enérgico con los brazos acompañando. Eleva el gasto calórico notablemente manteniendo el impacto mínimo.", recSeries:"1", recReps:"20-45 min"},
+        {n:"Paseo con mochila (rucking)", t:T_S, tip:"Mochila con peso", info:"Caminar con peso en la espalda (empieza con 5 kg). Convierte el paseo en trabajo de fuerza-resistencia de todo el cuerpo sin impacto añadido.", recSeries:"1", recReps:"30-45 min"},
+        {n:"Estiramiento de gemelos en pared (cardio)", t:T_S, tip:"Estiramiento", info:"Talón clavado atrás, empuja la pared. Estira gemelo y sóleo tras el pedaleo o el paseo.", recSeries:"1", recReps:"30-45s/pierna"},
+        {n:"Estiramiento de cuádriceps de pie con apoyo", t:T_S, tip:"Estiramiento", info:"Lleva el talón al glúteo sujetando el pie, apoyado en una silla o pared. Estira cuádriceps y flexor de cadera.", recSeries:"1", recReps:"30s/pierna"},
+        {n:"Zancada baja (flexor de cadera)", t:T_S, tip:"Estiramiento", info:"Rodilla atrás apoyada en el suelo, lleva la cadera adelante. Estira psoas e ingle, acortados por pedalear sentado.", recSeries:"1", recReps:"30-45s/lado"},
+        {n:"Estiramiento de isquiotibiales con toalla (cardio)", t:T_S, tip:"Estiramiento", info:"Tumbado con la toalla en el pie, eleva la pierna recta. Estira los isquios sin comprometer la espalda.", recSeries:"1", recReps:"45s/pierna"}
+    ] }
 };
 
 const GRUPOS = Object.keys(db);
-const GRUPOS_SEMANA = GRUPOS.filter(g => g !== 'Salud'); // Piernas no aparece en planificación semanal
+const GRUPOS_SEMANA = GRUPOS; // Todos los grupos son planificables
 
 function getEjerciciosDe(grupo) {
     const base = (db[grupo]?.data || []).map(ex => {
@@ -162,7 +163,7 @@ const DIAS_DISPLAY = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sá
 
 const P_PUSH = ["Pecho", "Hombros", "Tríceps"];
 const P_PULL = ["Espalda", "Bíceps"];
-const P_LEGS = ["Salud", "Core"];
+const P_LEGS = ["Piernas", "Core"];
 
 let state = JSON.parse(localStorage.getItem('iron_log_v8.6')) || {
     hoy: [], historial: [], activeTab: 'rutinaPage',
@@ -427,7 +428,7 @@ function guardarEjercicio() {
     const datos = {
         n: nombre, name: nombre,
         t: document.getElementById('editExTipo').value,
-        tip: 'Sin equipamiento',
+        tip: (document.getElementById('editExEquipo') || {}).value || 'Sin equipamiento',
         info: document.getElementById('editExInfo').value.trim(),
         recSeries: document.getElementById('editExRecSeries').value.trim(),
         recReps: document.getElementById('editExRecReps').value.trim()
@@ -500,11 +501,11 @@ function addToToday(name, group, type, tip) { addToDay(name, group, type, tip); 
 function getEquipType(ex) {
     if (ex.group === "Cardio") return 'cardio';
     const tip = (ex.tip || '').trim();
-    if (tip === "Sin equipamiento") return 'bodyweight';
-    if (tip === "Solo Gomas")       return 'band';
-    if (tip === "Solo Mancuernas")  return 'dumbbell';
     if (tip === "Mancuernas / Gomas") return 'mixed';
-    return 'dumbbell'; // fallback
+    if (tip.includes("Mancuernas"))   return 'dumbbell';
+    if (tip.includes("Gomas") || tip.includes("Banda")) return 'band';
+    if (tip.includes("Bicicleta"))    return 'cardio';
+    return 'bodyweight'; // Sin equipamiento, Estiramiento, Peso corporal + Banco, Mochila...
 }
 
 // Genera el bloque de inputs de métricas según el tipo de equipamiento
@@ -1040,8 +1041,8 @@ function buildRutina(gruposSeleccionados, intensidad, recentExternal) {
     }[intensidad];
 
     // Cardio por intensidad (punto 3)
-    const CARDIO_SUAVE  = ['Pedaleo continuo suave','Pedaleo progresivo','Pedaleo con pausas activas'];
-    const CARDIO_NORMAL = ['Pedaleo continuo suave','Pedaleo progresivo','Pedaleo con pausas activas','Intervalos suaves','Paseo largo en el parque'];
+    const CARDIO_SUAVE  = ['Pedaleo suave continuo','Paseo por el parque'];
+    const CARDIO_NORMAL = ['Pedaleo suave continuo','Paseo por el parque','Pedaleo continuo moderado','Paseo rápido'];
 
     const recentHist = getEjerciciosRecientesPorGrupo(3); // punto 5: anti-repetición 3 sesiones
     const recent = {};
@@ -1049,7 +1050,7 @@ function buildRutina(gruposSeleccionados, intensidad, recentExternal) {
     const getRandom = arr => arr[Math.floor(Math.random() * arr.length)];
 
     // Grupos sin Cardio, sin Core, sin Piernas
-    const gruposPrincipales = gruposSeleccionados.filter(g => g !== 'Cardio' && g !== 'Core' && g !== 'Salud');
+    const gruposPrincipales = gruposSeleccionados.filter(g => g !== 'Cardio' && g !== 'Core' && g !== 'Piernas');
     let finalPool = [];
 
     // ── Básicos (1 por grupo, 2 en Intensa) ──────────────────────────────────
@@ -1104,11 +1105,26 @@ function buildRutina(gruposSeleccionados, intensidad, recentExternal) {
         }
     }
 
+    // ── Bloque Piernas (drenaje) si está seleccionado ─────────────────────────
+    if (gruposSeleccionados.includes('Piernas')) {
+        const piernasPool = getEjerciciosDe('Piernas').filter(e => e.tip !== 'Estiramiento' && !recent['Piernas'].includes(e.n));
+        const pPool = piernasPool.length >= 3 ? piernasPool : getEjerciciosDe('Piernas').filter(e => e.tip !== 'Estiramiento');
+        const usadosP = [];
+        let addedP = 0;
+        while (addedP < 3 && pPool.length > usadosP.length) {
+            const disp = pPool.filter(e => !usadosP.includes(e.n));
+            if (!disp.length) break;
+            const sel = getRandom(disp);
+            if (!finalPool.find(f => f.n === sel.n)) { finalPool.push({...sel, group: 'Piernas'}); addedP++; }
+            usadosP.push(sel.n);
+        }
+    }
+
     // ── Linfático SIEMPRE (punto 1) ───────────────────────────────────────────
-    const LINFATICOS = ['Elevaciones de talones','Bomba de tobillo','Elevación de piernas en pared','Bicicleta en el aire','Marcha en el sitio'];
+    const LINFATICOS = ['Bomba de tobillo (ankle pumps)','Piernas elevadas en la pared','Bicicleta en el aire','Elevación de talones sentado','Marcha sentado en silla','Círculos de tobillo'];
     if (!finalPool.some(f => LINFATICOS.includes(f.n))) {
-        const lp = getEjerciciosDe('Salud').filter(e => LINFATICOS.includes(e.n));
-        if (lp.length > 0) finalPool.push({...getRandom(lp), group: 'Salud'});
+        const lp = getEjerciciosDe('Piernas').filter(e => LINFATICOS.includes(e.n));
+        if (lp.length > 0) finalPool.push({...getRandom(lp), group: 'Piernas'});
     }
 
     // ── Cardio por intensidad (punto 3) ──────────────────────────────────────
@@ -1220,24 +1236,26 @@ function finalizarSesion() {
     document.getElementById('finalizarModal').style.display = 'flex';
 }
 function getEstiramientosDeCierre() {
-    const grupos = new Set(state.hoy.map(e => e.group));
-    const nombres = [];
-    if (grupos.has('Pecho'))                    nombres.push('Apertura de pecho con manos entrelazadas', 'Cobra');
-    if (grupos.has('Espalda'))                  nombres.push('Postura del niño', 'Perro boca abajo');
-    if (grupos.has('Hombros'))                  nombres.push('Estiramiento de hombro cruzado');
-    if (grupos.has('Core'))                     nombres.push('Gato-Vaca');
-    if (grupos.has('Tríceps') || grupos.has('Bíceps')) nombres.push('Estiramiento de tríceps sobre la cabeza');
-    if (nombres.length < 3)                     nombres.push('Torsión tumbada');
-    nombres.push('Elevación de piernas en pared'); // siempre al final
-    const uniqueNames = [...new Set(nombres)].slice(0, 5);
-    return uniqueNames.map(nombre => {
-        const ex = getEjerciciosDe('Salud').find(e => (e.n||e.name) === nombre);
-        if (!ex) return null;
-        return { name: nombre, group: 'Salud', t: T_S,
-            tip: ex.tip || 'Sin equipamiento', series: '', reps: '', peso: '',
-            nota: '', done: false, recSeries: ex.recSeries||'',
-            recReps: ex.recReps||'', usaBanda: false };
-    }).filter(Boolean);
+    const grupos = [...new Set(state.hoy.map(e => e.group))].filter(g => g !== 'Cardio' && g !== 'Piernas');
+    const seleccion = [];
+    // 1-2 estiramientos del propio grupo entrenado
+    grupos.forEach(g => {
+        const estirs = getEjerciciosDe(g).filter(e => e.tip === 'Estiramiento');
+        const shuffled = [...estirs].sort(() => Math.random() - 0.5);
+        shuffled.slice(0, grupos.length <= 2 ? 2 : 1).forEach(e => {
+            if (!seleccion.find(s => s.n === e.n)) seleccion.push({...e, group: g});
+        });
+    });
+    // Siempre cierra con drenaje
+    const drenaje = getEjerciciosDe('Piernas').find(e => e.n === 'Piernas elevadas en la pared');
+    const final = seleccion.slice(0, 4);
+    if (drenaje) final.push({...drenaje, group: 'Piernas'});
+    return final.map(ex => ({
+        name: ex.n, group: ex.group, t: T_S,
+        tip: ex.tip || 'Estiramiento', series: '', reps: '', peso: '',
+        nota: '', done: false, recSeries: ex.recSeries || '',
+        recReps: ex.recReps || '', usaBanda: false
+    }));
 }
 
 function cerrarGuiaModal() {
