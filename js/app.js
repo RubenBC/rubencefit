@@ -597,12 +597,66 @@ function toggleExpandDone(i) {
     renderToday();
 }
 
+function generarHoyDirecto() {
+    const d = new Date();
+    const hoyNombre = DIAS_LOGICA[d.getDay() === 0 ? 6 : d.getDay() - 1];
+    intensityCtx = { modo: 'dia', dia: hoyNombre };
+    document.getElementById('intensidadModal').style.display = 'flex';
+}
+
+function addBloqueDrenaje() {
+    const pool = getEjerciciosDe('Piernas').filter(e => e.tip !== 'Estiramiento' && !state.hoy.find(h => h.name === e.n));
+    const shuffled = [...pool].sort(() => Math.random() - 0.5).slice(0, 3);
+    if (!shuffled.length) { showToast('Ya tienes todo el drenaje añadido'); return; }
+    shuffled.forEach(ex => state.hoy.push({
+        name: ex.n, group: 'Piernas', t: T_S, tip: ex.tip,
+        series: '', reps: '', peso: '', nota: '', done: false,
+        recSeries: ex.recSeries || '', recReps: ex.recReps || '', usaBanda: false
+    }));
+    save(); renderToday();
+    showToast(`🦵 ${shuffled.length} ejercicios de drenaje añadidos`);
+}
+
+function addBloqueEstiramientos() {
+    const estiramientos = getEstiramientosDeCierre().filter(e => !state.hoy.find(h => h.name === e.name));
+    if (!estiramientos.length) { showToast('Ya tienes los estiramientos añadidos'); return; }
+    estiramientos.forEach(e => state.hoy.push(e));
+    save(); renderToday();
+    showToast(`🧘 ${estiramientos.length} estiramientos añadidos`);
+}
+
 function renderToday() {
     const list = document.getElementById('todayList');
     if(!list) return;
-    if(state.hoy.length === 0) { list.innerHTML = "<p style='text-align:center; padding:40px; color:var(--text2)'>No hay ejercicios para hoy.</p>"; updateSessionProgress(); return; }
-    
-    list.innerHTML = state.hoy.map((ex, i) => {
+    if(state.hoy.length === 0) {
+        const d = new Date();
+        const hoyNombre = DIAS_LOGICA[d.getDay() === 0 ? 6 : d.getDay() - 1];
+        const hayPlantilla = state.plantillaSemanal && state.plantillaSemanal[hoyNombre] && state.plantillaSemanal[hoyNombre].length > 0;
+        list.innerHTML = `
+        <div class="hoy-empty">
+            <p class="hoy-empty-msg">No hay ejercicios para hoy. ¿Por dónde empezamos?</p>
+            <button class="hoy-empty-btn hoy-empty-primary" onclick="generarHoyDirecto()">
+                <span class="material-symbols-outlined">bolt</span>
+                <span>Generar rutina de hoy<small>Con los grupos del ${hoyNombre}</small></span>
+            </button>
+            ${hayPlantilla ? `
+            <button class="hoy-empty-btn" onclick="cargarPlantillaEnHoy('${hoyNombre}')">
+                <span class="material-symbols-outlined">event_note</span>
+                <span>Cargar plan del ${hoyNombre}<small>${state.plantillaSemanal[hoyNombre].length} ejercicios planificados</small></span>
+            </button>` : ''}
+            <button class="hoy-empty-btn" onclick="showPage('rutinaPage')">
+                <span class="material-symbols-outlined">library_books</span>
+                <span>Elegir de la Biblioteca<small>Añadir ejercicios manualmente</small></span>
+            </button>
+        </div>`;
+        updateSessionProgress(); return;
+    }
+
+    list.innerHTML = `
+        <div class="bloques-rapidos">
+            <button class="bloque-chip" onclick="addBloqueDrenaje()">+ Drenaje (3)</button>
+            <button class="bloque-chip" onclick="addBloqueEstiramientos()">+ Estiramientos</button>
+        </div>` + state.hoy.map((ex, i) => {
         const tagClass = ex.t === T_B ? 'tag-basico' : ex.t === T_A ? 'tag-aisla' : 'tag-salud';
         const accentClass = ex.t === T_B ? 'today-card-basico' : ex.t === T_A ? 'today-card-aisla' : 'today-card-salud';
         const doneClass = ex.done ? 'today-card-done' : '';
@@ -663,6 +717,7 @@ function initTodaySortable() {
     if (_todaySortable) { _todaySortable.destroy(); _todaySortable = null; }
     _todaySortable = new Sortable(list, {
         handle: '.drag-handle',
+        draggable: '.routine-card',
         animation: 180,
         ghostClass: 'drag-ghost',
         onEnd: (evt) => {
@@ -1699,6 +1754,12 @@ const STAT_INFO = {
 
 // stat info modal removed — see tooltip functions below
 
+let statsAbiertos = new Set(['constancia']);
+function toggleStatsCard(id) {
+    if (statsAbiertos.has(id)) statsAbiertos.delete(id); else statsAbiertos.add(id);
+    updateStats();
+}
+
 function updateStats() {
     const container = document.getElementById('statsContent');
     if (!container) return;
@@ -1775,21 +1836,38 @@ function updateStats() {
     state.historial.filter(h=>last7.includes(h.fecha)).forEach(s=>{if(s.ejercicios)s.ejercicios.forEach(ex=>{if(LINFATICOS_STAT.includes(ex.name))linfCount++;});});
     const linfColor=linfCount>=4?'#2E7D32':linfCount>=2?'#E65100':'var(--danger)';
     const linfLabel=linfCount>=4?'✓ Bien':linfCount>=2?'! Mejorable':'⚠ Bajo';
-    container.innerHTML=`
-        <div class="stat-box stat-tappable" onclick="abrirInfoStat('racha',event)"><span class="stat-label">🔥 Racha actual</span><span class="stat-val">${racha}<small>días</small></span></div>
-        <div class="stat-box stat-tappable" onclick="abrirInfoStat('racha_max',event)"><span class="stat-label">🏆 Racha máxima</span><span class="stat-val">${maxRacha}<small>días</small></span></div>
-        <div class="stat-box stat-tappable" onclick="abrirInfoStat('descansos',event)"><span class="stat-label">😴 Descansos semana</span><span class="stat-val">${descSemana}<small>días</small></span></div>
-        <div class="stat-box stat-tappable" onclick="abrirInfoStat('tendencia',event)"><span class="stat-label">📈 Tendencia semanal</span><span class="stat-val" style="font-size:13px;color:${tendenciaColor};">${tendenciaIcon} ${sesSemana}ses<small style="color:${tendenciaColor};">${tendenciaTexto}</small></span></div>
-        <div class="stat-box stat-tappable" onclick="abrirInfoStat('cardio_semana',event)"><span class="stat-label">🚴 Cardio semana</span><span class="stat-val">${cardioSemana}<small>min</small></span></div>
-        <div class="stat-box stat-tappable" onclick="abrirInfoStat('cardio_mes',event)"><span class="stat-label">🚴 Cardio mes</span><span class="stat-val">${cardioMes}<small>min</small></span></div>
-        <div class="stat-box stat-tappable" onclick="abrirInfoStat('dias_descanso',event)"><span class="stat-label">⏱ Último entreno</span><span class="stat-val" style="color:${diasColor};">${diasDescanso}<small>días</small></span></div>
-        <div class="stat-box stat-tappable" onclick="abrirInfoStat('cardio_total',event)"><span class="stat-label">🚴 Cardio total</span><span class="stat-val">${cardioTotal}<small>min</small></span></div>
-        <div class="stat-box stat-tappable" onclick="abrirInfoStat('linfaticos_semana',event)" style="grid-column:1/span 2;"><span class="stat-label">🦵 Linfáticos semana <span class="stat-info-hint" style="color:${linfColor};">${linfLabel}</span></span><span class="stat-val">${linfCount}<small>ejercicios</small></span></div>
-        <div class="stat-box stat-full stat-tappable" onclick="abrirInfoStat('grupos_mes',event)">
-            <span class="stat-label" style="font-size:10px;margin-bottom:10px;display:flex;align-items:center;gap:4px;"><span class="material-symbols-outlined" style="font-size:13px;">bar_chart</span> Sesiones por grupo · 30 días</span>
-            <div class="myu-groups-container">${gruposBars}</div>
-        </div>
-    `;
+    const card = (id, titulo, resumen, contenido) => {
+        const abierto = statsAbiertos.has(id);
+        return `
+        <div class="stats-card">
+            <div class="stats-card-header" onclick="toggleStatsCard('${id}')">
+                <span class="stats-card-title">${titulo}</span>
+                ${!abierto ? `<span class="stats-card-resumen">${resumen}</span>` : ''}
+                <span class="material-symbols-outlined stats-card-chevron">${abierto ? 'expand_less' : 'expand_more'}</span>
+            </div>
+            ${abierto ? `<div class="stats-card-body">${contenido}</div>` : ''}
+        </div>`;
+    };
+
+    container.innerHTML =
+        card('constancia', '🔥 Racha y constancia', `${racha} días · ${sesSemana} ses/sem`, `
+            <div class="stat-box stat-tappable" onclick="abrirInfoStat('racha',event)"><span class="stat-label">🔥 Racha actual</span><span class="stat-val">${racha}<small>días</small></span></div>
+            <div class="stat-box stat-tappable" onclick="abrirInfoStat('racha_max',event)"><span class="stat-label">🏆 Racha máxima</span><span class="stat-val">${maxRacha}<small>días</small></span></div>
+            <div class="stat-box stat-tappable" onclick="abrirInfoStat('descansos',event)"><span class="stat-label">😴 Descansos semana</span><span class="stat-val">${descSemana}<small>días</small></span></div>
+            <div class="stat-box stat-tappable" onclick="abrirInfoStat('tendencia',event)"><span class="stat-label">📈 Tendencia semanal</span><span class="stat-val" style="font-size:13px;color:${tendenciaColor};">${tendenciaIcon} ${sesSemana}ses<small style="color:${tendenciaColor};">${tendenciaTexto}</small></span></div>
+            <div class="stat-box stat-tappable" onclick="abrirInfoStat('dias_descanso',event)" style="grid-column:1/span 2;"><span class="stat-label">⏱ Último entreno</span><span class="stat-val" style="color:${diasColor};">${diasDescanso}<small>días</small></span></div>
+        `) +
+        card('cardio', '🚴 Cardio y drenaje', `${cardioSemana} min/sem · ${linfCount} linf.`, `
+            <div class="stat-box stat-tappable" onclick="abrirInfoStat('cardio_semana',event)"><span class="stat-label">🚴 Cardio semana</span><span class="stat-val">${cardioSemana}<small>min</small></span></div>
+            <div class="stat-box stat-tappable" onclick="abrirInfoStat('cardio_mes',event)"><span class="stat-label">🚴 Cardio mes</span><span class="stat-val">${cardioMes}<small>min</small></span></div>
+            <div class="stat-box stat-tappable" onclick="abrirInfoStat('cardio_total',event)"><span class="stat-label">🚴 Cardio total</span><span class="stat-val">${cardioTotal}<small>min</small></span></div>
+            <div class="stat-box stat-tappable" onclick="abrirInfoStat('linfaticos_semana',event)"><span class="stat-label">🦵 Linfáticos semana <span class="stat-info-hint" style="color:${linfColor};">${linfLabel}</span></span><span class="stat-val">${linfCount}<small>ej.</small></span></div>
+        `) +
+        card('grupos', '📊 Sesiones por grupo', '30 días', `
+            <div class="stat-box stat-full stat-tappable" onclick="abrirInfoStat('grupos_mes',event)" style="grid-column:1/span 2;">
+                <div class="myu-groups-container">${gruposBars}</div>
+            </div>
+        `);
 }
 
 
