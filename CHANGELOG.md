@@ -4,6 +4,18 @@ Aplicación personal de entrenamiento. A partir de la v1.0 sale de fase beta.
 
 ---
 
+## v2.1 — Nueva base de ejercicios
+
+- Base de ejercicios completamente renovada: 121 entradas (89 ejercicios + 32 estiramientos) con descripción de ejecución y musculatura en cada uno
+- Nuevo grupo Piernas (drenaje linfático) sustituye al grupo Salud; 14 ejercicios de bomba muscular y retorno venoso sin fuerza pura
+- Cada grupo muscular incluye ahora sus 4 estiramientos específicos integrados
+- Piernas es planificable en la Semana; al generar rutina con Piernas se añaden 3 ejercicios de drenaje
+- Los estiramientos de cierre de sesión se eligen ahora de los grupos realmente entrenados
+- El formulario de ejercicio propio (+) incluye selector de equipamiento
+- Nombres de cardio y linfáticos actualizados en el generador
+
+---
+
 ## v2.0 — Simplificación de interfaz
 
 - Temporizador colapsado a una línea fina fuera de la pestaña Hoy; se expande automáticamente al entrar en Hoy o tocándolo
