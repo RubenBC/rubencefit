@@ -4,6 +4,12 @@ Aplicación personal de entrenamiento. A partir de la v1.0 sale de fase beta.
 
 ---
 
+## v2.2
+
+- Nueva opción ⓘ Información en el menú ⋮ de cada ejercicio en Hoy: muestra la descripción de ejecución y la dosis recomendada
+
+---
+
 ## v2.1 — Nueva base de ejercicios
 
 - Base de ejercicios completamente renovada: 121 entradas (89 ejercicios + 32 estiramientos) con descripción de ejecución y musculatura en cada uno
