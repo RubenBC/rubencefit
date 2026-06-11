@@ -4,6 +4,14 @@ Aplicación personal de entrenamiento. A partir de la v1.0 sale de fase beta.
 
 ---
 
+## v2.4
+
+- Pantalla de Hoy vacía con accesos directos: generar rutina con los grupos del día, cargar el plan guardado del día (si existe) o ir a la Biblioteca
+- Chips de bloque rápido en Hoy: "+ Drenaje (3)" añade 3 ejercicios de Piernas y "+ Estiramientos" añade los de cierre según los grupos de la sesión
+- Panel de estadísticas reorganizado en 3 tarjetas colapsables (Racha y constancia · Cardio y drenaje · Sesiones por grupo) con resumen visible al estar cerradas
+
+---
+
 ## v2.3
 
 - El generador de rutinas ya no añade nada automáticamente: ni ejercicios de Salud ni el linfático garantizado. Solo genera lo que corresponde a los grupos elegidos para ese día
