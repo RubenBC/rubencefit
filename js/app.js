@@ -286,6 +286,7 @@ function showPage(id, btn, slideDir) {
     if(btn) btn.classList.add('active'); else { const b = document.getElementById('btn-'+id.replace('Page','')); if(b) b.classList.add('active'); }
     state.activeTab = id; save();
     setTimerExpanded(id === 'hoyPage');
+    if (id === 'hoyPage') sincronizarHoyConPlan();
     if (id === 'hoyPage' && state.sesionStartTime) startSesionStopwatch();
     else if (id !== 'hoyPage') stopSesionStopwatch();
     updateStopwatchVisibility();
@@ -479,19 +480,36 @@ function showToast(msg, color) {
     setTimeout(() => toast.remove(), 1200);
 }
 
+function getHoyNombre() {
+    const d = new Date();
+    return DIAS_LOGICA[d.getDay() === 0 ? 6 : d.getDay() - 1];
+}
+
+// Sincroniza la sesión de hoy con el plan del día actual (opción A: no autocarga si ya entrenaste hoy)
+function sincronizarHoyConPlan() {
+    const hoyNombre = getHoyNombre();
+    const yaEntrenadoHoy = state.historial.some(s => s.fecha === new Date().toLocaleDateString());
+    const plan = state.plantillaSemanal && state.plantillaSemanal[hoyNombre];
+    if (state.hoy.length === 0 && plan && plan.length > 0 && !yaEntrenadoHoy) {
+        state.hoy = plan.map(ex => ({...ex, done: false}));
+        save();
+    }
+}
+
 function addToDay(name, group, type, tip) {
     const dia = bibliotecaDia;
-    if (dia === 'hoy') {
-        if (state.hoy.find(ex => ex.name === name)) { showToast("Ya está en la lista.", "#e74c3c"); return; }
-        const exDb = getEjerciciosDe(group).find(e => (e.n||e.name) === name) || {};
-        state.hoy.push({ name, group, t: type, tip, series: '', reps: '', peso: '', nota: '', done: false, recSeries: exDb.recSeries||'', recReps: exDb.recReps||'' });
+    const exDb = getEjerciciosDe(group).find(e => (e.n||e.name) === name) || {};
+    const nuevo = { name, group, t: type, tip, series: '', reps: '', peso: '', nota: '', done: false, recSeries: exDb.recSeries||'', recReps: exDb.recReps||'' };
+    // Si el día seleccionado es HOY, va directo a la sesión activa
+    if (dia === getHoyNombre()) {
+        if (state.hoy.find(ex => ex.name === name)) { showToast("Ya está en la sesión de hoy.", "#e74c3c"); return; }
+        state.hoy.push(nuevo);
         save(); showToast("¡Añadido a Hoy! ✓");
     } else {
         if (!state.plantillaSemanal) state.plantillaSemanal = {};
         if (!state.plantillaSemanal[dia]) state.plantillaSemanal[dia] = [];
         if (state.plantillaSemanal[dia].find(e => e.name === name)) { showToast("Ya está en ese día.", "#e74c3c"); return; }
-        const exDb2 = getEjerciciosDe(group).find(e => (e.n||e.name) === name) || {};
-        state.plantillaSemanal[dia].push({ name, group, t: type, tip, series: '', reps: '', peso: '', nota: '', done: false, recSeries: exDb2.recSeries||'', recReps: exDb2.recReps||'' });
+        state.plantillaSemanal[dia].push(nuevo);
         save(); showToast(`✓ Añadido al ${dia}`);
     }
 }
@@ -655,7 +673,6 @@ function renderToday() {
     if(state.hoy.length === 0) {
         const d = new Date();
         const hoyNombre = DIAS_LOGICA[d.getDay() === 0 ? 6 : d.getDay() - 1];
-        const hayPlantilla = state.plantillaSemanal && state.plantillaSemanal[hoyNombre] && state.plantillaSemanal[hoyNombre].length > 0;
         list.innerHTML = `
         <div class="hoy-empty">
             <p class="hoy-empty-msg">No hay ejercicios para hoy. ¿Por dónde empezamos?</p>
@@ -663,11 +680,6 @@ function renderToday() {
                 <span class="material-symbols-outlined">bolt</span>
                 <span>Generar rutina de hoy<small>Con los grupos del ${hoyNombre}</small></span>
             </button>
-            ${hayPlantilla ? `
-            <button class="hoy-empty-btn" onclick="cargarPlantillaEnHoy('${hoyNombre}')">
-                <span class="material-symbols-outlined">event_note</span>
-                <span>Cargar plan del ${hoyNombre}<small>${state.plantillaSemanal[hoyNombre].length} ejercicios planificados</small></span>
-            </button>` : ''}
             <button class="hoy-empty-btn" onclick="showPage('rutinaPage')">
                 <span class="material-symbols-outlined">library_books</span>
                 <span>Elegir de la Biblioteca<small>Añadir ejercicios manualmente</small></span>
@@ -862,7 +874,9 @@ function renderWeek() {
         const entrenado = state.historial.some(s => s.fecha === fechaDia.toLocaleDateString());
         const sel = state.semana[dia] || [];
         const info = getDayColor(sel);
-        const plantilla = state.plantillaSemanal ? state.plantillaSemanal[dia] : null;
+        // El día de hoy muestra la sesión activa en vivo; los demás, su plan guardado
+        const esSesionViva = esHoy && state.hoy.length > 0;
+        const plantilla = esSesionViva ? state.hoy : (state.plantillaSemanal ? state.plantillaSemanal[dia] : null);
         const isOpen = state.openMenu === dia;
         const tieneRutina = plantilla && plantilla.length > 0;
         const labelsHtml = sel.length > 0
@@ -895,9 +909,13 @@ function renderWeek() {
                         <button class="week-btn-secondary" onclick="abrirSelectorParaDia('${dia}')">⚡ Generar</button>
                         <button class="week-btn-primary" style="background:var(--color-verde); color:#2d5a27; border:1px solid #a8d8a8;" onclick="guardarDia('${dia}')">✓ Guardar</button>
                     ` : `
-                        <button class="week-btn-secondary" onclick="editarDia('${dia}')"><span class="material-symbols-outlined" style="font-size:14px;">edit</span> Editar</button>
+                        ${esSesionViva
+                            ? `<button class="week-btn-secondary" onclick="showPage('hoyPage')"><span class="material-symbols-outlined" style="font-size:14px;">edit</span> Editar en Hoy</button>`
+                            : `<button class="week-btn-secondary" onclick="editarDia('${dia}')"><span class="material-symbols-outlined" style="font-size:14px;">edit</span> Editar</button>`}
                         <button class="week-btn-secondary" onclick="toggleDuplicar('${dia}')"><span class="material-symbols-outlined" style="font-size:14px;">content_copy</span> Duplicar</button>
-                        <button class="week-btn-primary" onclick="cargarPlantillaEnHoy('${dia}')">Cargar en Hoy →</button>
+                        ${esHoy
+                            ? `<button class="week-btn-primary" onclick="showPage('hoyPage')">Ir a Hoy →</button>`
+                            : `<button class="week-btn-primary" onclick="cargarPlantillaEnHoy('${dia}')">Cargar en Hoy →</button>`}
                     `}
                 </div>
                 ${duplicandoDia === dia ? `
@@ -949,7 +967,7 @@ function renderWeek() {
                     </label>
                 `).join('')}
             </div>` : `
-            <div class="day-resumen">${tieneRutina ? plantilla.length + ' ejercicios planificados' : (sel.length > 0 ? sel.join(' · ') + ' — sin planificar' : 'Descanso')}</div>`}
+            <div class="day-resumen">${esSesionViva ? '🟢 ' + plantilla.length + ' ejercicios en tu sesión de hoy' : (tieneRutina ? plantilla.length + ' ejercicios planificados' : (sel.length > 0 ? sel.join(' · ') + ' — sin planificar' : 'Descanso'))}</div>`}
         </div>`;
     }).join('');
 }
@@ -960,9 +978,12 @@ function toggleDuplicar(dia) {
 }
 
 function duplicarDiaA(origen, destino) {
-    if (!state.plantillaSemanal || !state.plantillaSemanal[origen]) return;
+    // Fuente: si hoy tiene sesión viva y es el origen, copia esa; si no, el plan
+    let fuente = state.plantillaSemanal && state.plantillaSemanal[origen];
+    if (origen === getHoyNombre() && state.hoy.length > 0) fuente = state.hoy;
+    if (!fuente || !fuente.length) { showToast("Ese día no tiene rutina que copiar."); return; }
     if (!state.plantillaSemanal) state.plantillaSemanal = {};
-    state.plantillaSemanal[destino] = JSON.parse(JSON.stringify(state.plantillaSemanal[origen]));
+    state.plantillaSemanal[destino] = JSON.parse(JSON.stringify(fuente)).map(ex => ({...ex, done: false}));
     // Copia también los grupos del día
     state.semana[destino] = [...(state.semana[origen] || [])];
     duplicandoDia = null;
@@ -1037,14 +1058,14 @@ function confirmarRutinaGenerada() {
     cerrarPreviewModal();
     if (!_rutinaPreview || !_rutinaPreviewDia) return;
     const dia = _rutinaPreviewDia;
-    if (!state.plantillaSemanal) state.plantillaSemanal = {};
-    state.plantillaSemanal[dia] = JSON.parse(JSON.stringify(_rutinaPreview));
-    const d = new Date();
-    const hoyNombre = DIAS_LOGICA[d.getDay() === 0 ? 6 : d.getDay() - 1];
-    if (dia === hoyNombre) {
+    if (dia === getHoyNombre()) {
+        // Hoy: carga directa en la sesión activa. El plan semanal no se toca.
         state.hoy = JSON.parse(JSON.stringify(_rutinaPreview));
         save(); showPage('hoyPage');
     } else {
+        // Otro día: guarda en el plan de ese día
+        if (!state.plantillaSemanal) state.plantillaSemanal = {};
+        state.plantillaSemanal[dia] = JSON.parse(JSON.stringify(_rutinaPreview));
         save(); renderWeek();
         showToast(`✓ Rutina del ${dia} guardada`);
     }
