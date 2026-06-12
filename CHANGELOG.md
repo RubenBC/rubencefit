@@ -4,6 +4,14 @@ Aplicación personal de entrenamiento. A partir de la v1.0 sale de fase beta.
 
 ---
 
+## v2.5
+
+- Corregido: el botón "Generar rutina de hoy" de la pantalla vacía no abría el selector de intensidad (id de modal incorrecto)
+- Eliminados todos los alert() y confirm() nativos restantes (11), que Chrome bloquea silenciosamente en PWA. Sustituidos por avisos toast y un nuevo modal de confirmación propio
+- Afecta a: generar rutina, limpiar hoy, eliminar ejercicio propio, cargar plantilla de otro día, borrar sesión, borrar plantillas, restaurar backup y borrar historial (con doble confirmación)
+
+---
+
 ## v2.4
 
 - Pantalla de Hoy vacía con accesos directos: generar rutina con los grupos del día, cargar el plan guardado del día (si existe) o ir a la Biblioteca
