@@ -424,7 +424,7 @@ function cerrarEditarEjercicio(el, e) {
 
 function guardarEjercicio() {
     const nombre = document.getElementById('editExNombre').value.trim();
-    if (!nombre) { alert('El nombre es obligatorio.'); return; }
+    if (!nombre) { showToast('⚠️ El nombre es obligatorio.'); return; }
     const datos = {
         n: nombre, name: nombre,
         t: document.getElementById('editExTipo').value,
@@ -454,7 +454,9 @@ function guardarEjercicio() {
 }
 
 function eliminarCustom(nombre, grupo) {
-    if (!confirm(`¿Eliminar "${nombre}"?`)) return;
+    pedirConfirmacion(`¿Eliminar "${nombre}"?`, () => _eliminarEjercicioCustom(grupo, nombre), 'Eliminar'); return;
+}
+function _eliminarEjercicioCustom(grupo, nombre) {
     const arr = state.ejerciciosCustom[grupo] || [];
     state.ejerciciosCustom[grupo] = arr.filter(e => (e.n||e.name) !== nombre);
     save(); showExercises(grupo);
@@ -597,11 +599,33 @@ function toggleExpandDone(i) {
     renderToday();
 }
 
+// Confirmación propia (confirm() nativo está bloqueado en PWA)
+let _confirmCallback = null;
+function pedirConfirmacion(mensaje, onOk, textoOk) {
+    _confirmCallback = onOk;
+    document.getElementById('confirmMsg').innerText = mensaje;
+    document.getElementById('confirmOkBtn').innerText = textoOk || 'Confirmar';
+    document.getElementById('confirmModal').style.display = 'flex';
+}
+function confirmarOk() {
+    document.getElementById('confirmModal').style.display = 'none';
+    const cb = _confirmCallback; _confirmCallback = null;
+    if (cb) cb();
+}
+function confirmarCancelar() {
+    document.getElementById('confirmModal').style.display = 'none';
+    _confirmCallback = null;
+}
+
 function generarHoyDirecto() {
     const d = new Date();
     const hoyNombre = DIAS_LOGICA[d.getDay() === 0 ? 6 : d.getDay() - 1];
+    if (!(state.semana[hoyNombre] || []).length) {
+        showToast('⚠️ El ' + hoyNombre + ' no tiene grupos configurados. Ve a Semana.');
+        return;
+    }
     intensityCtx = { modo: 'dia', dia: hoyNombre };
-    document.getElementById('intensidadModal').style.display = 'flex';
+    mostrarModalIntensidad("¿Cómo te encuentras hoy?");
 }
 
 function addBloqueDrenaje() {
@@ -781,7 +805,7 @@ function swapExercise(index) {
     const groupData = db[currentEx.group];
     if (!groupData) return;
     const options = groupData.data.filter(e => e.t === currentEx.t && e.n !== currentEx.name);
-    if (options.length === 0) { alert("No hay más ejercicios de este tipo."); return; }
+    if (options.length === 0) { showToast("No hay más ejercicios de este tipo."); return; }
     const newEx = options[Math.floor(Math.random() * options.length)];
     state.hoy[index].name = newEx.n;
     state.hoy[index].tip = newEx.tip;
@@ -791,7 +815,7 @@ function swapExercise(index) {
 }
 
 function updateEx(i, field, val) { state.hoy[i][field] = val; save(); }
-function clearHoy() { if(confirm("¡Limpiar todo hoy?")) { state.hoy = []; resetSesionStopwatch(); save(); renderToday(); } }
+function clearHoy() { pedirConfirmacion("¿Limpiar toda la sesión de hoy?", () => { state.hoy = []; resetSesionStopwatch(); save(); renderToday(); }, "Limpiar"); }
 function quitarDeHoy(i) { state.hoy.splice(i, 1); save(); renderToday(); }
 
 function getDayColor(selected) {
@@ -963,16 +987,14 @@ function abrirSelectorIntensidad() {
     const d = new Date();
     const diaIdx = d.getDay() === 0 ? 6 : d.getDay() - 1;
     const nombreDia = DIAS_LOGICA[diaIdx];
-    if (!(state.semana[nombreDia] || []).length) { alert("Hoy toca descanso según tu programación."); return; }
-    if (state.hoy.length > 0 && !confirm("¿Generar nueva rutina? Se borrará la actual.")) return;
+    if (!(state.semana[nombreDia] || []).length) { showToast("😴 Hoy toca descanso según tu programación."); return; }
     intensityCtx = { modo: 'hoy', dia: nombreDia };
     mostrarModalIntensidad("¿Cómo te encuentras hoy?");
 }
 
 function abrirSelectorParaDia(dia) {
     const grupos = state.semana[dia] || [];
-    if (!grupos.length) { alert("Este día no tiene grupos configurados."); return; }
-    if (state.hoy.length > 0 && !confirm(`¿Generar rutina de ${dia}? Se borrará la actual.`)) return;
+    if (!grupos.length) { showToast("⚠️ Este día no tiene grupos configurados."); return; }
     intensityCtx = { modo: 'dia', dia };
     const d = new Date();
     const hoyNombre = DIAS_LOGICA[d.getDay() === 0 ? 6 : d.getDay() - 1];
@@ -981,8 +1003,7 @@ function abrirSelectorParaDia(dia) {
 
 function abrirGenerarSemana() {
     const count = DIAS_LOGICA.filter(d => (state.semana[d]||[]).length > 0).length;
-    if (!count) { alert("Configura grupos en al menos un día."); return; }
-    if (!confirm(`¿Generar rutinas para los ${count} días configurados?`)) return;
+    if (!count) { showToast("⚠️ Configura grupos en al menos un día."); return; }
     intensityCtx = { modo: 'semana', dia: null };
     mostrarModalIntensidad(`Intensidad para la semana · ${count} días`);
 }
@@ -1245,16 +1266,23 @@ function cargarPlantillaEnHoy(dia) {
     const hoyDisplay = DIAS_DISPLAY[d.getDay() === 0 ? 6 : d.getDay() - 1];
     const diaDisplay = DIAS_DISPLAY[DIAS_LOGICA.indexOf(dia)];
 
+    const cargar = () => {
+        state.hoy = plantilla.map(ex => ({...ex, done: false}));
+        save();
+        showPage('hoyPage');
+    };
     if (dia !== hoyNombre) {
-        if (!confirm(`Esta rutina es del ${diaDisplay}.\nHoy es ${hoyDisplay}.\n\n¿Quieres cargarla igualmente?\n\nSe guardará en el historial con la fecha de hoy.`)) return;
+        pedirConfirmacion(`Esta rutina es del ${diaDisplay} y hoy es ${hoyDisplay}. Se guardará en el historial con la fecha de hoy. ¿Cargarla igualmente?`, () => {
+            if (state.hoy.length > 0) pedirConfirmacion(`¿Reemplazar la sesión actual con la rutina del ${diaDisplay}?`, cargar, 'Reemplazar');
+            else cargar();
+        }, 'Cargar');
+        return;
     }
-    if (state.hoy.length > 0 && !confirm(`¿Reemplazar la sesión actual con la rutina del ${diaDisplay}?`)) return;
-    state.hoy = plantilla.map(ex => ({...ex, done: false}));
-    save();
-    showPage('hoyPage');
+    if (state.hoy.length > 0) { pedirConfirmacion(`¿Reemplazar la sesión actual con la rutina del ${diaDisplay}?`, cargar, 'Reemplazar'); return; }
+    cargar();
 }
 
-function limpiarPlantillas() { if(confirm("¿Borrar rutinas guardadas?")) { state.plantillaSemanal = {}; save(); renderWeek(); } }
+function limpiarPlantillas() { pedirConfirmacion("¿Borrar todas las rutinas guardadas de la semana?", () => { state.plantillaSemanal = {}; save(); renderWeek(); }, "Borrar"); }
 
 function compartirBackup() {
     const datos = {
@@ -1365,7 +1393,7 @@ function mostrarToastBackup() {
     setTimeout(() => toast?.remove(), 8000);
 }
 
-function borrarHistorialItem(index) { if(confirm("¿Borrar sesión?")) { state.historial.splice(index, 1); save(); renderHistory(); } }
+function borrarHistorialItem(index) { pedirConfirmacion("¿Borrar esta sesión del historial?", () => { state.historial.splice(index, 1); save(); renderHistory(); }, "Borrar"); }
 
 // ── Versión del esquema de backup ───────────────────────────────────────────
 // Incrementar cada vez que se añadan/quiten campos en state o se renombren ejercicios
@@ -1441,21 +1469,15 @@ function importarDatos(event) {
             if (!esValido) throw new Error('Formato inválido');
             const fechaInfo = datos.fecha ? `del ${datos.fecha}${datos.hora ? ' a las ' + datos.hora : ''}` : 'sin fecha';
             const sesiones = datos.state.historial ? datos.state.historial.length : 0;
-            if (!confirm(`¿Restaurar backup ${fechaInfo}?
-
-· ${sesiones} sesiones guardadas
-
-Se reemplazarán todos los datos actuales.`)) {
-                event.target.value = '';
-                return;
-            }
-            const stateRestaurado = aplicarMigraciones(datos);
-            Object.assign(state, stateRestaurado);
-            save();
-            showPage('historialPage');
-            showToast(`✓ Restauradas ${sesiones} sesiones`);
+            pedirConfirmacion(`¿Restaurar backup ${fechaInfo}? Contiene ${sesiones} sesiones. Se reemplazarán todos los datos actuales.`, () => {
+                const stateRestaurado = aplicarMigraciones(datos);
+                Object.assign(state, stateRestaurado);
+                save();
+                showPage('historialPage');
+                showToast(`✓ Restauradas ${sesiones} sesiones`);
+            }, 'Restaurar');
         } catch(err) {
-            alert('Error al leer el archivo. Asegúrate de que es un backup válido de IronLog (.json).');
+            showToast('❌ Archivo no válido. Debe ser un backup .json de la app.');
         }
         event.target.value = '';
     };
@@ -1463,11 +1485,14 @@ Se reemplazarán todos los datos actuales.`)) {
 }
 
 function borrarTodoHistorial() {
-    if (!confirm("¿Borrar todo el historial de sesiones?\n\nEsta acción no se puede deshacer.")) return;
-    if (!confirm("¿Seguro? Se perderán todos los registros permanentemente.")) return;
-    state.historial = [];
-    save();
-    renderHistory();
+    pedirConfirmacion("¿Borrar todo el historial de sesiones? Esta acción no se puede deshacer.", () => {
+        pedirConfirmacion("¿Seguro? Se perderán todos los registros permanentemente.", () => {
+            state.historial = [];
+            save();
+            renderHistory();
+            showToast('🗑 Historial borrado');
+        }, 'Borrar todo');
+    }, 'Continuar');
 }
 
 function renderHistory() {
@@ -2166,7 +2191,7 @@ window.addEventListener('popstate', () => {
         if (Math.abs(dx) < 70) return;
         if (Math.abs(dx) < Math.abs(dy) * 1.8) return;
         // No cambiar si hay un modal abierto
-        const modales = ['exInfoModal','editExModal','intensidadModal','statInfoModal','dayModal','syncModal','finalizarModal','guiaModal','puntosModal','ajustesModal'];
+        const modales = ['exInfoModal','editExModal','intensidadModal','statInfoModal','dayModal','syncModal','finalizarModal','guiaModal','puntosModal','ajustesModal','confirmModal'];
         for (const id of modales) {
             const m = document.getElementById(id);
             if (m && m.style.display && m.style.display !== 'none') return;
