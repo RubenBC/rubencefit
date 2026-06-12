@@ -4,6 +4,21 @@ Aplicación personal de entrenamiento. A partir de la v1.0 sale de fase beta.
 
 ---
 
+## v3.0 — Modelo unificado: el plan y la sesión de hoy son lo mismo
+
+Cambio profundo en cómo se relacionan la pestaña Hoy y la Semana. Adiós a la dualidad "plan guardado vs sesión copiada".
+
+- Al abrir Hoy, si no hay sesión en marcha y existe un plan para el día actual, se carga solo, sin pedir nada (salvo que ya hayas entrenado hoy)
+- Añadir un ejercicio desde la Biblioteca con el día de hoy seleccionado va directo a la sesión de Hoy
+- Generar rutina para hoy la carga directamente en Hoy
+- Quitar, cambiar o reordenar ejercicios en Hoy solo afecta a la sesión de hoy: tu plan semanal queda intacto para la próxima semana (un mal día no rompe la planificación)
+- En la pestaña Semana, el día de hoy muestra en vivo tu sesión activa (marcada con 🟢) en lugar del plan; el botón pasa a "Ir a Hoy" y se edita desde allí
+- Desaparece el paso manual "Cargar en Hoy" para el día actual
+
+> Recomendación: exporta un backup desde ⚙ Ajustes antes de actualizar, por seguridad.
+
+---
+
 ## v2.5
 
 - Corregido: el botón "Generar rutina de hoy" de la pantalla vacía no abría el selector de intensidad (id de modal incorrecto)
