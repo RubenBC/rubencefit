@@ -24,7 +24,7 @@
         <p class="splash-by">Diseñada y desarrollada por</p>
         <p class="splash-author">Rubén Bejarano Checa</p>
         <p class="splash-ai">Creada con asistencia de inteligencia artificial</p>
-        <p class="splash-version">v2.4</p>
+        <p class="splash-version">v2.5</p>
     </div>
 </div>
 
@@ -416,6 +416,17 @@
                 <span class="material-symbols-outlined">delete_forever</span>
                 <span>Borrar todo el historial</span>
             </button>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL CONFIRMACIÓN GENÉRICA -->
+<div id="confirmModal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:999999;align-items:center;justify-content:center;padding:24px;" onclick="if(event.target===this)confirmarCancelar()">
+    <div style="background:var(--surface);border-radius:16px;padding:22px 20px;max-width:340px;width:100%;">
+        <p id="confirmMsg" style="margin:0 0 20px;font-size:14px;color:var(--text);line-height:1.5;"></p>
+        <div style="display:flex;gap:10px;">
+            <button onclick="confirmarCancelar()" style="flex:1;background:var(--surface2);color:var(--text2);border:none;border-radius:12px;padding:12px;font-size:14px;font-weight:600;cursor:pointer;">Cancelar</button>
+            <button id="confirmOkBtn" onclick="confirmarOk()" style="flex:1;background:var(--primary);color:white;border:none;border-radius:12px;padding:12px;font-size:14px;font-weight:bold;cursor:pointer;">Confirmar</button>
         </div>
     </div>
 </div>
