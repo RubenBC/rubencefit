@@ -4,6 +4,12 @@ Aplicación personal de entrenamiento. A partir de la v1.0 sale de fase beta.
 
 ---
 
+## v3.1
+
+- Corregido el error al reordenar ejercicios arrastrando en Hoy: los chips de bloque rápido estaban dentro de la zona arrastrable y descuadraban los índices, corrompiendo la lista. Ahora están fuera y el reordenado es estable
+
+---
+
 ## v3.0 — Modelo unificado: el plan y la sesión de hoy son lo mismo
 
 Cambio profundo en cómo se relacionan la pestaña Hoy y la Semana. Adiós a la dualidad "plan guardado vs sesión copiada".
