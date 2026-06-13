@@ -673,6 +673,8 @@ function renderToday() {
     if(state.hoy.length === 0) {
         const d = new Date();
         const hoyNombre = DIAS_LOGICA[d.getDay() === 0 ? 6 : d.getDay() - 1];
+        const chipsEmpty = document.getElementById('todayChips');
+        if (chipsEmpty) chipsEmpty.innerHTML = '';
         list.innerHTML = `
         <div class="hoy-empty">
             <p class="hoy-empty-msg">No hay ejercicios para hoy. ¿Por dónde empezamos?</p>
@@ -688,11 +690,13 @@ function renderToday() {
         updateSessionProgress(); return;
     }
 
-    list.innerHTML = `
+    const chipsEl = document.getElementById('todayChips');
+    if (chipsEl) chipsEl.innerHTML = `
         <div class="bloques-rapidos">
             <button class="bloque-chip" onclick="addBloqueDrenaje()">+ Drenaje (3)</button>
             <button class="bloque-chip" onclick="addBloqueEstiramientos()">+ Estiramientos</button>
-        </div>` + state.hoy.map((ex, i) => {
+        </div>`;
+    list.innerHTML = state.hoy.map((ex, i) => {
         const tagClass = ex.t === T_B ? 'tag-basico' : ex.t === T_A ? 'tag-aisla' : 'tag-salud';
         const accentClass = ex.t === T_B ? 'today-card-basico' : ex.t === T_A ? 'today-card-aisla' : 'today-card-salud';
         const doneClass = ex.done ? 'today-card-done' : '';
@@ -757,9 +761,11 @@ function initTodaySortable() {
         animation: 180,
         ghostClass: 'drag-ghost',
         onEnd: (evt) => {
-            if (evt.oldIndex === evt.newIndex) return;
-            const item = state.hoy.splice(evt.oldIndex, 1)[0];
-            state.hoy.splice(evt.newIndex, 0, item);
+            const from = evt.oldIndex, to = evt.newIndex;
+            if (from === to || from == null || to == null) return;
+            if (from < 0 || from >= state.hoy.length || to < 0 || to >= state.hoy.length) { renderToday(); return; }
+            const item = state.hoy.splice(from, 1)[0];
+            state.hoy.splice(to, 0, item);
             save(); renderToday();
         }
     });
