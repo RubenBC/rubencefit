@@ -4,6 +4,24 @@ Aplicación personal de entrenamiento. A partir de la v1.0 sale de fase beta.
 
 ---
 
+## v3.5 — Auditoría completa
+
+Revisión técnica exhaustiva (código, textos, contenido de fitness). Correcciones:
+- Textos de consejos desactualizados: decían "5 días/sesiones semanales" cuando la rutina actual son 6 días. Actualizados a 6 días, racha 10-25, mes 24-26 sesiones
+- Referencias al grupo "Salud" (eliminado en v2.1) en los consejos, sustituidas por "tipo S (estiramientos y drenaje)"
+- Consejo de cardio decía "30-60 min/semana" pero la barra de progreso usa 160: alineados ambos al objetivo real de 160 min semanales y ~600-700 mensuales, con mención al SAF
+- appVersion de los backups exportados pasa de "IronLog" a "Rubencefit"
+- Nombre de archivo de backup: rubencefit-backup-FECHA.json
+- Verificado a fondo: sintaxis, sin duplicados de variables/funciones, accesos a arrays protegidos, divisiones sin riesgo de cero, parseo de fechas correcto, detección de equipamiento robusta, y contenido técnico de los ejercicios (Tate press, flexiones inclinadas/declinadas, Curl 21) correcto
+
+---
+
+## v3.4
+
+- Corregido: la tendencia semanal contaba entradas del historial en lugar de días únicos entrenados — si un día tenías 2 sesiones guardadas contaba doble. Ahora cuenta días distintos correctamente
+
+---
+
 ## v3.3
 
 - Semana estadística ahora es lunes a domingo real (se resetea el lunes a las 00:00, no los últimos 7 días móviles)

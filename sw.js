@@ -1,4 +1,4 @@
-const CACHE_NAME = 'rubencefit-v3.3';
+const CACHE_NAME = 'rubencefit-v3.5';
 const STATIC_ASSETS = ['./icon.png','./ch3ca-logo.png','./manifest.json','https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.2/Sortable.min.js'];
 
 self.addEventListener('install', event => {
