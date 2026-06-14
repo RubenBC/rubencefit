@@ -1383,6 +1383,8 @@ function guardarSesionDirecta() {
 }
 
 function _guardarSesion() {
+    openExMenu = null;
+    expandedDone = new Set();
     const durSec = state.sesionStartTime ? Math.floor((Date.now() - state.sesionStartTime) / 1000) : null;
     state.historial.unshift({
         fecha: new Date().toLocaleDateString(),
@@ -2149,6 +2151,8 @@ function cerrarSyncModal() {
 }
 
 function onSyncIconPress() {
+    cerrarAjustesModal();
+    cerrarAjustesModal();
     const btn = document.getElementById('syncIcon');
     if (btn) btn.style.opacity = '0.5';
     setTimeout(() => { if (btn) btn.style.opacity = '1'; }, 300);
@@ -2161,7 +2165,7 @@ function onSyncIconPress() {
 }
 
 function handleBackButton() {
-    const modales = ['exInfoModal','editExModal','intensidadModal','generarSemanaModal','statInfoModal','dayModal','syncModal','finalizarModal','guiaModal'];
+    const modales = ['exInfoModal','editExModal','intensityModal','dayModal','syncModal','finalizarModal','guiaModal','puntosModal','rutinaPreviewModal','ajustesModal','confirmModal'];
     for (const id of modales) {
         const el = document.getElementById(id);
         if (el && el.style.display !== 'none' && el.style.display !== '') {
@@ -2220,7 +2224,7 @@ window.addEventListener('popstate', () => {
         if (Math.abs(dx) < 70) return;
         if (Math.abs(dx) < Math.abs(dy) * 1.8) return;
         // No cambiar si hay un modal abierto
-        const modales = ['exInfoModal','editExModal','intensidadModal','statInfoModal','dayModal','syncModal','finalizarModal','guiaModal','puntosModal','ajustesModal','confirmModal'];
+        const modales = ['exInfoModal','editExModal','intensityModal','dayModal','syncModal','finalizarModal','guiaModal','puntosModal','rutinaPreviewModal','ajustesModal','confirmModal'];
         for (const id of modales) {
             const m = document.getElementById(id);
             if (m && m.style.display && m.style.display !== 'none') return;
