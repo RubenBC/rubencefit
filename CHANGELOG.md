@@ -4,6 +4,12 @@ Aplicación personal de entrenamiento. A partir de la v1.0 sale de fase beta.
 
 ---
 
+## v3.2
+
+- La pestaña Hoy muestra el tiempo estimado de la sesión bajo la barra de progreso, calculado por lo alto según los ejercicios presentes y actualizado al añadir o quitar
+
+---
+
 ## v3.1
 
 - Corregido el error al reordenar ejercicios arrastrando en Hoy: los chips de bloque rápido estaban dentro de la zona arrastrable y descuadraban los índices, corrompiendo la lista. Ahora están fuera y el reordenado es estable
