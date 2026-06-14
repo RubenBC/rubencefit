@@ -1842,22 +1842,31 @@ function updateStats() {
         } else { tempDesc++; if (tempDesc > 2) { tempRacha = 0; tempDesc = 0; } }
         histCheck.setDate(histCheck.getDate() + 1);
     }
+    // Semana real: lunes a domingo (resetea el lunes a las 00:00)
+    const diaSemHoy = today.getDay() === 0 ? 6 : today.getDay() - 1; // 0=lun
+    const lunesEsta = new Date(today); lunesEsta.setDate(today.getDate() - diaSemHoy); lunesEsta.setHours(0,0,0,0);
+    const lunesPrev = new Date(lunesEsta); lunesPrev.setDate(lunesEsta.getDate() - 7);
     const last7 = [], prev7 = [];
-    for (let i=0;i<7;i++){const d=new Date(today);d.setDate(today.getDate()-i);last7.push(d.toLocaleDateString());}
-    for (let i=7;i<14;i++){const d=new Date(today);d.setDate(today.getDate()-i);prev7.push(d.toLocaleDateString());}
+    for (let i=0;i<7;i++){const d=new Date(lunesEsta);d.setDate(lunesEsta.getDate()+i);last7.push(d.toLocaleDateString());}
+    for (let i=0;i<7;i++){const d=new Date(lunesPrev);d.setDate(lunesPrev.getDate()+i);prev7.push(d.toLocaleDateString());}
     const sesSemana = state.historial.filter(h=>last7.includes(h.fecha)).length;
     const sesPrevSemana = state.historial.filter(h=>prev7.includes(h.fecha)).length;
     const descSemana = 7 - sesSemana;
     const diff = sesSemana - sesPrevSemana;
-    const tendenciaIcon = diff>0?'↑':diff<0?'↓':'=';
-    const tendenciaColor = diff>0?'#2E7D32':diff<0?'var(--danger)':'var(--text2)';
-    const tendenciaTexto = diff>0?`+${diff} vs sem. ant.`:diff<0?`${diff} vs sem. ant.`:`igual sem. ant.`;
+    // Tendencia: comparación visual clara
+    const tendenciaIcon = diff>0 ? '↑' : diff<0 ? '↓' : '=';
+    const tendenciaColor = diff>0 ? '#2E7D32' : diff<0 ? 'var(--danger)' : 'var(--text2)';
+    const tendenciaSem = diff>0 ? `${sesSemana} sem · ${sesPrevSemana} ant. (+${diff})` : diff<0 ? `${sesSemana} sem · ${sesPrevSemana} ant. (${diff})` : `${sesSemana} sem · igual que ant.`;
     const thisMonth = [];
     const tmp = new Date(today.getFullYear(),today.getMonth(),1);
     while (tmp<=today){thisMonth.push(tmp.toLocaleDateString());tmp.setDate(tmp.getDate()+1);}
     const getCardioMin = (fechas) => { let min=0; state.historial.filter(h=>fechas.includes(h.fecha)).forEach(s=>{if(s.ejercicios)s.ejercicios.forEach(ex=>{if(ex.group==='Cardio'&&ex.series)min+=parseFloat(ex.series)||0;})}); return Math.round(min); };
     const cardioSemana = getCardioMin(last7);
     const cardioMes = getCardioMin(thisMonth);
+    const CARDIO_OBJETIVO = 160; // min/semana según rutina
+    const cardioProgPct = Math.min(Math.round(cardioSemana / CARDIO_OBJETIVO * 100), 100);
+    const cardioProgColor = cardioProgPct >= 100 ? '#2E7D32' : cardioProgPct >= 60 ? '#E65100' : 'var(--danger)';
+    const cardioProgLabel = cardioProgPct >= 100 ? '✓ Objetivo cumplido' : cardioProgPct >= 60 ? 'En camino' : 'Por debajo';
     let cardioTotal = 0;
     state.historial.forEach(s=>{if(s.ejercicios)s.ejercicios.forEach(ex=>{if(ex.group==='Cardio'&&ex.series)cardioTotal+=parseFloat(ex.series)||0;});});
     cardioTotal = Math.round(cardioTotal);
@@ -1887,6 +1896,45 @@ function updateStats() {
             <span class="myu-group-count" style="color:${col};">${n}</span>
         </div>`;
     }).join('');
+    // Progresión de peso: top 5 ejercicios con más registros de peso
+    const pesoHistorial = {};
+    state.historial.forEach(s => {
+        if (!s.ejercicios) return;
+        s.ejercicios.forEach(ex => {
+            const p = parseFloat(ex.peso);
+            if (!isNaN(p) && p > 0 && ex.group !== 'Cardio') {
+                if (!pesoHistorial[ex.name]) pesoHistorial[ex.name] = [];
+                pesoHistorial[ex.name].push({ fecha: s.fecha, peso: p });
+            }
+        });
+    });
+    // Ordenar entradas por fecha y calcular progresión (primer registro vs último)
+    const progresionEjs = Object.entries(pesoHistorial)
+        .filter(([,arr]) => arr.length >= 2)
+        .map(([nombre, arr]) => {
+            const sorted = arr.sort((a,b) => {
+                const pa = a.fecha.split('/'), pb = b.fecha.split('/');
+                return new Date(pa[2],pa[1]-1,pa[0]) - new Date(pb[2],pb[1]-1,pb[0]);
+            });
+            const primero = sorted[0].peso, ultimo = sorted[sorted.length-1].peso;
+            const diff = parseFloat((ultimo - primero).toFixed(1));
+            return { nombre, primero, ultimo, diff, sesiones: arr.length };
+        })
+        .sort((a,b) => b.sesiones - a.sesiones)
+        .slice(0, 6);
+
+    const progresionHTML = progresionEjs.length === 0
+        ? `<p style="color:var(--text2);font-size:12px;text-align:center;padding:12px 0;">Registra pesos en tus sesiones para ver la progresión</p>`
+        : progresionEjs.map(e => {
+            const color = e.diff > 0 ? '#2E7D32' : e.diff < 0 ? 'var(--danger)' : 'var(--text2)';
+            const arrow = e.diff > 0 ? '↑' : e.diff < 0 ? '↓' : '=';
+            return `<div class="prog-row">
+                <span class="prog-name">${e.nombre}</span>
+                <span class="prog-detail">${e.primero} kg → ${e.ultimo} kg</span>
+                <span class="prog-diff" style="color:${color};">${arrow} ${e.diff > 0 ? '+' : ''}${e.diff} kg</span>
+            </div>`;
+        }).join('');
+
     const LINFATICOS_STAT=['Bomba de tobillo (ankle pumps)','Piernas elevadas en la pared','Bicicleta en el aire','Elevación de talones sentado','Marcha sentado en silla','Círculos de tobillo'];
     let linfCount=0;
     state.historial.filter(h=>last7.includes(h.fecha)).forEach(s=>{if(s.ejercicios)s.ejercicios.forEach(ex=>{if(LINFATICOS_STAT.includes(ex.name))linfCount++;});});
@@ -1910,18 +1958,32 @@ function updateStats() {
             <div class="stat-box stat-tappable" onclick="abrirInfoStat('racha',event)"><span class="stat-label">🔥 Racha actual</span><span class="stat-val">${racha}<small>días</small></span></div>
             <div class="stat-box stat-tappable" onclick="abrirInfoStat('racha_max',event)"><span class="stat-label">🏆 Racha máxima</span><span class="stat-val">${maxRacha}<small>días</small></span></div>
             <div class="stat-box stat-tappable" onclick="abrirInfoStat('descansos',event)"><span class="stat-label">😴 Descansos semana</span><span class="stat-val">${descSemana}<small>días</small></span></div>
-            <div class="stat-box stat-tappable" onclick="abrirInfoStat('tendencia',event)"><span class="stat-label">📈 Tendencia semanal</span><span class="stat-val" style="font-size:13px;color:${tendenciaColor};">${tendenciaIcon} ${sesSemana}ses<small style="color:${tendenciaColor};">${tendenciaTexto}</small></span></div>
+            <div class="stat-box stat-tappable" onclick="abrirInfoStat('tendencia',event)" style="grid-column:1/span 2;"><span class="stat-label">📈 Tendencia semanal</span><div style="display:flex;align-items:center;gap:8px;margin-top:6px;"><span style="font-size:28px;font-weight:900;color:${tendenciaColor};">${tendenciaIcon}</span><span style="font-size:13px;color:${tendenciaColor};font-weight:600;line-height:1.4;">${tendenciaSem}</span></div></div>
             <div class="stat-box stat-tappable" onclick="abrirInfoStat('dias_descanso',event)" style="grid-column:1/span 2;"><span class="stat-label">⏱ Último entreno</span><span class="stat-val" style="color:${diasColor};">${diasDescanso}<small>días</small></span></div>
         `) +
-        card('cardio', '🚴 Cardio y drenaje', `${cardioSemana} min/sem · ${linfCount} linf.`, `
-            <div class="stat-box stat-tappable" onclick="abrirInfoStat('cardio_semana',event)"><span class="stat-label">🚴 Cardio semana</span><span class="stat-val">${cardioSemana}<small>min</small></span></div>
+        card('cardio', '🚴 Cardio y drenaje', `${cardioSemana}/${CARDIO_OBJETIVO} min sem.`, `
+            <div class="stat-box" style="grid-column:1/span 2;">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+                    <span class="stat-label" style="margin:0;">🚴 Objetivo semanal</span>
+                    <span style="font-size:13px;font-weight:700;color:${cardioProgColor};">${cardioSemana} / ${CARDIO_OBJETIVO} min · ${cardioProgPct}%</span>
+                </div>
+                <div style="background:var(--surface2);border-radius:6px;height:10px;overflow:hidden;">
+                    <div style="height:100%;width:${cardioProgPct}%;background:${cardioProgColor};border-radius:6px;transition:width 0.4s;"></div>
+                </div>
+                <div style="text-align:right;font-size:11px;color:${cardioProgColor};font-weight:600;margin-top:4px;">${cardioProgLabel}</div>
+            </div>
             <div class="stat-box stat-tappable" onclick="abrirInfoStat('cardio_mes',event)"><span class="stat-label">🚴 Cardio mes</span><span class="stat-val">${cardioMes}<small>min</small></span></div>
             <div class="stat-box stat-tappable" onclick="abrirInfoStat('cardio_total',event)"><span class="stat-label">🚴 Cardio total</span><span class="stat-val">${cardioTotal}<small>min</small></span></div>
             <div class="stat-box stat-tappable" onclick="abrirInfoStat('linfaticos_semana',event)"><span class="stat-label">🦵 Linfáticos semana <span class="stat-info-hint" style="color:${linfColor};">${linfLabel}</span></span><span class="stat-val">${linfCount}<small>ej.</small></span></div>
         `) +
-        card('grupos', '📊 Sesiones por grupo', '30 días', `
-            <div class="stat-box stat-full stat-tappable" onclick="abrirInfoStat('grupos_mes',event)" style="grid-column:1/span 2;">
-                <div class="myu-groups-container">${gruposBars}</div>
+        card('progresion', '📈 Progresión de peso', `${progresionEjs.length} ejercicios`, `
+            <div style="grid-column:1/span 2;">
+                ${progresionHTML}
+            </div>
+        `) +
+        card('grupos', '📊 Sesiones por grupo — 30 días', '30 días', `
+            <div style="grid-column:1/span 2;padding:4px 0;">
+                <div class="myu-groups-container myu-groups-large">${gruposBars}</div>
             </div>
         `);
 }
