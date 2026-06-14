@@ -4,6 +4,30 @@ Aplicación personal de entrenamiento. A partir de la v1.0 sale de fase beta.
 
 ---
 
+## v3.2 — Revisión de calidad + fix modal sync
+
+- Corregido: modal de sincronización aparecía por debajo del sheet de Ajustes (z-index)
+- Revisión minuciosa de toda la app. Bugs adicionales encontrados y corregidos:
+  - SW y splash desincronizados (v3.3 vs v3.2) — unificados
+  - Al guardar sesión, openExMenu y expandedDone no se reseteaban, podían quedar sucios para la próxima sesión
+  - exInfoModal y editExModal con z-index:9000 podían quedar bajo otros modales (elevados a 99999)
+  - IDs fantasma (generarSemanaModal, statInfoModal) en la lista del botón atrás sin existir en el HTML
+
+---
+
+## v3.2
+
+- Corregido: el modal de sincronización aparecía por debajo del sheet de Ajustes al pulsar el botón de nube desde ahí. Ahora se cierra Ajustes y el modal de sync aparece encima correctamente
+
+---
+
+## v3.3
+
+- Al pulsar sincronizar en la nube desde Ajustes, ahora se cierra la hoja de Ajustes y se muestra el modal de sincronización (antes quedaba detrás)
+- Corregido el botón atrás de Android: la lista de modales estaba desactualizada (id antiguo intensidadModal y faltaban varios modales nuevos), así que atrás ahora cierra correctamente cualquier modal abierto
+
+---
+
 ## v3.2
 
 - La pestaña Hoy muestra el tiempo estimado de la sesión bajo la barra de progreso, calculado por lo alto según los ejercicios presentes y actualizado al añadir o quitar
