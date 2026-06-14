@@ -4,6 +4,16 @@ Aplicación personal de entrenamiento. A partir de la v1.0 sale de fase beta.
 
 ---
 
+## v3.3
+
+- Semana estadística ahora es lunes a domingo real (se resetea el lunes a las 00:00, no los últimos 7 días móviles)
+- Nueva tarjeta Progresión de peso: muestra los ejercicios con más historial de peso registrado, comparando el primer valor con el último
+- Barra de progreso de cardio semanal vs objetivo (160 min/semana) con porcentaje y estado
+- Tendencia semanal rediseñada: flecha grande + comparativa numérica clara (X esta semana · Y anterior)
+- Barras de sesiones por grupo más grandes: texto 13px y números en 16px negrilla
+
+---
+
 ## v3.2 — Revisión de calidad + fix modal sync
 
 - Corregido: modal de sincronización aparecía por debajo del sheet de Ajustes (z-index)
