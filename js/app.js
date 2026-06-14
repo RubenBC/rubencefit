@@ -1316,7 +1316,7 @@ function limpiarPlantillas() { pedirConfirmacion("¿Borrar todas las rutinas gua
 function compartirBackup() {
     const datos = {
         backupVersion: BACKUP_VERSION,
-        appVersion: 'IronLog',
+        appVersion: 'Rubencefit',
         fecha: new Date().toLocaleDateString(),
         hora: new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}),
         state: state
@@ -1325,7 +1325,7 @@ function compartirBackup() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `ironlog-backup-${new Date().toLocaleDateString().replace(/\//g,'-')}.json`;
+    a.download = `rubencefit-backup-${new Date().toLocaleDateString().replace(/\//g,'-')}.json`;
     a.click();
     URL.revokeObjectURL(url);
 }
@@ -1473,7 +1473,7 @@ function toggleDarkMode() {
 function exportarDatos() {
     const datos = {
         backupVersion: BACKUP_VERSION,
-        appVersion: 'IronLog',
+        appVersion: 'Rubencefit',
         fecha: new Date().toLocaleDateString(),
         hora: new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}),
         state: state
@@ -1482,7 +1482,7 @@ function exportarDatos() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `ironlog-backup-${new Date().toLocaleDateString().replace(/\//g,'-')}.json`;
+    a.download = `rubencefit-backup-${new Date().toLocaleDateString().replace(/\//g,'-')}.json`;
     a.click();
     URL.revokeObjectURL(url);
     showToast('✓ Backup exportado');
@@ -1743,8 +1743,8 @@ const STAT_INFO = {
     },
     racha: {
         titulo: "Racha Actual 🔥",
-        desc: "Días entrenados en tu racha activa. Se permiten hasta 2 días de descanso consecutivos sin romperla, adaptado a tu rutina con martes y jueves libres.",
-        consejo: "Con tu programación de 5 días semanales, una racha saludable es de 10-20 días. No la fuerces si el cuerpo pide descanso."
+        desc: "Días entrenados en tu racha activa. Se permiten hasta 2 días de descanso consecutivos sin romperla.",
+        consejo: "Con tu programación de 6 días semanales, una racha saludable es de 10-25 días. No la fuerces si el cuerpo pide descanso."
     },
     racha_max: {
         titulo: "Racha Máxima 🏆",
@@ -1754,27 +1754,27 @@ const STAT_INFO = {
     ses_semana: {
         titulo: "Sesiones Esta Semana 📅",
         desc: "Entrenamientos registrados en los últimos 7 días.",
-        consejo: "Con tu rutina habitual el ideal son 5 sesiones. 3-4 es un buen resultado si la semana laboral fue intensa."
+        consejo: "Con tu rutina habitual el ideal son 6 sesiones (descanso el domingo). 4-5 es un buen resultado si la semana laboral fue intensa."
     },
     descansos: {
         titulo: "Días de Descanso Esta Semana 😴",
         desc: "Días sin entreno en los últimos 7 días (7 menos las sesiones de la semana).",
-        consejo: "2 días es lo planificado. Si ves 3 o más, se perdió algún día de entrenamiento. Si ves 0-1, valora si estás descansando suficiente para tu recuperación linfática."
+        consejo: "1 día de descanso (domingo) es lo planificado. Si ves 3 o más, se perdió algún día. Si ves 0, valora si descansas suficiente para tu recuperación."
     },
     cardio_semana: {
         titulo: "Cardio Esta Semana 🚴",
         desc: "Minutos registrados en ejercicios de Cardio durante los últimos 7 días.",
-        consejo: "Para tu condición linfática el cardio de bajo impacto es especialmente beneficioso. Se recomiendan al menos 30-60 min semanales para favorecer el retorno venoso."
+        consejo: "Para tu condición (SAF y linfedema) el cardio de bajo impacto es de lo más beneficioso: mejora el retorno venoso y reduce el riesgo trombótico. Tu objetivo es 160 min semanales repartidos a diario."
     },
     cardio_mes: {
         titulo: "Cardio Este Mes 🚴",
         desc: "Total de minutos de cardio acumulados desde el día 1 del mes en curso.",
-        consejo: "Un objetivo razonable para tu perfil es 120-180 min mensuales. Más tiempo a baja intensidad siempre es mejor que poco tiempo a alta intensidad."
+        consejo: "Con tu objetivo de 160 min semanales, un mes ronda los 600-700 min. Más tiempo a baja intensidad siempre es mejor que poco tiempo a alta intensidad."
     },
     ses_mes: {
         titulo: "Sesiones Este Mes 📆",
         desc: "Entrenamientos completados desde el día 1 del mes actual.",
-        consejo: "Entrenando 5 días por semana, un mes completo debería sumar unas 20-22 sesiones. Entre 15 y 20 es un resultado muy sólido."
+        consejo: "Entrenando 6 días por semana, un mes completo debería sumar unas 24-26 sesiones. Entre 18 y 24 es un resultado muy sólido."
     },
     semanas_activas: {
         titulo: "Semanas Activas 📆",
@@ -1784,7 +1784,7 @@ const STAT_INFO = {
     distribucion: {
         titulo: "Distribución por Tipo",
         desc: "Porcentaje de ejercicios Básicos (B), Aislamiento (A) y Salud (S) sobre el total de tu historial.",
-        consejo: "Para tu perfil, un reparto equilibrado sería B 40% · A 30% · S 30%. Un porcentaje de Salud bajo indica que estás priorizando músculo sobre movilidad y circulación, lo cual puede afectar tu condición linfática."
+        consejo: "Para tu perfil, un reparto equilibrado sería B 40% · A 30% · S 30%. Un porcentaje de S (estiramientos y drenaje) bajo indica que estás priorizando músculo sobre movilidad y circulación, lo cual puede afectar tu condición linfática."
     },
     top_grupo: {
         titulo: "Grupo Muscular Top",
@@ -1798,8 +1798,8 @@ const STAT_INFO = {
     },
     salud_sesion: {
         titulo: "Salud por Sesión 🛡️",
-        desc: "Media de ejercicios de tipo Salud en tus últimas 10 sesiones.",
-        consejo: "Para tu condición linfática y hormonal se recomiendan al menos 2 ejercicios de Salud por sesión: uno de movilidad y uno de activación circulatoria. Si este número es inferior a 2, añade más ejercicios tipo S a tu rutina."
+        desc: "Media de ejercicios de tipo S (estiramientos y drenaje) en tus últimas 10 sesiones.",
+        consejo: "Para tu condición linfática y hormonal se recomiendan al menos 2 ejercicios de tipo S por sesión: uno de movilidad y uno de activación circulatoria. Si es inferior a 2, añade más estiramientos o drenaje a tu rutina."
     },
     mas_descuidado: {
         titulo: "Grupo Más Descuidado ⚠️",
@@ -1849,8 +1849,11 @@ function updateStats() {
     const last7 = [], prev7 = [];
     for (let i=0;i<7;i++){const d=new Date(lunesEsta);d.setDate(lunesEsta.getDate()+i);last7.push(d.toLocaleDateString());}
     for (let i=0;i<7;i++){const d=new Date(lunesPrev);d.setDate(lunesPrev.getDate()+i);prev7.push(d.toLocaleDateString());}
-    const sesSemana = state.historial.filter(h=>last7.includes(h.fecha)).length;
-    const sesPrevSemana = state.historial.filter(h=>prev7.includes(h.fecha)).length;
+    // Contar DÍAS únicos entrenados (no entradas — un día puede tener varias sesiones)
+    const diasSemana = new Set(state.historial.filter(h=>last7.includes(h.fecha)).map(h=>h.fecha)).size;
+    const diasPrevSemana = new Set(state.historial.filter(h=>prev7.includes(h.fecha)).map(h=>h.fecha)).size;
+    const sesSemana = diasSemana;
+    const sesPrevSemana = diasPrevSemana;
     const descSemana = 7 - sesSemana;
     const diff = sesSemana - sesPrevSemana;
     // Tendencia: comparación visual clara
