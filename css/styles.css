@@ -2433,3 +2433,53 @@ body.dark-mode .day-badge-done { background: #0a1f0a; color: #81C784; }
     font-weight: 600;
     margin-top: 6px;
 }
+
+/* =========================================================
+   v3.3 — ESTADÍSTICAS: PROGRESIÓN, CARDIO, GRUPOS GRANDES
+========================================================= */
+/* Progresión de peso */
+.prog-row {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 0;
+    border-bottom: 1px solid var(--outline);
+}
+.prog-row:last-child { border-bottom: none; }
+.prog-name {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.prog-detail {
+    font-size: 11px;
+    color: var(--text2);
+    white-space: nowrap;
+}
+.prog-diff {
+    font-size: 12px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+/* Grupos más grandes */
+.myu-groups-large .myu-group-row {
+    padding: 7px 0;
+    gap: 10px;
+}
+.myu-groups-large .myu-group-name {
+    font-size: 13px;
+    font-weight: 600;
+}
+.myu-groups-large .myu-group-track {
+    height: 12px;
+}
+.myu-groups-large .myu-group-count {
+    font-size: 16px;
+    font-weight: 800;
+    min-width: 22px;
+}
