@@ -239,13 +239,15 @@ function updateSessionProgress() {
             <button class="session-complete-btn" onclick="finalizarSesion()">Guardar →</button>
         </div>`;
     } else {
+        const minTotal = getEstimatedDuration(state.hoy);
         el.innerHTML = `
         <div class="session-progress-wrap">
             <div class="session-progress-bar-bg">
                 <div class="session-progress-bar-fill" style="width:${pct}%"></div>
             </div>
             <span class="session-progress-text">${done} / ${total}</span>
-        </div>`;
+        </div>
+        <div class="session-time-est">⏱ ~${minTotal} min estimados</div>`;
     }
 }
 
