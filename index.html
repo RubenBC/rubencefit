@@ -24,7 +24,7 @@
         <p class="splash-by">Diseñada y desarrollada por</p>
         <p class="splash-author">Rubén Bejarano Checa</p>
         <p class="splash-ai">Creada con asistencia de inteligencia artificial</p>
-        <p class="splash-version">v3.5</p>
+        <p class="splash-version">v3.6</p>
     </div>
 </div>
 
@@ -404,15 +404,30 @@
                 <span class="material-symbols-outlined">dark_mode</span>
                 <span>Modo oscuro</span>
             </button>
+
+            <div class="ajustes-sep">Copia completa (rutina + progresos · nube)</div>
             <button class="ajustes-item" onclick="exportarDatos()">
                 <span class="material-symbols-outlined">upload</span>
-                <span>Exportar backup (JSON)</span>
+                <span>Exportar backup completo</span>
             </button>
             <label class="ajustes-item">
                 <span class="material-symbols-outlined">download</span>
-                <span>Importar backup</span>
+                <span>Importar backup completo</span>
                 <input type="file" accept=".json" onchange="importarDatos(event)" style="display:none;">
             </label>
+
+            <div class="ajustes-sep">Solo rutina semanal (local)</div>
+            <button class="ajustes-item" onclick="exportarRutina()">
+                <span class="material-symbols-outlined">event_upcoming</span>
+                <span>Exportar rutina</span>
+            </button>
+            <label class="ajustes-item">
+                <span class="material-symbols-outlined">calendar_add_on</span>
+                <span>Importar rutina (no toca progresos)</span>
+                <input type="file" accept=".json" onchange="importarRutina(event)" style="display:none;">
+            </label>
+
+            <div class="ajustes-sep"></div>
             <button class="ajustes-item ajustes-danger" onclick="borrarTodoHistorial()">
                 <span class="material-symbols-outlined">delete_forever</span>
                 <span>Borrar todo el historial</span>

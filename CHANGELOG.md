@@ -4,6 +4,17 @@ Aplicación personal de entrenamiento. A partir de la v1.0 sale de fase beta.
 
 ---
 
+## v3.6 — Importar/exportar rutina por separado
+
+- El menú de Ajustes separa ahora dos tipos de copia:
+  - Copia completa (rutina + progresos): se exporta/importa entera y sigue sincronizándose con la nube, como hasta ahora
+  - Solo rutina semanal: exporta/importa únicamente la planificación (días, ejercicios y tus ejercicios personalizados), guardada solo en local
+- Importar una rutina NO toca tu historial ni tus progresos: solo reemplaza la planificación semanal
+- Al importar rutina, los ejercicios personalizados se fusionan sin perder los que ya tuvieras
+- También se puede importar la rutina desde un backup completo (extrae solo la parte de planificación)
+
+---
+
 ## v3.5 — Auditoría completa
 
 Revisión técnica exhaustiva (código, textos, contenido de fitness). Correcciones:
