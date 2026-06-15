@@ -1488,6 +1488,74 @@ function exportarDatos() {
     showToast('✓ Backup exportado');
 }
 
+// ── Exportar/Importar SOLO la rutina semanal (local, sin tocar historial ni nube) ──
+function exportarRutina() {
+    const rutina = {
+        rutinaVersion: 1,
+        appVersion: 'Rubencefit',
+        tipo: 'rutina',
+        fecha: new Date().toLocaleDateString(),
+        hora: new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}),
+        plantillaSemanal: state.plantillaSemanal || {},
+        semana: state.semana || {},
+        ejerciciosCustom: state.ejerciciosCustom || {},
+        ejerciciosEditados: state.ejerciciosEditados || {}
+    };
+    const blob = new Blob([JSON.stringify(rutina, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `rubencefit-rutina-${new Date().toLocaleDateString().replace(/\//g,'-')}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+    showToast('✓ Rutina exportada');
+}
+
+function importarRutina(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        try {
+            const datos = JSON.parse(e.target.result);
+            // Aceptar archivos de rutina, o extraer la rutina de un backup completo
+            const esRutina = datos.tipo === 'rutina' || datos.rutinaVersion !== undefined;
+            const esBackup = datos.state && datos.state.plantillaSemanal;
+            if (!esRutina && !esBackup) throw new Error('No es un archivo de rutina válido');
+
+            const fuente = esRutina ? datos : datos.state;
+            const nDias = Object.values(fuente.plantillaSemanal || {}).filter(d => d && d.length).length;
+            const fechaInfo = datos.fecha ? `del ${datos.fecha}` : '';
+
+            pedirConfirmacion(`¿Cargar esta rutina ${fechaInfo}? Tiene ${nDias} días planificados. Tu historial y progresos NO se tocan, solo se reemplaza la planificación semanal.`, () => {
+                state.plantillaSemanal = fuente.plantillaSemanal || {};
+                state.semana = fuente.semana || {};
+                // Fusionar ejercicios custom (no perder los que ya tienes)
+                const customNuevo = fuente.ejerciciosCustom || {};
+                if (!state.ejerciciosCustom) state.ejerciciosCustom = {};
+                Object.keys(customNuevo).forEach(grupo => {
+                    if (!state.ejerciciosCustom[grupo]) state.ejerciciosCustom[grupo] = [];
+                    customNuevo[grupo].forEach(ex => {
+                        if (!state.ejerciciosCustom[grupo].find(e => (e.name||e.n) === (ex.name||ex.n))) {
+                            state.ejerciciosCustom[grupo].push(ex);
+                        }
+                    });
+                });
+                if (fuente.ejerciciosEditados) {
+                    state.ejerciciosEditados = {...(state.ejerciciosEditados||{}), ...fuente.ejerciciosEditados};
+                }
+                save();
+                showPage('semanaPage');
+                showToast(`✓ Rutina cargada (${nDias} días)`);
+            }, 'Cargar rutina');
+        } catch(err) {
+            showToast('❌ Archivo de rutina no válido');
+        }
+        event.target.value = '';
+    };
+    reader.readAsText(file);
+}
+
 function importarDatos(event) {
     const file = event.target.files[0];
     if (!file) return;
