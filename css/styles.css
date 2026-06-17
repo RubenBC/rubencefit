@@ -2501,3 +2501,60 @@ body.dark-mode .day-badge-done { background: #0a1f0a; color: #81C784; }
     padding: 0;
     margin-top: 8px;
 }
+
+/* =========================================================
+   v4.0 — MODO CÍCLICO
+========================================================= */
+.ciclo-toca {
+    background: var(--primary-light);
+    border: 1px solid var(--primary);
+    border-radius: 14px;
+    padding: 16px;
+    margin-bottom: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    text-align: center;
+}
+.ciclo-toca-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--primary);
+    font-weight: 700;
+}
+.ciclo-toca-nombre {
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--text);
+}
+.ciclo-toca-detalle {
+    font-size: 12px;
+    color: var(--text2);
+}
+.selector-sesion-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--outline);
+    border-radius: 12px;
+    padding: 14px;
+    cursor: pointer;
+    text-align: left;
+}
+.selector-sesion-item.actual {
+    border-color: var(--primary);
+    background: var(--primary-light);
+}
+.selector-sesion-letra {
+    font-size: 22px;
+    font-weight: 900;
+    color: var(--primary);
+    min-width: 34px;
+    text-align: center;
+}
+.selector-sesion-info { display: flex; flex-direction: column; }
+.selector-sesion-nombre { font-size: 15px; font-weight: 700; color: var(--text); }
+.selector-sesion-detalle { font-size: 12px; color: var(--text2); }
