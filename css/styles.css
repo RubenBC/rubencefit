@@ -2626,3 +2626,92 @@ body.dark-mode .day-badge-done { background: #0a1f0a; color: #81C784; }
     margin-top: 2px;
 }
 .ciclo-toca-grupos { display:block; text-align:center; }
+
+/* =========================================================
+   v4.3 — PROGRESO DEL CICLO EN HOY + DESCANSO RÁPIDO
+========================================================= */
+.ciclo-progreso {
+    background: var(--primary-light);
+    border-radius: 12px;
+    padding: 10px 12px;
+    margin-bottom: 10px;
+}
+.ciclo-progreso.libre { text-align: center; }
+.ciclo-progreso-label {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--primary);
+    display: block;
+    margin-bottom: 8px;
+}
+.ciclo-progreso.libre .ciclo-progreso-label { margin-bottom: 0; }
+.ciclo-puntos {
+    display: flex;
+    gap: 6px;
+}
+.ciclo-punto {
+    flex: 1;
+    text-align: center;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 5px 0;
+    border-radius: 8px;
+    background: var(--surface2);
+    color: var(--text2);
+    border: 1px solid var(--outline);
+}
+.ciclo-punto.activo {
+    background: var(--primary);
+    color: #fff;
+    border-color: var(--primary);
+}
+.marca-anterior {
+    font-size: 11px;
+    color: var(--text2);
+    margin-bottom: 6px;
+}
+
+/* =========================================================
+   v4.4 — AVISOS DEL CICLO (periodización, deload, equilibrio)
+========================================================= */
+.ciclo-aviso {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 14px;
+    border-radius: 12px;
+    margin-bottom: 10px;
+    font-size: 13px;
+    line-height: 1.4;
+}
+.ciclo-aviso .material-symbols-outlined { font-size: 22px; flex-shrink: 0; }
+.ciclo-aviso-texto { flex: 1; }
+.ciclo-aviso-btn {
+    background: var(--primary);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 14px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+.aviso-bloque {
+    background: rgba(124, 92, 255, 0.12);
+    border: 1px solid var(--primary);
+    color: var(--text);
+}
+.aviso-bloque .material-symbols-outlined { color: var(--primary); }
+.aviso-deload {
+    background: rgba(230, 81, 0, 0.10);
+    border: 1px solid #E65100;
+    color: var(--text);
+}
+.aviso-deload .material-symbols-outlined { color: #E65100; }
+.aviso-equilibrio {
+    background: rgba(67, 160, 71, 0.10);
+    border: 1px solid #43A047;
+    color: var(--text);
+}
+.aviso-equilibrio .material-symbols-outlined { color: #43A047; }
