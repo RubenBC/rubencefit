@@ -2558,3 +2558,62 @@ body.dark-mode .day-badge-done { background: #0a1f0a; color: #81C784; }
 .selector-sesion-info { display: flex; flex-direction: column; }
 .selector-sesion-nombre { font-size: 15px; font-weight: 700; color: var(--text); }
 .selector-sesion-detalle { font-size: 12px; color: var(--text2); }
+
+/* =========================================================
+   v4.0 Fase 2 — PANTALLA CICLO
+========================================================= */
+.ciclo-vacio { text-align:center; padding:30px 10px; color:var(--text2); display:flex; flex-direction:column; gap:14px; }
+.ciclo-info-card {
+    background: var(--primary-light);
+    border: 1px solid var(--primary);
+    border-radius: 14px;
+    padding: 14px 16px;
+    margin-bottom: 16px;
+}
+.ciclo-info-row { display:flex; justify-content:space-between; align-items:center; font-size:14px; margin-bottom:4px; }
+.ciclo-info-row span { color:var(--text2); }
+.ciclo-info-row b { color:var(--text); }
+.ciclo-info-hint { font-size:11px; color:var(--text2); margin-top:6px; line-height:1.4; }
+
+.ciclo-sesion-card {
+    background: var(--surface);
+    border: 1px solid var(--outline);
+    border-radius: 14px;
+    margin-bottom: 10px;
+    overflow: hidden;
+}
+.ciclo-sesion-card.actual { border-color: var(--primary); border-width: 2px; }
+.ciclo-sesion-head { display:flex; align-items:center; gap:12px; padding:14px; cursor:pointer; }
+.ciclo-sesion-letra {
+    font-size: 24px; font-weight: 900; color: var(--primary);
+    min-width: 36px; text-align: center;
+}
+.ciclo-sesion-titulo { flex:1; display:flex; flex-direction:column; }
+.ciclo-sesion-nombre { font-size:16px; font-weight:700; color:var(--text); }
+.ciclo-sesion-sub { font-size:12px; color:var(--text2); }
+.ciclo-chevron { color:var(--text2); }
+.ciclo-sesion-body { padding: 0 14px 14px; }
+.ciclo-sesion-acciones { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:12px; }
+.ciclo-sesion-acciones button {
+    display:flex; align-items:center; gap:4px;
+    background: var(--surface2); border:1px solid var(--outline);
+    border-radius:8px; padding:7px 10px; font-size:12px; color:var(--text); cursor:pointer;
+}
+.ciclo-sesion-acciones button:disabled { opacity:0.4; }
+.ciclo-sesion-acciones button .material-symbols-outlined { font-size:15px; }
+.ciclo-accion-danger { color:var(--danger) !important; }
+.ciclo-ejercicios { display:flex; flex-direction:column; gap:4px; margin-bottom:10px; }
+.ciclo-ej-row {
+    display:flex; align-items:center; gap:8px;
+    padding:8px 10px; background:var(--surface2); border-radius:8px;
+}
+.ciclo-ej-tag { font-size:13px; }
+.ciclo-ej-nombre { flex:1; font-size:13px; color:var(--text); }
+.ciclo-ej-rec { font-size:11px; color:var(--text2); }
+.ciclo-ej-del { background:none; border:none; color:var(--text2); cursor:pointer; padding:2px; display:flex; }
+.ciclo-ej-del .material-symbols-outlined { font-size:16px; }
+.ciclo-add-ej {
+    width:100%; display:flex; align-items:center; justify-content:center; gap:6px;
+    background:var(--surface2); border:1.5px dashed var(--outline); color:var(--primary);
+    border-radius:10px; padding:10px; font-size:13px; font-weight:600; cursor:pointer;
+}
