@@ -4,6 +4,12 @@ Aplicación personal de entrenamiento. A partir de la v1.0 sale de fase beta.
 
 ---
 
+## v4.2
+
+- Cada sesión del ciclo muestra ahora los grupos musculares que trabaja (ej. "Espalda · Bíceps · Piernas"), además de su nombre. Visible en la pantalla Ciclo, en Hoy y en el selector de sesión
+
+---
+
 ## v4.1 (Fase 2) — Pantalla Ciclo
 
 La antigua pestaña Semana es ahora "Mi Ciclo", el gestor de tus sesiones A, B, C, D...
