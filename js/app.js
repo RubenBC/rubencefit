@@ -311,7 +311,7 @@ function showPage(id, btn, slideDir) {
     updateStopwatchVisibility();
     if(id === 'rutinaPage') { if(bibliotecaDia === 'hoy') {} renderGroups(); }
     if(id === 'hoyPage') renderToday();
-    if(id === 'semanaPage') renderWeek();
+    if(id === 'semanaPage') { migrarPlantillaACiclo(); renderCiclo(); }
     if(id === 'historialPage') renderHistory();
 }
 
@@ -598,6 +598,14 @@ function addToDay(name, group, type, tip) {
     const dia = bibliotecaDia;
     const exDb = getEjerciciosDe(group).find(e => (e.n||e.name) === name) || {};
     const nuevo = { name, group, t: type, tip, series: '', reps: '', peso: '', nota: '', done: false, recSeries: exDb.recSeries||'', recReps: exDb.recReps||'' };
+    // Añadir a una sesión del ciclo
+    if (dia === '__ciclo__' && _sesionDestino !== null && state.ciclo.sesiones[_sesionDestino]) {
+        const ses = state.ciclo.sesiones[_sesionDestino];
+        if (ses.ejercicios.find(ex => ex.name === name)) { showToast("Ya está en esta sesión.", "#e74c3c"); return; }
+        ses.ejercicios.push(nuevo);
+        save(); showToast(`✓ Añadido a ${getEtiquetaSesion(_sesionDestino)}`);
+        return;
+    }
     // Si el día seleccionado es HOY, va directo a la sesión activa
     if (dia === getHoyNombre()) {
         if (state.hoy.find(ex => ex.name === name)) { showToast("Ya está en la sesión de hoy.", "#e74c3c"); return; }
@@ -731,6 +739,28 @@ function confirmarOk() {
 function confirmarCancelar() {
     document.getElementById('confirmModal').style.display = 'none';
     _confirmCallback = null;
+}
+
+// Modal de entrada de texto (para nombrar/renombrar sesiones)
+let _textoCallback = null;
+function pedirTextoModal(titulo, placeholder, valorInicial, onOk) {
+    _textoCallback = onOk;
+    document.getElementById('textoModalTitulo').innerText = titulo;
+    const input = document.getElementById('textoModalInput');
+    input.placeholder = placeholder || '';
+    input.value = valorInicial || '';
+    document.getElementById('textoModal').style.display = 'flex';
+    setTimeout(() => input.focus(), 100);
+}
+function confirmarTexto() {
+    const val = document.getElementById('textoModalInput').value;
+    document.getElementById('textoModal').style.display = 'none';
+    const cb = _textoCallback; _textoCallback = null;
+    if (cb) cb(val);
+}
+function cancelarTexto() {
+    document.getElementById('textoModal').style.display = 'none';
+    _textoCallback = null;
 }
 
 function generarHoyDirecto() {
@@ -1028,6 +1058,160 @@ function toggleDiaSemana(dia) {
     if (diasAbiertosSemana.has(dia)) diasAbiertosSemana.delete(dia);
     else diasAbiertosSemana.add(dia);
     renderWeek();
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// PANTALLA CICLO (Fase 2) — gestionar las sesiones A, B, C, D...
+// ══════════════════════════════════════════════════════════════════════════════
+let cicloSesionAbierta = null;
+
+function renderCiclo() {
+    const cont = document.getElementById('cicloPlanner');
+    if (!cont) return;
+    const c = state.ciclo;
+    if (!c || !c.sesiones.length) {
+        cont.innerHTML = `
+            <div class="ciclo-vacio">
+                <p>Tu ciclo está vacío. Crea tu primera sesión para empezar.</p>
+                <button class="hoy-empty-btn hoy-empty-primary" onclick="anadirSesionCiclo()">
+                    <span class="material-symbols-outlined">add</span>
+                    <span>Crear primera sesión</span>
+                </button>
+            </div>`;
+        return;
+    }
+
+    // Cabecera con bloque actual y posición
+    const bloqueLabel = c.bloque === 'fuerza' ? '💪 Fuerza' : '🏋️ Hipertrofia';
+    let html = `
+        <div class="ciclo-info-card">
+            <div class="ciclo-info-row">
+                <span>Bloque actual</span>
+                <b>${bloqueLabel}</b>
+            </div>
+            <div class="ciclo-info-row">
+                <span>Toca ahora</span>
+                <b>${getEtiquetaSesion(c.posicion)} · ${c.sesiones[c.posicion] ? c.sesiones[c.posicion].nombre : '—'}</b>
+            </div>
+            <div class="ciclo-info-hint">El ciclo avanza solo cuando completas una sesión. ${c.sesiones.length} sesiones en tu secuencia.</div>
+        </div>`;
+
+    // Lista de sesiones
+    html += '<div id="cicloSesionesList">';
+    c.sesiones.forEach((s, i) => {
+        const esActual = i === c.posicion;
+        const abierta = cicloSesionAbierta === i;
+        html += `
+        <div class="ciclo-sesion-card ${esActual ? 'actual' : ''}">
+            <div class="ciclo-sesion-head" onclick="toggleSesionCiclo(${i})">
+                <span class="ciclo-sesion-letra">${getEtiquetaSesion(i)}</span>
+                <div class="ciclo-sesion-titulo">
+                    <span class="ciclo-sesion-nombre">${s.nombre}</span>
+                    <span class="ciclo-sesion-sub">${s.ejercicios.length} ejercicios${esActual ? ' · toca ahora' : ''}</span>
+                </div>
+                <span class="material-symbols-outlined ciclo-chevron">${abierta ? 'expand_less' : 'expand_more'}</span>
+            </div>
+            ${abierta ? `
+            <div class="ciclo-sesion-body">
+                <div class="ciclo-sesion-acciones">
+                    <button onclick="renombrarSesionCiclo(${i})"><span class="material-symbols-outlined">edit</span> Renombrar</button>
+                    <button onclick="fijarPosicionCiclo(${i})" ${esActual ? 'disabled' : ''}><span class="material-symbols-outlined">flag</span> Marcar como actual</button>
+                    <button onclick="moverSesion(${i},-1)" ${i===0?'disabled':''}><span class="material-symbols-outlined">arrow_upward</span></button>
+                    <button onclick="moverSesion(${i},1)" ${i===c.sesiones.length-1?'disabled':''}><span class="material-symbols-outlined">arrow_downward</span></button>
+                    <button class="ciclo-accion-danger" onclick="borrarSesionCiclo(${i})"><span class="material-symbols-outlined">delete</span></button>
+                </div>
+                <div class="ciclo-ejercicios">
+                    ${s.ejercicios.map((ex, j) => `
+                        <div class="ciclo-ej-row">
+                            <span class="ciclo-ej-tag tag-${ex.t===T_B?'basico':ex.t===T_A?'aisla':'salud'}">${getIcon(ex.t)}</span>
+                            <span class="ciclo-ej-nombre">${ex.name}</span>
+                            <span class="ciclo-ej-rec">${ex.recReps||''}</span>
+                            <button class="ciclo-ej-del" onclick="quitarEjDeSesion(${i},${j})"><span class="material-symbols-outlined">close</span></button>
+                        </div>`).join('')}
+                </div>
+                <button class="ciclo-add-ej" onclick="anadirEjASesion(${i})">
+                    <span class="material-symbols-outlined">add</span> Añadir ejercicio
+                </button>
+            </div>` : ''}
+        </div>`;
+    });
+    html += '</div>';
+    cont.innerHTML = html;
+}
+
+function toggleSesionCiclo(i) {
+    cicloSesionAbierta = cicloSesionAbierta === i ? null : i;
+    renderCiclo();
+}
+
+function anadirSesionCiclo() {
+    const nombre = '';
+    pedirTextoModal('Nueva sesión', 'Nombre (ej. Empuje, Tirón, Pierna...)', '', (val) => {
+        if (!val || !val.trim()) return;
+        state.ciclo.sesiones.push({
+            id: 'ses_' + Date.now(),
+            nombre: val.trim(),
+            tipo: val.trim(),
+            ejercicios: []
+        });
+        if (!state.ciclo.bloqueInicio) state.ciclo.bloqueInicio = new Date().toLocaleDateString();
+        save();
+        cicloSesionAbierta = state.ciclo.sesiones.length - 1;
+        renderCiclo();
+        showToast('Sesión creada');
+    });
+}
+
+function renombrarSesionCiclo(i) {
+    const s = state.ciclo.sesiones[i];
+    pedirTextoModal('Renombrar sesión', 'Nombre de la sesión', s.nombre, (val) => {
+        if (!val || !val.trim()) return;
+        s.nombre = val.trim(); s.tipo = val.trim();
+        save(); renderCiclo();
+    });
+}
+
+function fijarPosicionCiclo(i) {
+    state.ciclo.posicion = i;
+    save(); renderCiclo();
+    showToast(`${getEtiquetaSesion(i)} marcada como actual`);
+}
+
+function moverSesion(i, dir) {
+    const arr = state.ciclo.sesiones;
+    const j = i + dir;
+    if (j < 0 || j >= arr.length) return;
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+    // Mantener la posición actual apuntando a la misma sesión lógica
+    if (state.ciclo.posicion === i) state.ciclo.posicion = j;
+    else if (state.ciclo.posicion === j) state.ciclo.posicion = i;
+    cicloSesionAbierta = j;
+    save(); renderCiclo();
+}
+
+function borrarSesionCiclo(i) {
+    const s = state.ciclo.sesiones[i];
+    pedirConfirmacion(`¿Borrar la sesión "${s.nombre}" (${getEtiquetaSesion(i)})? No afecta a tu historial.`, () => {
+        state.ciclo.sesiones.splice(i, 1);
+        if (state.ciclo.posicion >= state.ciclo.sesiones.length) state.ciclo.posicion = 0;
+        cicloSesionAbierta = null;
+        save(); renderCiclo();
+        showToast('Sesión borrada');
+    }, 'Borrar');
+}
+
+function quitarEjDeSesion(i, j) {
+    state.ciclo.sesiones[i].ejercicios.splice(j, 1);
+    save(); renderCiclo();
+}
+
+// Para añadir ejercicio: usa la Biblioteca apuntando a esta sesión
+let _sesionDestino = null;
+function anadirEjASesion(i) {
+    _sesionDestino = i;
+    bibliotecaDia = '__ciclo__';
+    showPage('rutinaPage');
+    showToast(`Elige ejercicios para ${getEtiquetaSesion(i)}`);
 }
 
 function renderWeek() {
@@ -2477,7 +2661,7 @@ function onSyncIconPress() {
 }
 
 function handleBackButton() {
-    const modales = ['exInfoModal','editExModal','intensityModal','dayModal','syncModal','finalizarModal','guiaModal','puntosModal','rutinaPreviewModal','ajustesModal','confirmModal'];
+    const modales = ['exInfoModal','editExModal','intensityModal','dayModal','syncModal','finalizarModal','guiaModal','puntosModal','rutinaPreviewModal','ajustesModal','confirmModal','textoModal','selectorSesionModal'];
     for (const id of modales) {
         const el = document.getElementById(id);
         if (el && el.style.display !== 'none' && el.style.display !== '') {
@@ -2536,7 +2720,7 @@ window.addEventListener('popstate', () => {
         if (Math.abs(dx) < 70) return;
         if (Math.abs(dx) < Math.abs(dy) * 1.8) return;
         // No cambiar si hay un modal abierto
-        const modales = ['exInfoModal','editExModal','intensityModal','dayModal','syncModal','finalizarModal','guiaModal','puntosModal','rutinaPreviewModal','ajustesModal','confirmModal'];
+        const modales = ['exInfoModal','editExModal','intensityModal','dayModal','syncModal','finalizarModal','guiaModal','puntosModal','rutinaPreviewModal','ajustesModal','confirmModal','textoModal','selectorSesionModal'];
         for (const id of modales) {
             const m = document.getElementById(id);
             if (m && m.style.display && m.style.display !== 'none') return;
