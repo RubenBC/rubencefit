@@ -315,51 +315,31 @@ function showPage(id, btn, slideDir) {
     if(id === 'historialPage') renderHistory();
 }
 
-function renderDiaSelector() {
-    const row = document.getElementById('diaSelectorRow');
+function renderDestino() {
+    const row = document.getElementById('bibliotecaDestino');
     if (!row) return;
-    const hoy = new Date();
-    const hoyIdx = hoy.getDay() === 0 ? 6 : hoy.getDay() - 1;
-    const hoyKey = DIAS_LOGICA[hoyIdx];
-    const chips = DIAS_LOGICA.map((d, i) => ({ key: d, label: DIAS_DISPLAY[i].slice(0,3) }));
-    row.innerHTML = chips.map(c => {
-        const grupos = state.semana[c.key] || [];
-        const tieneGrupos = grupos.length > 0;
-        const activo = bibliotecaDia === c.key;
-        const esHoy = c.key === hoyKey;
-        return `<div class="dia-chip${activo ? ' dia-chip-active' : ''}${esHoy ? ' dia-chip-today' : ''}${!tieneGrupos ? ' dia-chip-rest' : ''}" onclick="setDia('${c.key}')">
-            <span class="dia-chip-label">${c.label}</span>
-        </div>`;
-    }).join('');
-}
-
-function setDia(dia) {
-    bibliotecaDia = dia;
-    renderGroups();
-    // Refresh exercise list if open
-    const ev = document.getElementById('exerciseView');
-    const gn = document.getElementById('selectedGroupName');
-    if (ev && ev.style.display !== 'none' && gn.innerText) showExercises(gn.innerText);
+    let texto, icono;
+    if (bibliotecaDia === '__ciclo__' && _sesionDestino !== null && state.ciclo.sesiones[_sesionDestino]) {
+        const s = state.ciclo.sesiones[_sesionDestino];
+        icono = 'repeat';
+        texto = `Añadiendo a <b>${getEtiquetaSesion(_sesionDestino)} · ${s.nombre}</b>`;
+    } else {
+        icono = 'fitness_center';
+        texto = 'Añadiendo a <b>la sesión de Hoy</b>';
+    }
+    row.innerHTML = `<span class="material-symbols-outlined">${icono}</span><span>${texto}</span>`;
 }
 
 function getDiaLabel() {
-    if (bibliotecaDia === 'hoy') return 'HOY';
-    return bibliotecaDia.toUpperCase();
-}
-
-function getGruposParaDia() {
-    return state.semana[bibliotecaDia] || [];
+    return bibliotecaDia === '__ciclo__' ? 'CICLO' : 'HOY';
 }
 
 function renderGroups() {
-    renderDiaSelector();
-    const grupos = getGruposParaDia();
+    renderDestino();
     document.getElementById('groupGrid').innerHTML = GRUPOS.map(g => {
-        const enDia = !grupos || grupos.includes(g);
-        return `<div class="group-card${!enDia ? ' group-card-dim' : ''}" onclick="showExercises('${g}')">
+        return `<div class="group-card" onclick="showExercises('${g}')">
             <span class="material-symbols-outlined">${db[g].icon}</span>
             <div style="font-weight:bold;">${g}</div>
-            ${!enDia ? '<div style="font-size:9px; opacity:0.5;">no en este día</div>' : ''}
         </div>`;
     }).join('');
 }
@@ -603,18 +583,10 @@ function addToDay(name, group, type, tip) {
         save(); showToast(`✓ Añadido a ${getEtiquetaSesion(_sesionDestino)}`);
         return;
     }
-    // Si el día seleccionado es HOY, va directo a la sesión activa
-    if (dia === getHoyNombre()) {
-        if (state.hoy.find(ex => ex.name === name)) { showToast("Ya está en la sesión de hoy.", "#e74c3c"); return; }
-        state.hoy.push(nuevo);
-        save(); showToast("¡Añadido a Hoy! ✓");
-    } else {
-        if (!state.plantillaSemanal) state.plantillaSemanal = {};
-        if (!state.plantillaSemanal[dia]) state.plantillaSemanal[dia] = [];
-        if (state.plantillaSemanal[dia].find(e => e.name === name)) { showToast("Ya está en ese día.", "#e74c3c"); return; }
-        state.plantillaSemanal[dia].push(nuevo);
-        save(); showToast(`✓ Añadido al ${dia}`);
-    }
+    // En cualquier otro caso, va a la sesión de Hoy
+    if (state.hoy.find(ex => ex.name === name)) { showToast("Ya está en la sesión de hoy.", "#e74c3c"); return; }
+    state.hoy.push(nuevo);
+    save(); showToast("¡Añadido a Hoy! ✓");
 }
 
 function addToToday(name, group, type, tip) { addToDay(name, group, type, tip); }
@@ -1081,7 +1053,15 @@ function parseFechaDMY(str) {
     if (!str) return null;
     const p = String(str).split('/');
     if (p.length !== 3) return null;
-    return new Date(parseInt(p[2]), parseInt(p[1]) - 1, parseInt(p[0]));
+    let a = parseInt(p[0]), b = parseInt(p[1]), c = parseInt(p[2]);
+    if (isNaN(a) || isNaN(b) || isNaN(c)) return null;
+    // Detectar formato: si el primer número supera 12, es día (D/M/Y);
+    // si el segundo supera 12, es formato M/D/Y. Por defecto asumimos D/M/Y (España).
+    let dia, mes, anio = c;
+    if (a > 12) { dia = a; mes = b; }        // claramente D/M/Y
+    else if (b > 12) { mes = a; dia = b; }   // claramente M/D/Y
+    else { dia = a; mes = b; }               // ambiguo → D/M/Y (config del usuario)
+    return new Date(anio, mes - 1, dia);
 }
 
 // Semanas transcurridas desde el inicio del bloque actual
