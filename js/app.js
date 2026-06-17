@@ -177,6 +177,23 @@ if (!state.ejerciciosCustom) state.ejerciciosCustom = {};
 if (!state.ejerciciosEditados) state.ejerciciosEditados = {};
 if (!state.lastSync) state.lastSync = null;
 
+// ─────────────────────────────────────────────────────────────────────────────
+// MODELO CÍCLICO (v4.0)
+// state.ciclo = {
+//   sesiones: [ { id, nombre, tipo, ejercicios:[...] }, ... ],  // secuencia A,B,C,D...
+//   posicion: 0,            // índice de la sesión que toca ahora
+//   bloque: 'fuerza',       // 'fuerza' | 'hipertrofia'
+//   bloqueInicio: 'd/m/yyyy' // fecha de inicio del bloque (para contar semanas)
+// }
+// El ciclo SOLO avanza cuando el usuario confirma una sesión como hecha.
+// Los días de cardio/paseo/descanso NO consumen el ciclo.
+// ─────────────────────────────────────────────────────────────────────────────
+if (!state.ciclo) {
+    state.ciclo = { sesiones: [], posicion: 0, bloque: 'fuerza', bloqueInicio: null };
+}
+if (state.ciclo.posicion === undefined) state.ciclo.posicion = 0;
+if (!state.ciclo.bloque) state.ciclo.bloque = 'fuerza';
+
 let swInterval = null;
 let bibliotecaDia = (() => { const d = new Date().getDay(); return DIAS_LOGICA[d === 0 ? 6 : d - 1]; })();
 let diasEditando = new Set();
@@ -288,7 +305,7 @@ function showPage(id, btn, slideDir) {
     if(btn) btn.classList.add('active'); else { const b = document.getElementById('btn-'+id.replace('Page','')); if(b) b.classList.add('active'); }
     state.activeTab = id; save();
     setTimerExpanded(id === 'hoyPage');
-    if (id === 'hoyPage') sincronizarHoyConPlan();
+    if (id === 'hoyPage') { migrarPlantillaACiclo(); sincronizarHoyConCiclo(); }
     if (id === 'hoyPage' && state.sesionStartTime) startSesionStopwatch();
     else if (id !== 'hoyPage') stopSesionStopwatch();
     updateStopwatchVisibility();
@@ -487,6 +504,85 @@ function getHoyNombre() {
     return DIAS_LOGICA[d.getDay() === 0 ? 6 : d.getDay() - 1];
 }
 
+// ══════════════════════════════════════════════════════════════════════════════
+// MOTOR DEL CICLO (Fase 1)
+// ══════════════════════════════════════════════════════════════════════════════
+
+// Devuelve la sesión que toca ahora (o null si no hay ciclo definido)
+function getSesionActual() {
+    const c = state.ciclo;
+    if (!c || !c.sesiones || c.sesiones.length === 0) return null;
+    const pos = ((c.posicion % c.sesiones.length) + c.sesiones.length) % c.sesiones.length;
+    return c.sesiones[pos];
+}
+
+// Nombre legible de la posición, ej. "Sesión B"
+function getEtiquetaSesion(idx) {
+    return 'Sesión ' + String.fromCharCode(65 + idx); // 0→A, 1→B...
+}
+
+// Carga la sesión que toca en state.hoy (si no hay sesión viva y no se ha entrenado hoy)
+function sincronizarHoyConCiclo() {
+    const sesion = getSesionActual();
+    const yaEntrenadoHoy = state.historial.some(s => s.fecha === new Date().toLocaleDateString() && s.cicloSesion);
+    if (state.hoy.length === 0 && sesion && !yaEntrenadoHoy) {
+        state.hoy = sesion.ejercicios.map(ex => ({...ex, done: false}));
+        state._hoySesionId = sesion.id;
+        save();
+    }
+}
+
+// Avanza el ciclo a la siguiente sesión
+function avanzarCiclo() {
+    const c = state.ciclo;
+    if (!c || !c.sesiones.length) return;
+    c.posicion = (c.posicion + 1) % c.sesiones.length;
+    save();
+}
+
+// Cargar una sesión concreta del ciclo en Hoy (para saltar/repetir)
+function cargarSesionDelCiclo(idx, posicionar) {
+    const c = state.ciclo;
+    if (!c || !c.sesiones[idx]) return;
+    state.hoy = c.sesiones[idx].ejercicios.map(ex => ({...ex, done: false}));
+    state._hoySesionId = c.sesiones[idx].id;
+    if (posicionar) c.posicion = idx; // el ciclo continúa desde aquí
+    save();
+    showPage('hoyPage');
+    showToast(`Cargada ${getEtiquetaSesion(idx)}`);
+}
+
+// Convierte la plantillaSemanal actual en sesiones del ciclo (migración suave)
+function migrarPlantillaACiclo() {
+    if (state.ciclo.sesiones.length > 0) return; // ya migrado
+    const orden = ['Lunes','Martes','Miercoles','Jueves','Viernes','Sabado','Domingo'];
+    const sesiones = [];
+    orden.forEach(dia => {
+        const ejs = state.plantillaSemanal && state.plantillaSemanal[dia];
+        if (ejs && ejs.length > 0) {
+            // Detectar tipo por los grupos
+            const grupos = ejs.map(e => e.group);
+            let tipo = 'Mixta';
+            const tieneEmpuje = grupos.some(g => ['Pecho','Hombros','Tríceps'].includes(g));
+            const tieneTiron = grupos.some(g => ['Espalda','Bíceps'].includes(g));
+            const soloCardio = grupos.every(g => ['Cardio','Piernas','Core'].includes(g));
+            if (tieneEmpuje && !tieneTiron) tipo = 'Empuje';
+            else if (tieneTiron && !tieneEmpuje) tipo = 'Tirón';
+            else if (soloCardio) tipo = 'Cardio y movilidad';
+            sesiones.push({
+                id: 'ses_' + Date.now() + '_' + sesiones.length,
+                nombre: tipo,
+                tipo: tipo,
+                ejercicios: JSON.parse(JSON.stringify(ejs))
+            });
+        }
+    });
+    state.ciclo.sesiones = sesiones;
+    state.ciclo.posicion = 0;
+    if (!state.ciclo.bloqueInicio) state.ciclo.bloqueInicio = new Date().toLocaleDateString();
+    save();
+}
+
 // Sincroniza la sesión de hoy con el plan del día actual (opción A: no autocarga si ya entrenaste hoy)
 function sincronizarHoyConPlan() {
     const hoyNombre = getHoyNombre();
@@ -669,26 +765,93 @@ function addBloqueEstiramientos() {
     showToast(`🧘 ${estiramientos.length} estiramientos añadidos`);
 }
 
+// ── Acciones del ciclo desde la pantalla Hoy ─────────────────────────────────
+function empezarSesionDelCiclo() {
+    const sesion = getSesionActual();
+    if (!sesion) return;
+    state.hoy = sesion.ejercicios.map(ex => ({...ex, done: false}));
+    state._hoySesionId = sesion.id;
+    save(); renderToday();
+}
+
+function abrirSelectorSesion() {
+    const c = state.ciclo;
+    if (!c || !c.sesiones.length) return;
+    const html = c.sesiones.map((s, i) => `
+        <button class="selector-sesion-item ${i === c.posicion ? 'actual' : ''}" onclick="cargarSesionDelCiclo(${i}, true); cerrarSelectorSesion();">
+            <span class="selector-sesion-letra">${getEtiquetaSesion(i)}</span>
+            <span class="selector-sesion-info">
+                <span class="selector-sesion-nombre">${s.nombre}</span>
+                <span class="selector-sesion-detalle">${s.ejercicios.length} ejercicios${i === c.posicion ? ' · toca ahora' : ''}</span>
+            </span>
+        </button>`).join('');
+    document.getElementById('selectorSesionLista').innerHTML = html;
+    document.getElementById('selectorSesionModal').style.display = 'flex';
+}
+function cerrarSelectorSesion() {
+    const m = document.getElementById('selectorSesionModal');
+    if (m) m.style.display = 'none';
+}
+
+function entrenamientoLibre() {
+    // Sesión vacía que NO está ligada al ciclo: el usuario añade lo que quiera
+    state.hoy = [];
+    state._hoySesionId = null;
+    state._libre = true;
+    save();
+    showToast('Entrenamiento libre — añade cardio o lo que quieras');
+    renderToday();
+    // Abrir directamente la biblioteca para que añada
+    setTimeout(() => showPage('rutinaPage'), 400);
+}
+
 function renderToday() {
     const list = document.getElementById('todayList');
     if(!list) return;
     if(state.hoy.length === 0) {
-        const d = new Date();
-        const hoyNombre = DIAS_LOGICA[d.getDay() === 0 ? 6 : d.getDay() - 1];
         const chipsEmpty = document.getElementById('todayChips');
         if (chipsEmpty) chipsEmpty.innerHTML = '';
-        list.innerHTML = `
-        <div class="hoy-empty">
-            <p class="hoy-empty-msg">No hay ejercicios para hoy. ¿Por dónde empezamos?</p>
-            <button class="hoy-empty-btn hoy-empty-primary" onclick="generarHoyDirecto()">
-                <span class="material-symbols-outlined">bolt</span>
-                <span>Generar rutina de hoy<small>Con los grupos del ${hoyNombre}</small></span>
-            </button>
-            <button class="hoy-empty-btn" onclick="showPage('rutinaPage')">
-                <span class="material-symbols-outlined">library_books</span>
-                <span>Elegir de la Biblioteca<small>Añadir ejercicios manualmente</small></span>
-            </button>
-        </div>`;
+        const sesion = getSesionActual();
+        const pos = state.ciclo ? state.ciclo.posicion : 0;
+        if (sesion) {
+            list.innerHTML = `
+            <div class="hoy-empty">
+                <div class="ciclo-toca">
+                    <span class="ciclo-toca-label">Toca ahora</span>
+                    <span class="ciclo-toca-nombre">${getEtiquetaSesion(pos)} · ${sesion.nombre}</span>
+                    <span class="ciclo-toca-detalle">${sesion.ejercicios.length} ejercicios</span>
+                </div>
+                <button class="hoy-empty-btn hoy-empty-primary" onclick="empezarSesionDelCiclo()">
+                    <span class="material-symbols-outlined">play_arrow</span>
+                    <span>Empezar ${getEtiquetaSesion(pos)}<small>${sesion.nombre}</small></span>
+                </button>
+                <button class="hoy-empty-btn" onclick="abrirSelectorSesion()">
+                    <span class="material-symbols-outlined">swap_horiz</span>
+                    <span>Hacer otra sesión<small>Saltar o repetir otra del ciclo</small></span>
+                </button>
+                <button class="hoy-empty-btn" onclick="entrenamientoLibre()">
+                    <span class="material-symbols-outlined">directions_walk</span>
+                    <span>Entrenamiento libre<small>Cardio, paseo o drenaje — no gasta el ciclo</small></span>
+                </button>
+                <button class="hoy-empty-btn" onclick="showPage('rutinaPage')">
+                    <span class="material-symbols-outlined">library_books</span>
+                    <span>Elegir de la Biblioteca<small>Añadir ejercicios manualmente</small></span>
+                </button>
+            </div>`;
+        } else {
+            list.innerHTML = `
+            <div class="hoy-empty">
+                <p class="hoy-empty-msg">Aún no tienes un ciclo definido. Créalo en la pestaña Ciclo, o añade ejercicios desde la Biblioteca.</p>
+                <button class="hoy-empty-btn hoy-empty-primary" onclick="showPage('semanaPage')">
+                    <span class="material-symbols-outlined">repeat</span>
+                    <span>Configurar mi ciclo<small>Define tus sesiones A, B, C...</small></span>
+                </button>
+                <button class="hoy-empty-btn" onclick="showPage('rutinaPage')">
+                    <span class="material-symbols-outlined">library_books</span>
+                    <span>Elegir de la Biblioteca<small>Añadir ejercicios manualmente</small></span>
+                </button>
+            </div>`;
+        }
         updateSessionProgress(); return;
     }
 
@@ -1386,16 +1549,32 @@ function _guardarSesion() {
     openExMenu = null;
     expandedDone = new Set();
     const durSec = state.sesionStartTime ? Math.floor((Date.now() - state.sesionStartTime) / 1000) : null;
+    const eraDelCiclo = !!state._hoySesionId && !state._libre;
+    const sesionDelCiclo = eraDelCiclo ? state._hoySesionId : null;
     state.historial.unshift({
         fecha: new Date().toLocaleDateString(),
         hora: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
         resumen: state.hoy.map(e => `${getIcon(e.t)}${e.name}`).join('; '),
         ejercicios: JSON.parse(JSON.stringify(state.hoy)),
-        duracion: durSec
+        duracion: durSec,
+        cicloSesion: sesionDelCiclo
     });
-    state.hoy = []; resetSesionStopwatch(); save(); showPage('historialPage');
+    state.hoy = [];
+    state._libre = false;
+    const sesionGuardada = state._hoySesionId;
+    state._hoySesionId = null;
+    resetSesionStopwatch();
+    save();
     mostrarToastBackup();
     syncToSupabase();
+    // Si era una sesión del ciclo, avanzar automáticamente y avisar
+    if (eraDelCiclo && state.ciclo && state.ciclo.sesiones.length) {
+        avanzarCiclo();
+        const siguiente = getSesionActual();
+        const pos = state.ciclo.posicion;
+        showToast(`✓ Sesión completada · ahora toca ${getEtiquetaSesion(pos)} (${siguiente ? siguiente.nombre : ''})`);
+    }
+    showPage('historialPage');
 }
 
 
