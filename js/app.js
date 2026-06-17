@@ -1318,46 +1318,8 @@ function anadirEjASesion(i) {
     showToast(`Elige ejercicios para ${getEtiquetaSesion(i)}`);
 }
 
-function togglePreview(dia) { const p = document.getElementById(`preview-${dia}`); if(p) p.style.display = p.style.display === 'none' ? 'block' : 'none'; }
-function toggleDayMenu(dia) { state.openMenu = state.openMenu === dia ? null : dia; renderWeek(); }
-function toggleWeek(dia, g) {
-    if(!state.semana[dia]) state.semana[dia] = [];
-    const idx = state.semana[dia].indexOf(g);
-    if(idx > -1) state.semana[dia].splice(idx, 1); else state.semana[dia].push(g);
-    if(state.plantillaSemanal) delete state.plantillaSemanal[dia];
-    save(); renderWeek();
-}
 
 // Contexto del modal de intensidad
-let intensityCtx = { modo: 'hoy', dia: null };
-
-function abrirSelectorIntensidad() {
-    const d = new Date();
-    const diaIdx = d.getDay() === 0 ? 6 : d.getDay() - 1;
-    const nombreDia = DIAS_LOGICA[diaIdx];
-    if (!(state.semana[nombreDia] || []).length) { showToast("😴 Hoy toca descanso según tu programación."); return; }
-    intensityCtx = { modo: 'hoy', dia: nombreDia };
-    mostrarModalIntensidad("¿Cómo te encuentras hoy?");
-}
-
-function abrirSelectorParaDia(dia) {
-    const grupos = state.semana[dia] || [];
-    if (!grupos.length) { showToast("⚠️ Este día no tiene grupos configurados."); return; }
-    intensityCtx = { modo: 'dia', dia };
-    const d = new Date();
-    const hoyNombre = DIAS_LOGICA[d.getDay() === 0 ? 6 : d.getDay() - 1];
-    mostrarModalIntensidad(dia === hoyNombre ? "¿Cómo te encuentras hoy?" : `¿Intensidad para el ${dia}?`);
-}
-
-function mostrarModalIntensidad(titulo) {
-    const t = document.getElementById('intensityModalTitle');
-    if (t) t.innerText = titulo;
-    document.getElementById('intensityModal').style.display = 'flex';
-}
-
-function cerrarSelectorIntensidad(el, e) {
-    if (!e || e.target === el) document.getElementById('intensityModal').style.display = 'none';
-}
 
 function getEstimatedDuration(rutina) {
     let min = 0;
@@ -1371,196 +1333,7 @@ function getEstimatedDuration(rutina) {
 }
 
 // Contexto de la rutina generada pendiente de confirmar
-let _rutinaPreview = null;
-let _rutinaPreviewDia = null;
 
-function confirmarRutinaGenerada() {
-    cerrarPreviewModal();
-    if (!_rutinaPreview || !_rutinaPreviewDia) return;
-    const dia = _rutinaPreviewDia;
-    if (dia === getHoyNombre()) {
-        // Hoy: carga directa en la sesión activa. El plan semanal no se toca.
-        state.hoy = JSON.parse(JSON.stringify(_rutinaPreview));
-        save(); showPage('hoyPage');
-    } else {
-        // Otro día: guarda en el plan de ese día
-        if (!state.plantillaSemanal) state.plantillaSemanal = {};
-        state.plantillaSemanal[dia] = JSON.parse(JSON.stringify(_rutinaPreview));
-        save(); renderWeek();
-        showToast(`✓ Rutina del ${dia} guardada`);
-    }
-    _rutinaPreview = null; _rutinaPreviewDia = null;
-}
-
-function regenerarRutina() {
-    cerrarPreviewModal();
-    if (!_rutinaPreviewDia || !_rutinaPreviewIntensidad) return;
-    const grupos = state.semana[_rutinaPreviewDia] || [];
-    const rutina = buildRutina(grupos, _rutinaPreviewIntensidad, {});
-    mostrarPreviewRutina(rutina, _rutinaPreviewDia, _rutinaPreviewIntensidad);
-}
-
-function cerrarPreviewModal() {
-    const m = document.getElementById('rutinaPreviewModal');
-    if (m) m.style.display = 'none';
-}
-
-let _rutinaPreviewIntensidad = null;
-
-function mostrarPreviewRutina(rutina, dia, intensidad) {
-    _rutinaPreview = rutina;
-    _rutinaPreviewDia = dia;
-    _rutinaPreviewIntensidad = intensidad;
-    const min = getEstimatedDuration(rutina);
-    const iconos = {[T_B]:'🔥', [T_A]:'🎯', [T_S]:'🛡️'};
-    const lista = rutina.map(ex => {
-        const ic = ex.group === 'Cardio' ? '🚴' : (iconos[ex.t] || '•');
-        return `<div class="preview-ex-item">${ic} <span>${ex.name}</span><small>${ex.group}</small></div>`;
-    }).join('');
-    document.getElementById('previewDia').textContent = dia;
-    document.getElementById('previewMin').textContent = `⏱ ~${min} min estimados`;
-    document.getElementById('previewLista').innerHTML = lista;
-    document.getElementById('rutinaPreviewModal').style.display = 'flex';
-}
-
-function generarConIntensidad(intensidad) {
-    cerrarSelectorIntensidad();
-    if (intensityCtx.modo === 'semana') { generarSemanaCompleta(intensidad); return; }
-    const dia = intensityCtx.dia;
-    const grupos = state.semana[dia] || [];
-    const rutina = buildRutina(grupos, intensidad, {});
-    mostrarPreviewRutina(rutina, dia, intensidad);
-}
-
-function getEjerciciosRecientesPorGrupo(numSesiones) {
-    const result = {};
-    GRUPOS.forEach(g => result[g] = []);
-    let porGrupo = {};
-    GRUPOS.forEach(g => porGrupo[g] = 0);
-    for (const sess of state.historial) {
-        if (!sess.ejercicios) continue;
-        const gruposEnSesion = new Set();
-        sess.ejercicios.forEach(ex => {
-            if (porGrupo[ex.group] < numSesiones) {
-                result[ex.group].push(ex.name);
-                gruposEnSesion.add(ex.group);
-            }
-        });
-        gruposEnSesion.forEach(g => porGrupo[g]++);
-    }
-    return result;
-}
-
-function buildRutina(gruposSeleccionados, intensidad, recentExternal) {
-    const config = {
-        suave:   { dosBasicos: false, totalAisla: 1, coreCount: 1, incluirCardio: true },
-        normal:  { dosBasicos: false, totalAisla: null, coreCount: 2, incluirCardio: true },
-        intensa: { dosBasicos: true,  totalAisla: null, coreCount: 2, incluirCardio: true }
-    }[intensidad];
-
-    // Cardio por intensidad (punto 3)
-    const CARDIO_SUAVE  = ['Pedaleo suave continuo','Paseo por el parque'];
-    const CARDIO_NORMAL = ['Pedaleo suave continuo','Paseo por el parque','Pedaleo continuo moderado','Paseo rápido'];
-
-    const recentHist = getEjerciciosRecientesPorGrupo(3); // punto 5: anti-repetición 3 sesiones
-    const recent = {};
-    GRUPOS.forEach(g => recent[g] = [...(recentHist[g]||[]), ...(recentExternal[g]||[])]);
-    const getRandom = arr => arr[Math.floor(Math.random() * arr.length)];
-
-    // Grupos sin Cardio, sin Core, sin Piernas
-    const gruposPrincipales = gruposSeleccionados.filter(g => g !== 'Cardio' && g !== 'Core' && g !== 'Piernas');
-    let finalPool = [];
-
-    // ── Básicos (1 por grupo, 2 en Intensa) ──────────────────────────────────
-    gruposPrincipales.forEach(g => {
-        const sinRepetir = getEjerciciosDe(g).filter(e => e.t === T_B && !recent[g].includes(e.n));
-        const pool = sinRepetir.length > 0 ? sinRepetir : getEjerciciosDe(g).filter(e => e.t === T_B);
-        if (pool.length > 0) finalPool.push({...getRandom(pool), group: g});
-    });
-    if (config.dosBasicos) {
-        gruposPrincipales.forEach(g => {
-            const ya = finalPool.filter(f => f.group === g).map(f => f.n);
-            const pool = getEjerciciosDe(g).filter(e => e.t === T_B && !ya.includes(e.n));
-            if (pool.length > 0) finalPool.push({...getRandom(pool), group: g});
-        });
-    }
-
-    // ── Aislamientos ──────────────────────────────────────────────────────────
-    if (config.totalAisla === 1) {
-        const todos = gruposPrincipales.flatMap(g => getEjerciciosDe(g).filter(e => e.t === T_A).map(e => ({...e, group: g})));
-        if (todos.length > 0) finalPool.push(getRandom(todos));
-    } else {
-        gruposPrincipales.forEach(g => {
-            const sinRepetir = getEjerciciosDe(g).filter(e => e.t === T_A && !recent[g].includes(e.n));
-            const pool = sinRepetir.length > 0 ? sinRepetir : getEjerciciosDe(g).filter(e => e.t === T_A);
-            if (pool.length > 0) finalPool.push({...getRandom(pool), group: g});
-        });
-    }
-
-    // ── Core explícito (1 en Suave, 2 en Normal/Intensa) ─────────────────────
-    if (gruposSeleccionados.includes('Core')) {
-        const coreEjs = getEjerciciosDe('Core');
-        const coreB = coreEjs.filter(e => e.t === T_B && !recent['Core'].includes(e.n));
-        const coreS = coreEjs.filter(e => e.t === T_S && !recent['Core'].includes(e.n));
-        const corePool = [...coreB, ...coreS];
-        let added = 0;
-        const usados = [];
-        while (added < config.coreCount && corePool.length > usados.length) {
-            const disponibles = corePool.filter(e => !usados.includes(e.n));
-            if (!disponibles.length) break;
-            const sel = getRandom(disponibles);
-            finalPool.push({...sel, group: 'Core'});
-            usados.push(sel.n);
-            added++;
-        }
-    }
-
-    // ── Bloque Piernas (drenaje) si está seleccionado ─────────────────────────
-    if (gruposSeleccionados.includes('Piernas')) {
-        const piernasPool = getEjerciciosDe('Piernas').filter(e => e.tip !== 'Estiramiento' && !recent['Piernas'].includes(e.n));
-        const pPool = piernasPool.length >= 3 ? piernasPool : getEjerciciosDe('Piernas').filter(e => e.tip !== 'Estiramiento');
-        const usadosP = [];
-        let addedP = 0;
-        while (addedP < 3 && pPool.length > usadosP.length) {
-            const disp = pPool.filter(e => !usadosP.includes(e.n));
-            if (!disp.length) break;
-            const sel = getRandom(disp);
-            if (!finalPool.find(f => f.n === sel.n)) { finalPool.push({...sel, group: 'Piernas'}); addedP++; }
-            usadosP.push(sel.n);
-        }
-    }
-
-    // ── Cardio por intensidad (punto 3) ──────────────────────────────────────
-    if (config.incluirCardio && gruposSeleccionados.includes('Cardio')) {
-        const cardioPool = intensidad === 'suave'
-            ? getEjerciciosDe('Cardio').filter(e => CARDIO_SUAVE.includes(e.n))
-            : intensidad === 'normal'
-                ? getEjerciciosDe('Cardio').filter(e => CARDIO_NORMAL.includes(e.n))
-                : [...getEjerciciosDe('Cardio')];
-        const cp = cardioPool.length > 0 ? cardioPool : [...getEjerciciosDe('Cardio')];
-        finalPool.unshift({...getRandom(cp), group: 'Cardio'});
-    }
-
-    // ── Orden óptimo ──────────────────────────────────────────────────────────
-    const LINFATICOS = ['Bomba de tobillo (ankle pumps)','Piernas elevadas en la pared','Bicicleta en el aire','Elevación de talones sentado','Marcha sentado en silla','Círculos de tobillo'];
-    const getScore = (ex) => {
-        if (ex.group === 'Cardio') return 0;
-        if (LINFATICOS.includes(ex.n || ex.name)) return 999;
-        if (ex.t === T_S) return ex.group === 'Core' ? 980 : 960;
-        if (ex.group === 'Core') return ex.t === T_B ? 800 : 840;
-        const gIdx = gruposPrincipales.indexOf(ex.group);
-        return ex.t === T_B ? 100 + gIdx * 10 : 500 + gIdx * 10;
-    };
-    finalPool.sort((a, b) => getScore(a) - getScore(b));
-
-    return finalPool.map(ex => {
-        const u = getUltimosValores(ex.n||ex.name);
-        return { name: ex.n||ex.name, group: ex.group, t: ex.t, tip: ex.tip,
-            series: u.series, reps: u.reps, peso: u.peso, nota: '',
-            usaBanda: u.usaBanda, done: false,
-            recSeries: ex.recSeries||'', recReps: ex.recReps||'' };
-    });
-}
 
 
 function getUltimosValores(nombre) {
@@ -1573,28 +1346,7 @@ function getUltimosValores(nombre) {
     return { series: '', reps: '', peso: '', usaBanda: false };
 }
 
-function generarSemanaCompleta(intensidad) {
-    const usados = {};
-    GRUPOS.forEach(g => usados[g] = []);
-    if (!state.plantillaSemanal) state.plantillaSemanal = {};
-    let count = 0;
-    DIAS_LOGICA.forEach(dia => {
-        const grupos = state.semana[dia] || [];
-        if (!grupos.length) return;
-        const rutina = buildRutina(grupos, intensidad, usados);
-        state.plantillaSemanal[dia] = JSON.parse(JSON.stringify(rutina));
-        rutina.forEach(ex => { if (!usados[ex.group]) usados[ex.group] = []; usados[ex.group].push(ex.name); });
-        count++;
-    });
-    save(); renderWeek();
-    showToast(`✓ ${count} rutinas generadas`);
-}
 
-function generarRutinaInteligente(intensidad) {
-    const d = new Date();
-    intensityCtx = { modo: 'hoy', dia: DIAS_LOGICA[d.getDay() === 0 ? 6 : d.getDay() - 1] };
-    generarConIntensidad(intensidad);
-}
 
 function compartirBackup() {
     const datos = {
@@ -2606,7 +2358,7 @@ function onSyncIconPress() {
 }
 
 function handleBackButton() {
-    const modales = ['exInfoModal','editExModal','intensityModal','dayModal','syncModal','finalizarModal','guiaModal','puntosModal','rutinaPreviewModal','ajustesModal','confirmModal','textoModal','selectorSesionModal'];
+    const modales = ['exInfoModal','editExModal','dayModal','syncModal','finalizarModal','guiaModal','puntosModal','ajustesModal','confirmModal','textoModal','selectorSesionModal'];
     for (const id of modales) {
         const el = document.getElementById(id);
         if (el && el.style.display !== 'none' && el.style.display !== '') {
@@ -2665,7 +2417,7 @@ window.addEventListener('popstate', () => {
         if (Math.abs(dx) < 70) return;
         if (Math.abs(dx) < Math.abs(dy) * 1.8) return;
         // No cambiar si hay un modal abierto
-        const modales = ['exInfoModal','editExModal','intensityModal','dayModal','syncModal','finalizarModal','guiaModal','puntosModal','rutinaPreviewModal','ajustesModal','confirmModal','textoModal','selectorSesionModal'];
+        const modales = ['exInfoModal','editExModal','dayModal','syncModal','finalizarModal','guiaModal','puntosModal','ajustesModal','confirmModal','textoModal','selectorSesionModal'];
         for (const id of modales) {
             const m = document.getElementById(id);
             if (m && m.style.display && m.style.display !== 'none') return;
