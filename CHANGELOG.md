@@ -4,6 +4,28 @@ Aplicación personal de entrenamiento. A partir de la v1.0 sale de fase beta.
 
 ---
 
+## v4.4 — Periodización y avisos de equilibrio (Fases 4 y 5)
+
+Completa el modo cíclico con las capas inteligentes:
+
+- **Periodización automática**: la app cuenta las semanas que llevas en el bloque actual (Fuerza/Hipertrofia) y, pasadas 4, te avisa en la pantalla Ciclo con un botón para cambiar de bloque. El cambio reinicia el contador
+- **Recordatorio de descarga**: a las 8 semanas, sugiere una semana suave de recuperación
+- **Avisos de equilibrio empuje/tirón**: analiza tus últimos 30 días y, si hay desbalance (2+ sesiones de diferencia), te avisa para que priorices el lado que falta. El aviso aparece tanto en la pantalla Ciclo como en Hoy al ir a entrenar
+- Indicador de "semana N" del bloque en la tarjeta de info del ciclo
+
+Con esto el modo cíclico está completo: secuencia de sesiones, sugerencia de peso, periodización y equilibrio, todo con reglas (sin coste, sin conexión).
+
+---
+
+## v4.3 — Mejoras del modo cíclico
+
+- Sugerencia de peso: al entrenar, el campo de peso muestra como referencia (placeholder) el peso de tu última vez en ese ejercicio
+- Indicador visual del ciclo en Hoy: cuando entrenas una sesión del ciclo, ves los puntos A·B·C·D con la actual resaltada, o "Entrenamiento libre" si es suelto
+- Botón de descanso rápido: en el menú de cada ejercicio, "Descanso 90s" y "Descanso 60s" que arrancan el temporizador al instante
+- Limpieza técnica: eliminadas 11 funciones del antiguo modo semanal que ya no se usaban (la app es más ligera y mantenible)
+
+---
+
 ## v4.2
 
 - Cada sesión del ciclo muestra ahora los grupos musculares que trabaja (ej. "Espalda · Bíceps · Piernas"), además de su nombre. Visible en la pantalla Ciclo, en Hoy y en el selector de sesión
