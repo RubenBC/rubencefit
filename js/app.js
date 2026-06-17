@@ -517,6 +517,13 @@ function getSesionActual() {
 }
 
 // Nombre legible de la posición, ej. "Sesión B"
+// Devuelve los grupos musculares (sin Cardio) de una sesión, como texto
+function getGruposSesion(sesion) {
+    if (!sesion || !sesion.ejercicios) return '';
+    const grupos = [...new Set(sesion.ejercicios.map(e => e.group).filter(g => g && g !== 'Cardio'))];
+    return grupos.join(' · ');
+}
+
 function getEtiquetaSesion(idx) {
     return 'Sesión ' + String.fromCharCode(65 + idx); // 0→A, 1→B...
 }
@@ -813,6 +820,7 @@ function abrirSelectorSesion() {
             <span class="selector-sesion-info">
                 <span class="selector-sesion-nombre">${s.nombre}</span>
                 <span class="selector-sesion-detalle">${s.ejercicios.length} ejercicios${i === c.posicion ? ' · toca ahora' : ''}</span>
+                ${getGruposSesion(s) ? `<span class="selector-sesion-grupos">${getGruposSesion(s)}</span>` : ''}
             </span>
         </button>`).join('');
     document.getElementById('selectorSesionLista').innerHTML = html;
@@ -850,6 +858,7 @@ function renderToday() {
                     <span class="ciclo-toca-label">Toca ahora</span>
                     <span class="ciclo-toca-nombre">${getEtiquetaSesion(pos)} · ${sesion.nombre}</span>
                     <span class="ciclo-toca-detalle">${sesion.ejercicios.length} ejercicios</span>
+                    ${getGruposSesion(sesion) ? `<span class="ciclo-toca-grupos">${getGruposSesion(sesion)}</span>` : ''}
                 </div>
                 <button class="hoy-empty-btn hoy-empty-primary" onclick="empezarSesionDelCiclo()">
                     <span class="material-symbols-outlined">play_arrow</span>
@@ -1108,6 +1117,7 @@ function renderCiclo() {
                 <div class="ciclo-sesion-titulo">
                     <span class="ciclo-sesion-nombre">${s.nombre}</span>
                     <span class="ciclo-sesion-sub">${s.ejercicios.length} ejercicios${esActual ? ' · toca ahora' : ''}</span>
+                    ${getGruposSesion(s) ? `<span class="ciclo-sesion-grupos">${getGruposSesion(s)}</span>` : ''}
                 </div>
                 <span class="material-symbols-outlined ciclo-chevron">${abierta ? 'expand_less' : 'expand_more'}</span>
             </div>
