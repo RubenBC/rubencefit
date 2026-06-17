@@ -591,16 +591,6 @@ function migrarPlantillaACiclo() {
 }
 
 // Sincroniza la sesión de hoy con el plan del día actual (opción A: no autocarga si ya entrenaste hoy)
-function sincronizarHoyConPlan() {
-    const hoyNombre = getHoyNombre();
-    const yaEntrenadoHoy = state.historial.some(s => s.fecha === new Date().toLocaleDateString());
-    const plan = state.plantillaSemanal && state.plantillaSemanal[hoyNombre];
-    if (state.hoy.length === 0 && plan && plan.length > 0 && !yaEntrenadoHoy) {
-        state.hoy = plan.map(ex => ({...ex, done: false}));
-        save();
-    }
-}
-
 function addToDay(name, group, type, tip) {
     const dia = bibliotecaDia;
     const exDb = getEjerciciosDe(group).find(e => (e.n||e.name) === name) || {};
@@ -642,6 +632,18 @@ function getEquipType(ex) {
 }
 
 // Genera el bloque de inputs de métricas según el tipo de equipamiento
+// Busca en el historial la última marca (peso y reps) de un ejercicio
+function getUltimaMarca(nombreEjercicio) {
+    for (const sesion of state.historial) {
+        if (!sesion.ejercicios) continue;
+        const ej = sesion.ejercicios.find(e => e.name === nombreEjercicio && (e.peso || e.reps));
+        if (ej && ej.peso) {
+            return { peso: ej.peso, reps: ej.reps, fecha: sesion.fecha };
+        }
+    }
+    return null;
+}
+
 function buildMetricsHtml(ex, i) {
     const tipo = getEquipType(ex);
 
@@ -684,7 +686,7 @@ function buildMetricsHtml(ex, i) {
             <div class="stats-grid">
                 <div class="input-group"><label>Series</label><input type="number" placeholder="${ex.recSeries||'—'}" value="${ex.series}" onchange="updateEx(${i}, 'series', this.value)" ${ro} class="${rc}"></div>
                 <div class="input-group"><label>Reps</label><input type="number" placeholder="${ex.recReps||'—'}" value="${ex.reps}" onchange="updateEx(${i}, 'reps', this.value)" ${ro} class="${rc}"></div>
-                <div class="input-group"><label>Peso (kg)</label><input type="number" placeholder="0" value="${ex.peso}" onchange="updateEx(${i}, 'peso', this.value)" ${ro} class="${rc}"></div>
+                <div class="input-group"><label>Peso (kg)</label><input type="number" placeholder="${(getUltimaMarca(ex.name)||{}).peso || '0'}" value="${ex.peso}" onchange="updateEx(${i}, 'peso', this.value)" ${ro} class="${rc}"></div>
             </div>`;
     }
 
@@ -770,17 +772,6 @@ function cancelarTexto() {
     _textoCallback = null;
 }
 
-function generarHoyDirecto() {
-    const d = new Date();
-    const hoyNombre = DIAS_LOGICA[d.getDay() === 0 ? 6 : d.getDay() - 1];
-    if (!(state.semana[hoyNombre] || []).length) {
-        showToast('⚠️ El ' + hoyNombre + ' no tiene grupos configurados. Ve a Semana.');
-        return;
-    }
-    intensityCtx = { modo: 'dia', dia: hoyNombre };
-    mostrarModalIntensidad("¿Cómo te encuentras hoy?");
-}
-
 function addBloqueDrenaje() {
     const pool = getEjerciciosDe('Piernas').filter(e => e.tip !== 'Estiramiento' && !state.hoy.find(h => h.name === e.n));
     const shuffled = [...pool].sort(() => Math.random() - 0.5).slice(0, 3);
@@ -852,8 +843,11 @@ function renderToday() {
         const sesion = getSesionActual();
         const pos = state.ciclo ? state.ciclo.posicion : 0;
         if (sesion) {
+            const avisoEqHoy = getAvisoEquilibrio();
+            const avisoHtml = avisoEqHoy ? `<div class="ciclo-aviso aviso-equilibrio" style="margin-bottom:14px;"><span class="material-symbols-outlined">balance</span><div class="ciclo-aviso-texto">${avisoEqHoy.texto}</div></div>` : '';
             list.innerHTML = `
             <div class="hoy-empty">
+                ${avisoHtml}
                 <div class="ciclo-toca">
                     <span class="ciclo-toca-label">Toca ahora</span>
                     <span class="ciclo-toca-nombre">${getEtiquetaSesion(pos)} · ${sesion.nombre}</span>
@@ -895,11 +889,25 @@ function renderToday() {
     }
 
     const chipsEl = document.getElementById('todayChips');
-    if (chipsEl) chipsEl.innerHTML = `
+    if (chipsEl) {
+        let badge = '';
+        if (state._hoySesionId && state.ciclo && state.ciclo.sesiones.length) {
+            const idx = state.ciclo.sesiones.findIndex(s => s.id === state._hoySesionId);
+            if (idx >= 0) {
+                const puntos = state.ciclo.sesiones.map((s, k) =>
+                    `<span class="ciclo-punto ${k === idx ? 'activo' : ''}" title="${s.nombre}">${getEtiquetaSesion(k)}</span>`
+                ).join('');
+                badge = `<div class="ciclo-progreso"><span class="ciclo-progreso-label">${getEtiquetaSesion(idx)} · ${state.ciclo.sesiones[idx].nombre}</span><div class="ciclo-puntos">${puntos}</div></div>`;
+            }
+        } else if (state._libre) {
+            badge = `<div class="ciclo-progreso libre"><span class="ciclo-progreso-label">🚶 Entrenamiento libre</span></div>`;
+        }
+        chipsEl.innerHTML = badge + `
         <div class="bloques-rapidos">
             <button class="bloque-chip" onclick="addBloqueDrenaje()">+ Drenaje (3)</button>
             <button class="bloque-chip" onclick="addBloqueEstiramientos()">+ Estiramientos</button>
         </div>`;
+    }
     list.innerHTML = state.hoy.map((ex, i) => {
         const tagClass = ex.t === T_B ? 'tag-basico' : ex.t === T_A ? 'tag-aisla' : 'tag-salud';
         const accentClass = ex.t === T_B ? 'today-card-basico' : ex.t === T_A ? 'today-card-aisla' : 'today-card-salud';
@@ -935,6 +943,8 @@ function renderToday() {
                         ${openExMenu === i ? `
                         <div class="ex-menu">
                             <button onclick="openExMenu=null;renderToday();abrirInfoEjercicio('${ex.name.replace(/'/g, "\\'")}','${ex.group}')"><span class="material-symbols-outlined">info</span> Información</button>
+                            <button onclick="openExMenu=null;renderToday();descansoRapido(90)"><span class="material-symbols-outlined">timer</span> Descanso 90s</button>
+                            <button onclick="openExMenu=null;renderToday();descansoRapido(60)"><span class="material-symbols-outlined">timer</span> Descanso 60s</button>
                             <button onclick="openExMenu=null;swapExercise(${i})"><span class="material-symbols-outlined">cached</span> Cambiar</button>
                             <button class="ex-menu-danger" onclick="openExMenu=null;quitarDeHoy(${i})"><span class="material-symbols-outlined">delete</span> Quitar</button>
                         </div>` : ''}
@@ -1017,11 +1027,6 @@ function quitarDeDia(dia, i) {
     save(); renderWeek();
 }
 
-function planificarDia(dia) {
-    bibliotecaDia = dia;
-    showPage('rutinaPage');
-}
-
 function swapExercise(index) {
     const currentEx = state.hoy[index];
     const groupData = db[currentEx.group];
@@ -1057,9 +1062,6 @@ function getDayColor(selected) {
     return { c: "var(--color-amarillo)", s: "Mezcla Híbrida" };
 }
 
-function editarDia(dia) { diasEditando.add(dia); renderWeek(); }
-function guardarDia(dia) { diasEditando.delete(dia); renderWeek(); }
-
 let duplicandoDia = null;
 let diasAbiertosSemana = null; // se inicializa con el día actual abierto
 
@@ -1068,6 +1070,83 @@ function toggleDiaSemana(dia) {
     else diasAbiertosSemana.add(dia);
     renderWeek();
 }
+
+// ══════════════════════════════════════════════════════════════════════════════
+// FASE 4 — PERIODIZACIÓN AUTOMÁTICA
+// ══════════════════════════════════════════════════════════════════════════════
+const SEMANAS_POR_BLOQUE = 4;   // recomendar cambio tras 4 semanas
+const SEMANAS_DELOAD = 8;        // recordar descarga cada 8 semanas
+
+function parseFechaDMY(str) {
+    if (!str) return null;
+    const p = String(str).split('/');
+    if (p.length !== 3) return null;
+    return new Date(parseInt(p[2]), parseInt(p[1]) - 1, parseInt(p[0]));
+}
+
+// Semanas transcurridas desde el inicio del bloque actual
+function semanasEnBloque() {
+    const inicio = parseFechaDMY(state.ciclo.bloqueInicio);
+    if (!inicio) return 0;
+    const dias = Math.floor((Date.now() - inicio.getTime()) / (1000*60*60*24));
+    return Math.floor(dias / 7);
+}
+
+// ¿Toca cambiar de bloque?
+function tocaCambioBloque() {
+    return semanasEnBloque() >= SEMANAS_POR_BLOQUE;
+}
+
+// Cambiar de bloque Fuerza <-> Hipertrofia
+function cambiarBloque() {
+    const nuevo = state.ciclo.bloque === 'fuerza' ? 'hipertrofia' : 'fuerza';
+    const nombreNuevo = nuevo === 'fuerza' ? 'Fuerza (6-8 reps)' : 'Hipertrofia (10-15 reps)';
+    pedirConfirmacion(`¿Cambiar al bloque de ${nombreNuevo}? Se reinicia el contador de semanas.`, () => {
+        state.ciclo.bloque = nuevo;
+        state.ciclo.bloqueInicio = new Date().toLocaleDateString();
+        save();
+        renderCiclo();
+        showToast(`Bloque cambiado a ${nuevo === 'fuerza' ? '💪 Fuerza' : '🏋️ Hipertrofia'}`);
+    }, 'Cambiar bloque');
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// FASE 5 — AVISOS DE EQUILIBRIO EMPUJE / TIRÓN
+// ══════════════════════════════════════════════════════════════════════════════
+const GRUPOS_EMPUJE = ['Pecho','Hombros','Tríceps'];
+const GRUPOS_TIRON = ['Espalda','Bíceps'];
+
+// Cuenta sesiones de empuje y tirón en los últimos N días
+function contarEmpujeTiron(dias) {
+    const limite = new Date(); limite.setDate(limite.getDate() - dias);
+    let empuje = 0, tiron = 0;
+    state.historial.forEach(s => {
+        const f = parseFechaDMY(s.fecha);
+        if (!f || f < limite || !s.ejercicios) return;
+        const grupos = new Set(s.ejercicios.map(e => e.group));
+        const esEmpuje = GRUPOS_EMPUJE.some(g => grupos.has(g));
+        const esTiron = GRUPOS_TIRON.some(g => grupos.has(g));
+        if (esEmpuje && !esTiron) empuje++;
+        else if (esTiron && !esEmpuje) tiron++;
+        else if (esEmpuje && esTiron) { empuje += 0.5; tiron += 0.5; } // sesión mixta
+    });
+    return { empuje, tiron };
+}
+
+// Devuelve un aviso de equilibrio si hay desbalance notable (o null)
+function getAvisoEquilibrio() {
+    const { empuje, tiron } = contarEmpujeTiron(30);
+    const total = empuje + tiron;
+    if (total < 3) return null; // pocos datos
+    const diff = Math.abs(empuje - tiron);
+    if (diff < 2) return null; // equilibrado
+    const pl = (n, sing, plur) => `${n} ${n === 1 ? sing : plur}`;
+    if (empuje > tiron) return { texto: `Llevas ${pl(empuje,'empuje','empujes')} y ${pl(tiron,'tirón','tirones')} este mes. Prioriza tirón para equilibrar (mejor para tu postura).`, tipo: 'tiron' };
+    return { texto: `Llevas ${pl(tiron,'tirón','tirones')} y ${pl(empuje,'empuje','empujes')} este mes. Prioriza empuje para equilibrar.`, tipo: 'empuje' };
+}
+
+// Compatibilidad: renderWeek antiguo ahora redirige al ciclo
+function renderWeek() { renderCiclo(); }
 
 // ══════════════════════════════════════════════════════════════════════════════
 // PANTALLA CICLO (Fase 2) — gestionar las sesiones A, B, C, D...
@@ -1092,11 +1171,15 @@ function renderCiclo() {
 
     // Cabecera con bloque actual y posición
     const bloqueLabel = c.bloque === 'fuerza' ? '💪 Fuerza' : '🏋️ Hipertrofia';
+    const semanas = semanasEnBloque();
+    const cambioBloque = tocaCambioBloque();
+    const deload = semanas >= SEMANAS_DELOAD;
+    const avisoEq = getAvisoEquilibrio();
     let html = `
         <div class="ciclo-info-card">
             <div class="ciclo-info-row">
                 <span>Bloque actual</span>
-                <b>${bloqueLabel}</b>
+                <b>${bloqueLabel}${semanas > 0 ? ` · semana ${semanas + 1}` : ''}</b>
             </div>
             <div class="ciclo-info-row">
                 <span>Toca ahora</span>
@@ -1104,6 +1187,37 @@ function renderCiclo() {
             </div>
             <div class="ciclo-info-hint">El ciclo avanza solo cuando completas una sesión. ${c.sesiones.length} sesiones en tu secuencia.</div>
         </div>`;
+
+    // Aviso de cambio de bloque
+    if (cambioBloque) {
+        const siguiente = c.bloque === 'fuerza' ? 'Hipertrofia (10-15 reps)' : 'Fuerza (6-8 reps)';
+        html += `
+        <div class="ciclo-aviso aviso-bloque">
+            <span class="material-symbols-outlined">autorenew</span>
+            <div class="ciclo-aviso-texto">
+                Llevas ${semanas} semanas en ${c.bloque === 'fuerza' ? 'Fuerza' : 'Hipertrofia'}. Buen momento para pasar a ${siguiente}.
+            </div>
+            <button class="ciclo-aviso-btn" onclick="cambiarBloque()">Cambiar</button>
+        </div>`;
+    }
+    // Recordatorio de descarga
+    if (deload) {
+        html += `
+        <div class="ciclo-aviso aviso-deload">
+            <span class="material-symbols-outlined">bedtime</span>
+            <div class="ciclo-aviso-texto">
+                Llevas ${semanas} semanas sin descarga. Considera una semana suave (menos series y peso) para recuperar.
+            </div>
+        </div>`;
+    }
+    // Aviso de equilibrio empuje/tirón
+    if (avisoEq) {
+        html += `
+        <div class="ciclo-aviso aviso-equilibrio">
+            <span class="material-symbols-outlined">balance</span>
+            <div class="ciclo-aviso-texto">${avisoEq.texto}</div>
+        </div>`;
+    }
 
     // Lista de sesiones
     html += '<div id="cicloSesionesList">';
@@ -1224,138 +1338,6 @@ function anadirEjASesion(i) {
     showToast(`Elige ejercicios para ${getEtiquetaSesion(i)}`);
 }
 
-function renderWeek() {
-    const planner = document.getElementById('weekPlanner');
-    if (!planner) return;
-    // Semana actual: fechas reales lunes-domingo
-    const _hoy = new Date();
-    const _diaSem = _hoy.getDay() === 0 ? 6 : _hoy.getDay() - 1;
-    const _lunes = new Date(_hoy); _lunes.setDate(_hoy.getDate() - _diaSem);
-    if (diasAbiertosSemana === null) diasAbiertosSemana = new Set([DIAS_LOGICA[_diaSem]]);
-    planner.innerHTML = DIAS_LOGICA.map((dia, idx) => {
-        const fechaDia = new Date(_lunes); fechaDia.setDate(_lunes.getDate() + idx);
-        const esHoy = idx === _diaSem;
-        const abierto = diasAbiertosSemana.has(dia);
-        const entrenado = state.historial.some(s => s.fecha === fechaDia.toLocaleDateString());
-        const sel = state.semana[dia] || [];
-        const info = getDayColor(sel);
-        // El día de hoy muestra la sesión activa en vivo; los demás, su plan guardado
-        const esSesionViva = esHoy && state.hoy.length > 0;
-        const plantilla = esSesionViva ? state.hoy : (state.plantillaSemanal ? state.plantillaSemanal[dia] : null);
-        const isOpen = state.openMenu === dia;
-        const tieneRutina = plantilla && plantilla.length > 0;
-        const labelsHtml = sel.length > 0
-            ? sel.map(g => `<span class="mini-tag">${g}</span>`).join('')
-            : '<span style="font-size:10px; color:var(--text2)">Descanso</span>';
-
-        const editando = diasEditando.has(dia);
-
-        let bodyHtml = '';
-        if (tieneRutina) {
-            bodyHtml = `
-                <div class="week-ex-list">
-                    ${plantilla.map((ex, i) => `
-                    <div class="week-ex-item">
-                        <div style="display:flex;align-items:center;justify-content:space-between;gap:6px;flex:1;">
-                            <span class="week-ex-name">${getIcon(ex.t)}${ex.name} <span style="color:var(--text2);font-weight:400;font-size:11px;">(${ex.group})</span></span>
-                            ${(() => { const dbEx = getEjerciciosDe(ex.group).find(e => (e.n||e.name)===ex.name); return dbEx?.info ? `<button class="week-info-btn" onclick="abrirInfoEjercicio('${ex.name}','${ex.group}')"><span class="material-symbols-outlined" style="font-size:15px;">info</span></button>` : ''; })()}
-                        </div>
-                        ${editando ? `
-                        <div class="week-ex-actions">
-                            <button class="btn-icon btn-sm" onclick="moverEjercicioDia('${dia}',${i},-1)" ${i===0?'disabled':''}><span class="material-symbols-outlined">arrow_upward</span></button>
-                            <button class="btn-icon btn-sm" onclick="moverEjercicioDia('${dia}',${i},1)" ${i===plantilla.length-1?'disabled':''}><span class="material-symbols-outlined">arrow_downward</span></button>
-                            <button class="btn-icon btn-delete btn-sm" onclick="quitarDeDia('${dia}',${i})"><span class="material-symbols-outlined">delete</span></button>
-                        </div>` : ''}
-                    </div>`).join('')}
-                </div>
-                <div class="week-day-actions">
-                    ${editando ? `
-                        <button class="week-btn-secondary" onclick="planificarDia('${dia}')">+ Añadir</button>
-                        <button class="week-btn-secondary" onclick="abrirSelectorParaDia('${dia}')">⚡ Generar</button>
-                        <button class="week-btn-primary" style="background:var(--color-verde); color:#2d5a27; border:1px solid #a8d8a8;" onclick="guardarDia('${dia}')">✓ Guardar</button>
-                    ` : `
-                        ${esSesionViva
-                            ? `<button class="week-btn-secondary" onclick="showPage('hoyPage')"><span class="material-symbols-outlined" style="font-size:14px;">edit</span> Editar en Hoy</button>`
-                            : `<button class="week-btn-secondary" onclick="editarDia('${dia}')"><span class="material-symbols-outlined" style="font-size:14px;">edit</span> Editar</button>`}
-                        <button class="week-btn-secondary" onclick="toggleDuplicar('${dia}')"><span class="material-symbols-outlined" style="font-size:14px;">content_copy</span> Duplicar</button>
-                        ${esHoy
-                            ? `<button class="week-btn-primary" onclick="showPage('hoyPage')">Ir a Hoy →</button>`
-                            : `<button class="week-btn-primary" onclick="cargarPlantillaEnHoy('${dia}')">Cargar en Hoy →</button>`}
-                    `}
-                </div>
-                ${duplicandoDia === dia ? `
-                <div class="duplicar-row">
-                    <span class="duplicar-label">Copiar a:</span>
-                    ${DIAS_LOGICA.filter(d => d !== dia).map(d => `<button class="duplicar-chip" onclick="duplicarDiaA('${dia}','${d}')">${d.slice(0,3)}</button>`).join('')}
-                </div>` : ''}`;
-        } else if (sel.length > 0) {
-            bodyHtml = `
-                <div class="week-plan-empty">
-                    <button class="week-btn-plan" onclick="planificarDia('${dia}')">
-                        <span class="material-symbols-outlined">edit_note</span> Planificar este día
-                    </button>
-                    <button class="week-btn-secondary" onclick="abrirSelectorParaDia('${dia}')">⚡ Generar automáticamente</button>
-                </div>`;
-        }
-
-        return `
-        <div class="day-card ${esHoy ? 'day-card-hoy' : ''}">
-            <div class="day-header day-header-toggle" onclick="toggleDiaSemana('${dia}')">
-                <div class="day-name">
-                    <span class="material-symbols-outlined day-chevron">${abierto ? 'expand_less' : 'expand_more'}</span>
-                    ${DIAS_DISPLAY[idx]} ${fechaDia.getDate()}
-                    ${esHoy ? '<span class="day-badge-hoy">HOY</span>' : ''}
-                    ${entrenado ? '<span class="day-badge-done">✓ Entrenado</span>' : ''}
-                </div>
-                <div style="display:flex;align-items:center;gap:7px;">
-                    <span class="day-dot" style="background:${
-                        info.c === 'var(--color-rojo)'      ? '#E53935' :
-                        info.c === 'var(--color-amarillo)'  ? '#F9A825' :
-                        info.c === 'var(--color-verde)'     ? '#43A047' :
-                        'var(--outline)'
-                    };"></span>
-                    <div class="day-status">${info.s}</div>
-                </div>
-            </div>
-            ${abierto ? `
-            <div class="selected-labels" style="margin-bottom:${tieneRutina?'8':'4'}px;">
-                ${labelsHtml}
-            </div>
-            ${bodyHtml}
-            <button onclick="toggleDayMenu('${dia}')" style="background:rgba(0,0,0,0.05); border:none; width:100%; padding:6px; border-radius:10px; font-size:10px; color:var(--text2); display:flex; align-items:center; justify-content:center; gap:4px; margin-top:10px;">
-                CONFIGURAR GRUPOS <span class="material-symbols-outlined" style="font-size:14px;">${isOpen ? 'expand_less' : 'expand_more'}</span>
-            </button>
-            <div class="group-selector ${isOpen ? 'open' : ''}">
-                ${GRUPOS_SEMANA.map(g => `
-                    <label class="check-item">
-                        <input type="checkbox" ${sel.includes(g)?'checked':''} onchange="toggleWeek('${dia}','${g}')"> ${g}
-                    </label>
-                `).join('')}
-            </div>` : `
-            <div class="day-resumen">${esSesionViva ? '🟢 ' + plantilla.length + ' ejercicios en tu sesión de hoy' : (tieneRutina ? plantilla.length + ' ejercicios planificados' : (sel.length > 0 ? sel.join(' · ') + ' — sin planificar' : 'Descanso'))}</div>`}
-        </div>`;
-    }).join('');
-}
-
-function toggleDuplicar(dia) {
-    duplicandoDia = duplicandoDia === dia ? null : dia;
-    renderWeek();
-}
-
-function duplicarDiaA(origen, destino) {
-    // Fuente: si hoy tiene sesión viva y es el origen, copia esa; si no, el plan
-    let fuente = state.plantillaSemanal && state.plantillaSemanal[origen];
-    if (origen === getHoyNombre() && state.hoy.length > 0) fuente = state.hoy;
-    if (!fuente || !fuente.length) { showToast("Ese día no tiene rutina que copiar."); return; }
-    if (!state.plantillaSemanal) state.plantillaSemanal = {};
-    state.plantillaSemanal[destino] = JSON.parse(JSON.stringify(fuente)).map(ex => ({...ex, done: false}));
-    // Copia también los grupos del día
-    state.semana[destino] = [...(state.semana[origen] || [])];
-    duplicandoDia = null;
-    save(); renderWeek();
-    showToast(`✓ Rutina del ${origen} copiada al ${destino}`);
-}
-
 function togglePreview(dia) { const p = document.getElementById(`preview-${dia}`); if(p) p.style.display = p.style.display === 'none' ? 'block' : 'none'; }
 function toggleDayMenu(dia) { state.openMenu = state.openMenu === dia ? null : dia; renderWeek(); }
 function toggleWeek(dia, g) {
@@ -1385,13 +1367,6 @@ function abrirSelectorParaDia(dia) {
     const d = new Date();
     const hoyNombre = DIAS_LOGICA[d.getDay() === 0 ? 6 : d.getDay() - 1];
     mostrarModalIntensidad(dia === hoyNombre ? "¿Cómo te encuentras hoy?" : `¿Intensidad para el ${dia}?`);
-}
-
-function abrirGenerarSemana() {
-    const count = DIAS_LOGICA.filter(d => (state.semana[d]||[]).length > 0).length;
-    if (!count) { showToast("⚠️ Configura grupos en al menos un día."); return; }
-    intensityCtx = { modo: 'semana', dia: null };
-    mostrarModalIntensidad(`Intensidad para la semana · ${count} días`);
 }
 
 function mostrarModalIntensidad(titulo) {
@@ -1640,35 +1615,6 @@ function generarRutinaInteligente(intensidad) {
     intensityCtx = { modo: 'hoy', dia: DIAS_LOGICA[d.getDay() === 0 ? 6 : d.getDay() - 1] };
     generarConIntensidad(intensidad);
 }
-
-function cargarPlantillaEnHoy(dia) {
-    const plantilla = state.plantillaSemanal && state.plantillaSemanal[dia];
-    if (!plantilla || plantilla.length === 0) {
-        showToast("Este día no tiene rutina guardada.", "#e74c3c");
-        return;
-    }
-    const d = new Date();
-    const hoyNombre = DIAS_LOGICA[d.getDay() === 0 ? 6 : d.getDay() - 1];
-    const hoyDisplay = DIAS_DISPLAY[d.getDay() === 0 ? 6 : d.getDay() - 1];
-    const diaDisplay = DIAS_DISPLAY[DIAS_LOGICA.indexOf(dia)];
-
-    const cargar = () => {
-        state.hoy = plantilla.map(ex => ({...ex, done: false}));
-        save();
-        showPage('hoyPage');
-    };
-    if (dia !== hoyNombre) {
-        pedirConfirmacion(`Esta rutina es del ${diaDisplay} y hoy es ${hoyDisplay}. Se guardará en el historial con la fecha de hoy. ¿Cargarla igualmente?`, () => {
-            if (state.hoy.length > 0) pedirConfirmacion(`¿Reemplazar la sesión actual con la rutina del ${diaDisplay}?`, cargar, 'Reemplazar');
-            else cargar();
-        }, 'Cargar');
-        return;
-    }
-    if (state.hoy.length > 0) { pedirConfirmacion(`¿Reemplazar la sesión actual con la rutina del ${diaDisplay}?`, cargar, 'Reemplazar'); return; }
-    cargar();
-}
-
-function limpiarPlantillas() { pedirConfirmacion("¿Borrar todas las rutinas guardadas de la semana?", () => { state.plantillaSemanal = {}; save(); renderWeek(); }, "Borrar"); }
 
 function compartirBackup() {
     const datos = {
@@ -2528,6 +2474,15 @@ function startTimer(s) {
             setTimerLabel('DESCANSO');
         }
     }, 1000);
+}
+
+function descansoRapido(segundos) {
+    setTimerExpanded(true);
+    startTimer(segundos);
+    showToast(`⏱ Descanso de ${segundos}s iniciado`);
+    // Llevar la vista al temporizador arriba
+    const tb = document.querySelector('.topbar');
+    if (tb && tb.scrollIntoView) tb.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 function startTimerCustom() {
