@@ -4,6 +4,26 @@ Aplicación personal de entrenamiento. A partir de la v1.0 sale de fase beta.
 
 ---
 
+## v4.5 — Biblioteca coherente con el modo cíclico
+
+- La Biblioteca ya no muestra los días de la semana (resto del modo semanal antiguo, que confundía)
+- Ahora muestra un indicador claro de destino: "Añadiendo a la sesión de Hoy" o "Añadiendo a [Sesión X] del ciclo" según desde dónde llegues
+- Entrar a la Biblioteca desde la barra inferior añade a Hoy; entrar desde el botón "+ Añadir ejercicio" de una sesión del ciclo añade a esa sesión
+- Todos los grupos musculares se muestran siempre (ya no se atenúan por día)
+
+---
+
+## v4.4 — Periodización y avisos de equilibrio (Fases 4 y 5)
+
+- Periodización automática: la app cuenta las semanas que llevas en el bloque actual (Fuerza/Hipertrofia) y, pasadas 4, te sugiere cambiar al otro con un botón. La cabecera del ciclo muestra "semana N"
+- Recordatorio de descarga: a las 8 semanas, aviso para hacer una semana suave de recuperación
+- Avisos de equilibrio empuje/tirón: si en los últimos 30 días hay desbalance (2+ sesiones de diferencia), te avisa en el Ciclo y en Hoy de qué priorizar, pensado para tu postura
+- Corregido un bug de interpretación de fechas que podía descuadrar el conteo de semanas según la configuración regional del dispositivo: ahora el parseo es robusto e independiente del formato
+
+Con esto el modo cíclico queda completo: secuencia de sesiones, sugerencia de peso, periodización y avisos inteligentes, todo por reglas, sin coste ni dependencias.
+
+---
+
 ## v4.4 — Periodización y avisos de equilibrio (Fases 4 y 5)
 
 Completa el modo cíclico con las capas inteligentes:

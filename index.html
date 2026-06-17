@@ -24,7 +24,7 @@
         <p class="splash-by">Diseñada y desarrollada por</p>
         <p class="splash-author">Rubén Bejarano Checa</p>
         <p class="splash-ai">Creada con asistencia de inteligencia artificial</p>
-        <p class="splash-version">v4.4</p>
+        <p class="splash-version">v4.5</p>
     </div>
 </div>
 
@@ -73,7 +73,7 @@
                     <div id="exerciseCounter" class="counter-badge">0</div>
                 </div>
             </div>
-            <div id="diaSelectorRow" class="dia-selector-row"></div>
+            <div id="bibliotecaDestino" class="biblioteca-destino"></div>
             <div class="group-grid" id="groupGrid"></div>
         </div>
         <div id="exerciseView" style="display:none;">
@@ -141,7 +141,7 @@
 </div>
 
 <nav class="bottom-nav">
-    <button class="nav-btn active" id="btn-rutina" onclick="showPage('rutinaPage', this)">
+    <button class="nav-btn active" id="btn-rutina" onclick="bibliotecaDia='hoy'; _sesionDestino=null; showPage('rutinaPage', this)">
         <span class="material-symbols-outlined">format_list_bulleted</span>Biblioteca
     </button>
     <button class="nav-btn" id="btn-hoy" onclick="showPage('hoyPage', this)">
