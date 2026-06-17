@@ -1086,35 +1086,7 @@ body.dark-mode .cal-puntos-sem {
     flex-direction: column;
     gap: 10px;
     margin-top: 8px;
-}
-
-.intensity-btn {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    background: var(--surface2);
-    border: 2px solid transparent;
-    border-radius: 16px;
-    padding: 16px;
-    cursor: pointer;
-    text-align: left;
-    transition: border-color 0.15s, transform 0.1s, background 0.15s;
-    width: 100%;
-}
-
-.intensity-btn:hover {
-    background: var(--primary-light);
-}
-
-.intensity-btn:active {
-    transform: scale(0.98);
-}
-
-.intensity-suave { border-color: #a8d8b9; }
-.intensity-normal { border-color: var(--primary); }
-.intensity-intensa { border-color: #e8a87c; }
-
-.intensity-emoji {
+}.intensity-emoji {
     font-size: 26px;
     flex-shrink: 0;
 }
@@ -1253,68 +1225,7 @@ body.dark-mode .cal-puntos-sem {
     cursor: pointer;
     flex-shrink: 0;
     white-space: nowrap;
-}
-
-/* =========================================================
-   DÍA SELECTOR EN BIBLIOTECA
-========================================================= */
-.dia-selector-row {
-    display: flex;
-    gap: 6px;
-    overflow-x: auto;
-    padding: 0 0 12px;
-    scrollbar-width: none;
-    -webkit-overflow-scrolling: touch;
-}
-.dia-selector-row::-webkit-scrollbar { display: none; }
-
-.dia-chip {
-    flex-shrink: 0;
-    padding: 6px 14px;
-    border-radius: var(--shape-full);
-    background: var(--surface2);
-    font-size: 12px;
-    font-weight: 500;
-    color: var(--text2);
-    cursor: pointer;
-    transition: background 0.15s, color 0.15s;
-    border: 1.5px solid transparent;
-}
-
-.dia-chip-active {
-    background: var(--primary-light);
-    color: var(--primary);
-    font-weight: bold;
-    border-color: var(--primary);
-}
-
-.dia-chip-rest {
-    opacity: 0.45;
-}
-
-/* Día actual — punto de color indicador */
-.dia-chip-today {
-    position: relative;
-}
-.dia-chip-today::after {
-    content: '';
-    position: absolute;
-    top: 3px;
-    right: 6px;
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: #43A047;
-}
-.dia-chip-today .dia-chip-label {
-    color: #43A047;
-    font-weight: 700;
-}
-.dia-chip-today.dia-chip-active .dia-chip-label {
-    color: var(--primary);
-}
-
-.group-card-dim {
+}.group-card-dim {
     opacity: 0.45;
 }
 
@@ -1396,35 +1307,7 @@ body.dark-mode .cal-puntos-sem {
     font-weight: bold;
     cursor: pointer;
     width: 100%;
-}
-
-.week-btn-primary {
-    flex: 1;
-    background: var(--primary);
-    color: white;
-    border: none;
-    border-radius: 8px;
-    padding: 8px 10px;
-    font-size: 11px;
-    font-weight: bold;
-    cursor: pointer;
-    white-space: nowrap;
-}
-
-.week-btn-secondary {
-    flex: 1;
-    background: rgba(255,255,255,0.6);
-    color: var(--primary);
-    border: 1px solid var(--primary);
-    border-radius: 8px;
-    padding: 8px 10px;
-    font-size: 11px;
-    font-weight: bold;
-    cursor: pointer;
-    white-space: nowrap;
-}
-
-/* =========================================================
+}/* =========================================================
    TEMPORIZADOR
 ========================================================= */
 .tmr-card {
@@ -1680,23 +1563,13 @@ body.dark-mode .nav-btn { color: #CAC4D0; }
 
 body.dark-mode .nav-btn.active { color: #D0BCFF; }
 
-body.dark-mode .nav-btn.active::before { background: #2D2640; }
-
-body.dark-mode .intensity-btn { background: #332F38; }
-
-body.dark-mode .mini-tag { background: #3D3842; color: #CAC4D0; }
+body.dark-mode .nav-btn.active::before { background: #2D2640; }body.dark-mode .mini-tag { background: #3D3842; color: #CAC4D0; }
 
 body.dark-mode .tag-basico { background: #3A2D5C; color: #D0BCFF; }
 body.dark-mode .tag-aisla  { background: #1A3320; color: #81C784; }
 body.dark-mode .tag-salud  { background: #1A2E3A; color: #4FC3F7; }
 
-body.dark-mode .btn-pill { background: #2D2640; color: #D0BCFF; }
-
-body.dark-mode .week-btn-secondary { background: rgba(255,255,255,0.06); color: #D0BCFF; border-color: #D0BCFF; }
-
-
-
-/* =========================================================
+body.dark-mode .btn-pill { background: #2D2640; color: #D0BCFF; }/* =========================================================
    BOTONES ICON EJERCICIO
 ========================================================= */
 .btn-ex-info,
@@ -2288,14 +2161,7 @@ body.dark-mode .day-badge-done { background: #0a1f0a; color: #81C784; }
     font-size: 18px;
     vertical-align: middle;
     color: var(--text2);
-}
-.day-resumen {
-    font-size: 12px;
-    color: var(--text2);
-    padding: 2px 0 0 24px;
-}
-
-/* Hoja de Ajustes */
+}/* Hoja de Ajustes */
 .ajustes-list {
     display: flex;
     flex-direction: column;
