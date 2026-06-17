@@ -4,6 +4,20 @@ Aplicación personal de entrenamiento. A partir de la v1.0 sale de fase beta.
 
 ---
 
+## v4.0 (Fase 1) — Modo cíclico: motor de secuencia
+
+Primer paso del nuevo modo cíclico, que sustituye los días fijos de la semana por una secuencia de sesiones (A → B → C → D...) que avanzas a tu ritmo.
+
+- Tu rutina semanal actual se convierte automáticamente en sesiones del ciclo (migración suave, sin perder nada)
+- Al abrir Hoy, la app te dice qué sesión toca ("Toca Sesión B · Tirón") con sus ejercicios listos
+- Botón para empezar la sesión que toca, hacer otra (saltar/repetir, el ciclo continúa desde ahí), o entrenamiento libre (cardio/paseo que NO consume el ciclo)
+- El ciclo SOLO avanza cuando completas y guardas una sesión del ciclo; los días de descanso o cardio libre no lo mueven
+- Las sesiones del ciclo quedan marcadas en el historial
+
+Próximas fases: sugerencia de peso, periodización automática y avisos de equilibrio.
+
+---
+
 ## v3.6 — Importar/exportar rutina por separado
 
 - El menú de Ajustes separa ahora dos tipos de copia:

@@ -24,7 +24,7 @@
         <p class="splash-by">Diseñada y desarrollada por</p>
         <p class="splash-author">Rubén Bejarano Checa</p>
         <p class="splash-ai">Creada con asistencia de inteligencia artificial</p>
-        <p class="splash-version">v3.6</p>
+        <p class="splash-version">v4.0</p>
     </div>
 </div>
 
@@ -444,6 +444,16 @@
             <button onclick="confirmarCancelar()" style="flex:1;background:var(--surface2);color:var(--text2);border:none;border-radius:12px;padding:12px;font-size:14px;font-weight:600;cursor:pointer;">Cancelar</button>
             <button id="confirmOkBtn" onclick="confirmarOk()" style="flex:1;background:var(--primary);color:white;border:none;border-radius:12px;padding:12px;font-size:14px;font-weight:bold;cursor:pointer;">Confirmar</button>
         </div>
+    </div>
+</div>
+
+<!-- MODAL SELECTOR DE SESIÓN DEL CICLO -->
+<div id="selectorSesionModal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:999999;align-items:flex-end;justify-content:center;" onclick="if(event.target===this)cerrarSelectorSesion()">
+    <div class="day-modal-sheet" style="padding:24px 20px 40px;width:100%;max-width:600px;">
+        <div style="width:32px;height:4px;background:var(--outline);border-radius:2px;margin:0 auto 20px;"></div>
+        <h3 style="margin:0 0 4px;font-size:18px;">Elegir sesión</h3>
+        <p style="margin:0 0 16px;font-size:13px;color:var(--text2);">Salta o repite la sesión que prefieras. El ciclo continuará desde la que elijas.</p>
+        <div id="selectorSesionLista" style="display:flex;flex-direction:column;gap:8px;"></div>
     </div>
 </div>
 
