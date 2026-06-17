@@ -4,6 +4,20 @@ Aplicación personal de entrenamiento. A partir de la v1.0 sale de fase beta.
 
 ---
 
+## v4.6 — Limpieza profunda
+
+Eliminado todo el código muerto del antiguo modo semanal y su generador de rutinas, que ya no tenían entrada de usuario tras el paso al modo cíclico:
+
+- Generador por intensidad completo: selector de intensidad, vista previa, buildRutina y funciones asociadas (~14 funciones)
+- Sus dos modales del HTML (intensidad y vista previa de rutina)
+- Función generarSemanaCompleta y generarRutinaInteligente
+- CSS muerto: clases de los chips de día, del generador y de la antigua vista semanal (~2.600 caracteres)
+- Variables globales huérfanas del generador
+
+La app queda más ligera y mantenible, sin ningún cambio visible en su funcionamiento: todo el flujo del modo cíclico permanece intacto y verificado.
+
+---
+
 ## v4.5 — Biblioteca coherente con el modo cíclico
 
 - La Biblioteca ya no muestra los días de la semana (resto del modo semanal antiguo, que confundía)
