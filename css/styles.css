@@ -2617,3 +2617,12 @@ body.dark-mode .day-badge-done { background: #0a1f0a; color: #81C784; }
     background:var(--surface2); border:1.5px dashed var(--outline); color:var(--primary);
     border-radius:10px; padding:10px; font-size:13px; font-weight:600; cursor:pointer;
 }
+
+/* v4.2 — grupos musculares en sesiones del ciclo */
+.ciclo-sesion-grupos, .ciclo-toca-grupos, .selector-sesion-grupos {
+    font-size: 11px;
+    color: var(--primary);
+    font-weight: 600;
+    margin-top: 2px;
+}
+.ciclo-toca-grupos { display:block; text-align:center; }
