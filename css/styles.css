@@ -2715,3 +2715,23 @@ body.dark-mode .day-badge-done { background: #0a1f0a; color: #81C784; }
     color: var(--text);
 }
 .aviso-equilibrio .material-symbols-outlined { color: #43A047; }
+
+/* =========================================================
+   v4.5 — INDICADOR DE DESTINO EN BIBLIOTECA
+========================================================= */
+.biblioteca-destino {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--primary-light);
+    border-radius: 10px;
+    padding: 10px 14px;
+    margin-bottom: 14px;
+    font-size: 13px;
+    color: var(--text);
+}
+.biblioteca-destino .material-symbols-outlined {
+    font-size: 18px;
+    color: var(--primary);
+}
+.biblioteca-destino b { color: var(--primary); }
