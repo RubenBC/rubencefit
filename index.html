@@ -24,7 +24,7 @@
         <p class="splash-by">Diseñada y desarrollada por</p>
         <p class="splash-author">Rubén Bejarano Checa</p>
         <p class="splash-ai">Creada con asistencia de inteligencia artificial</p>
-        <p class="splash-version">v4.0</p>
+        <p class="splash-version">v4.1</p>
     </div>
 </div>
 
@@ -106,13 +106,10 @@
 
     <div id="semanaPage" class="page">
         <div class="header-row">
-            <h2><span class="material-symbols-outlined">calendar_view_week</span> Semana</h2>
-            <div style="display:flex; gap:8px;">
-                <button onclick="limpiarPlantillas()" style="color:var(--danger); border:none; background:none; font-size:11px; font-weight:bold;">RESETEAR</button>
-                <button onclick="abrirGenerarSemana()" style="background:var(--primary-light); color:var(--primary); border:none; padding:8px 12px; border-radius:10px; font-size:11px; font-weight:bold;">⚡ SEMANA</button>
-            </div>
+            <h2><span class="material-symbols-outlined">repeat</span> Mi Ciclo</h2>
+            <button onclick="anadirSesionCiclo()" style="background:var(--primary-light); color:var(--primary); border:none; padding:8px 14px; border-radius:10px; font-size:12px; font-weight:bold; cursor:pointer;">+ Sesión</button>
         </div>
-        <div id="weekPlanner"></div>
+        <div id="cicloPlanner"></div>
     </div>
 
     <div id="historialPage" class="page">
@@ -151,7 +148,7 @@
         <span class="material-symbols-outlined">fitness_center</span>Hoy
     </button>
     <button class="nav-btn" id="btn-semana" onclick="showPage('semanaPage', this)">
-        <span class="material-symbols-outlined">calendar_month</span>Semana
+        <span class="material-symbols-outlined">repeat</span>Ciclo
     </button>
     <button class="nav-btn" id="btn-historial" onclick="showPage('historialPage', this)">
         <span class="material-symbols-outlined">history</span>Log
@@ -454,6 +451,18 @@
         <h3 style="margin:0 0 4px;font-size:18px;">Elegir sesión</h3>
         <p style="margin:0 0 16px;font-size:13px;color:var(--text2);">Salta o repite la sesión que prefieras. El ciclo continuará desde la que elijas.</p>
         <div id="selectorSesionLista" style="display:flex;flex-direction:column;gap:8px;"></div>
+    </div>
+</div>
+
+<!-- MODAL ENTRADA DE TEXTO -->
+<div id="textoModal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:999999;align-items:center;justify-content:center;padding:24px;" onclick="if(event.target===this)cancelarTexto()">
+    <div style="background:var(--surface);border-radius:16px;padding:22px 20px;max-width:340px;width:100%;">
+        <h3 id="textoModalTitulo" style="margin:0 0 14px;font-size:16px;">Texto</h3>
+        <input id="textoModalInput" type="text" style="width:100%;padding:12px;border-radius:10px;border:1px solid var(--outline);background:var(--surface2);color:var(--text);font-size:15px;margin-bottom:18px;box-sizing:border-box;">
+        <div style="display:flex;gap:10px;">
+            <button onclick="cancelarTexto()" style="flex:1;background:var(--surface2);color:var(--text2);border:none;border-radius:12px;padding:12px;font-size:14px;font-weight:600;cursor:pointer;">Cancelar</button>
+            <button onclick="confirmarTexto()" style="flex:1;background:var(--primary);color:white;border:none;border-radius:12px;padding:12px;font-size:14px;font-weight:bold;cursor:pointer;">Guardar</button>
+        </div>
     </div>
 </div>
 

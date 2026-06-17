@@ -4,6 +4,22 @@ Aplicación personal de entrenamiento. A partir de la v1.0 sale de fase beta.
 
 ---
 
+## v4.1 (Fase 2) — Pantalla Ciclo
+
+La antigua pestaña Semana es ahora "Mi Ciclo", el gestor de tus sesiones A, B, C, D...
+
+- Ves todas tus sesiones del ciclo en orden, con cuál toca ahora resaltada
+- Crear sesión nueva (con nombre: Empuje, Tirón, Pierna...)
+- Renombrar, reordenar (subir/bajar) y borrar sesiones
+- Marcar cualquier sesión como "la actual"
+- Añadir o quitar ejercicios de cada sesión (los ejercicios se eligen desde la Biblioteca)
+- Indicador del bloque actual (Fuerza/Hipertrofia) y de cuántas sesiones tiene tu ciclo
+- Borrar una sesión no afecta a tu historial
+
+Ahora puedes dejar tu ciclo en las sesiones de fuerza que quieras (p. ej. 4: Tirón, Empuje, Tirón, Empuje) y borrar las de cardio/movilidad que la migración traía, dejándolas como entrenamiento libre.
+
+---
+
 ## v4.0 (Fase 1) — Modo cíclico: motor de secuencia
 
 Primer paso del nuevo modo cíclico, que sustituye los días fijos de la semana por una secuencia de sesiones (A → B → C → D...) que avanzas a tu ritmo.
