@@ -4,6 +4,16 @@ Aplicación personal de entrenamiento. A partir de la v1.0 sale de fase beta.
 
 ---
 
+## v5.0 — Siluetas musculares mejoradas
+
+- Las siluetas de las tarjetas de grupo se rediseñan con más contraste y mejor anatomía
+- Tren superior (pecho, espalda, hombros, bíceps, tríceps, core): se dibuja solo el torso y los brazos, más grande, para que el músculo se vea mejor
+- Tren inferior (piernas, circulación): se dibuja el cuerpo completo
+- Cardio: torso con un corazón resaltado en el centro
+- Los colores del cuerpo se adaptan automáticamente al modo claro y oscuro; la zona activa siempre en rojo vivo para máximo contraste
+
+---
+
 ## v4.9
 
 - Las tarjetas de grupo en la Biblioteca muestran ahora una mini silueta del cuerpo humano con el grupo muscular correspondiente resaltado en rojo, en lugar del icono genérico. Dibujada en SVG (ligera, sin imágenes externas)
