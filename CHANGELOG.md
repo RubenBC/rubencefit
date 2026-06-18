@@ -4,6 +4,23 @@ Aplicación personal de entrenamiento. A partir de la v1.0 sale de fase beta.
 
 ---
 
+## v4.8 — Piernas y Circulación separados
+
+- El antiguo grupo "Piernas" (que mezclaba fuerza y drenaje) se divide en dos grupos independientes:
+  - **Piernas**: fuerza de pierna bilateral y sin impacto (sentadilla a banco, puente de glúteo, peso muerto rumano, elevación de talones, sentadilla isométrica)
+  - **Circulación**: drenaje linfático y movilidad de bajo impacto (bomba de tobillo, piernas en la pared, bicicleta en el aire, respiración, automasaje...)
+- Migración automática: tus ejercicios de drenaje existentes pasan solos al grupo Circulación; los de fuerza se quedan en Piernas
+- Ahora el resumen de grupos de cada sesión es honesto: "Piernas" solo aparece cuando hay fuerza real de pierna, no por el drenaje
+- El bloque "+ Drenaje" de Hoy y los estiramientos de cierre usan el nuevo grupo Circulación
+
+---
+
+## v4.7
+
+- Corregido: las etiquetas de grupos musculares de cada sesión mostraban "Piernas" en todas, porque contaban los ejercicios de drenaje (bomba de tobillo, piernas en la pared). Ahora solo cuentan el trabajo real de fuerza (Básico/Aislamiento), no el drenaje ni los estiramientos. Así "Piernas" aparece solo en las sesiones con pierna de verdad
+
+---
+
 ## v4.6 — Limpieza profunda
 
 Eliminado todo el código muerto del antiguo modo semanal y su generador de rutinas, que ya no tenían entrada de usuario tras el paso al modo cíclico:
