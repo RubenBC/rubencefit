@@ -113,7 +113,14 @@ const db = {
         {n:"Torsión lumbar tumbado", t:T_S, tip:"Estiramiento", info:"Boca arriba con rodillas juntas flexionadas, déjalas caer a un lado con los hombros en el suelo. Estira oblicuos y zona lumbar.", recSeries:"1", recReps:"45s/lado"},
         {n:"Postura de la cobra (core)", t:T_S, tip:"Estiramiento", info:"Boca abajo, extiende los brazos elevando el torso. El abdomen completo en estiramiento tras el trabajo de flexión.", recSeries:"1", recReps:"30-45s"}
     ] },
-    "Piernas": { icon: "directions_walk", advice: "Drenaje linfático y bomba muscular. Sin fuerza pura.", data: [
+        "Piernas": { icon: "exercise", advice: "Fuerza de pierna bilateral y controlada, sin impacto. Con visto bueno médico.", data: [
+        {n:"Sentadilla a banco con mancuernas", t:T_B, tip:"Mancuernas + Banco", info:"Con una mancuerna en cada mano, baja sentándote hacia atrás hasta rozar el banco con el glúteo y sube. El banco controla la profundidad y hace el movimiento seguro. Cuádriceps y glúteo de forma bilateral y sin impacto.", recSeries:"3", recReps:"8-12"},
+        {n:"Puente de glúteo con mancuerna", t:T_B, tip:"Mancuernas + Banco", info:"Tumbado con rodillas flexionadas y una mancuerna sobre la cadera, eleva la pelvis apretando el glúteo arriba y baja controlado. Glúteo y cadena posterior con carga; además eleva las piernas respecto al tronco, favoreciendo el retorno venoso.", recSeries:"4", recReps:"8-15"},
+        {n:"Peso muerto rumano con mancuernas", t:T_B, tip:"Solo Mancuernas", info:"De pie, baja las mancuernas pegadas a las piernas empujando la cadera atrás con rodillas semiflexionadas y espalda neutra. Cadena posterior completa: erectores, glúteo e isquios.", recSeries:"4", recReps:"6-10"},
+        {n:"Elevación de talones de pie con mancuerna", t:T_A, tip:"Solo Mancuernas", info:"De pie con una mancuerna en la mano, eleva los talones contrayendo el gemelo y baja lento. Fortalece el gemelo, que además actúa como bomba muscular para el retorno linfático de la pierna.", recSeries:"3", recReps:"12-20"},
+        {n:"Sentadilla isométrica en pared", t:T_S, tip:"Sin equipamiento", info:"Espalda apoyada en la pared, baja hasta que los muslos queden paralelos al suelo y aguanta. Cuádriceps en isometría, sin impacto ni carga axial.", recSeries:"3", recReps:"20-40s"}
+    ] },
+    "Circulación": { icon: "favorite", advice: "Drenaje linfático y bomba muscular. Bajo impacto, para tu circulación.", data: [
         {n:"Bomba de tobillo (ankle pumps)", t:T_S, tip:"Sin equipamiento", info:"Tumbado o sentado, flexiona y extiende los tobillos rítmicamente como acelerando. El gemelo actúa de bomba periférica empujando el fluido linfático hacia arriba: el ejercicio número uno del drenaje.", recSeries:"3", recReps:"15-20"},
         {n:"Círculos de tobillo", t:T_S, tip:"Sin equipamiento", info:"Dibuja círculos amplios con los pies en ambos sentidos. Moviliza el tobillo y activa la musculatura baja de la pierna en todos los planos.", recSeries:"3", recReps:"10/dirección"},
         {n:"Piernas elevadas en la pared", t:T_S, tip:"Sin equipamiento", info:"Tumbado con las piernas verticales apoyadas en la pared. La gravedad drena pasivamente; la respiración abdominal profunda mientras tanto multiplica el efecto.", recSeries:"1", recReps:"5-15 min"},
@@ -163,7 +170,7 @@ const DIAS_DISPLAY = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sá
 
 const P_PUSH = ["Pecho", "Hombros", "Tríceps"];
 const P_PULL = ["Espalda", "Bíceps"];
-const P_LEGS = ["Piernas", "Core"];
+const P_LEGS = ["Piernas", "Circulación", "Core"];
 
 let state = JSON.parse(localStorage.getItem('iron_log_v8.6')) || {
     hoy: [], historial: [], activeTab: 'rutinaPage',
@@ -305,13 +312,13 @@ function showPage(id, btn, slideDir) {
     if(btn) btn.classList.add('active'); else { const b = document.getElementById('btn-'+id.replace('Page','')); if(b) b.classList.add('active'); }
     state.activeTab = id; save();
     setTimerExpanded(id === 'hoyPage');
-    if (id === 'hoyPage') { migrarPlantillaACiclo(); sincronizarHoyConCiclo(); }
+    if (id === 'hoyPage') { migrarPlantillaACiclo(); migrarPiernasACirculacion(); sincronizarHoyConCiclo(); }
     if (id === 'hoyPage' && state.sesionStartTime) startSesionStopwatch();
     else if (id !== 'hoyPage') stopSesionStopwatch();
     updateStopwatchVisibility();
     if(id === 'rutinaPage') { if(bibliotecaDia === 'hoy') {} renderGroups(); }
     if(id === 'hoyPage') renderToday();
-    if(id === 'semanaPage') { migrarPlantillaACiclo(); renderCiclo(); }
+    if(id === 'semanaPage') { migrarPlantillaACiclo(); migrarPiernasACirculacion(); renderCiclo(); }
     if(id === 'historialPage') renderHistory();
 }
 
@@ -500,7 +507,11 @@ function getSesionActual() {
 // Devuelve los grupos musculares (sin Cardio) de una sesión, como texto
 function getGruposSesion(sesion) {
     if (!sesion || !sesion.ejercicios) return '';
-    const grupos = [...new Set(sesion.ejercicios.map(e => e.group).filter(g => g && g !== 'Cardio'))];
+    // Solo cuenta el trabajo real (Básico/Aislamiento), no el drenaje/estiramientos (tipo Salud)
+    const grupos = [...new Set(sesion.ejercicios
+        .filter(e => e.t !== T_S)
+        .map(e => e.group)
+        .filter(g => g && g !== 'Cardio'))];
     return grupos.join(' · ');
 }
 
@@ -539,6 +550,42 @@ function cargarSesionDelCiclo(idx, posicionar) {
     showToast(`Cargada ${getEtiquetaSesion(idx)}`);
 }
 
+// Reasigna ejercicios de drenaje del antiguo grupo "Piernas" al nuevo "Circulación"
+function migrarPiernasACirculacion() {
+    if (state._migradoCirculacion) return;
+    const nombresCirculacion = new Set(getEjerciciosDe('Circulación').map(e => e.n || e.name));
+    const reasignar = (arr) => {
+        if (!Array.isArray(arr)) return;
+        arr.forEach(ex => {
+            if (ex.group === 'Piernas' && (ex.t === T_S || nombresCirculacion.has(ex.name))) {
+                ex.group = 'Circulación';
+            }
+        });
+    };
+    // En sesiones del ciclo
+    if (state.ciclo && state.ciclo.sesiones) state.ciclo.sesiones.forEach(s => reasignar(s.ejercicios));
+    // En la sesión de hoy
+    reasignar(state.hoy);
+    // En plantillaSemanal (por si queda)
+    if (state.plantillaSemanal) Object.values(state.plantillaSemanal).forEach(reasignar);
+    // En ejercicios custom: mover los de drenaje de Piernas a Circulación
+    if (state.ejerciciosCustom && state.ejerciciosCustom.Piernas) {
+        const quedan = [];
+        state.ejerciciosCustom.Piernas.forEach(ex => {
+            if (ex.t === T_S) {
+                if (!state.ejerciciosCustom['Circulación']) state.ejerciciosCustom['Circulación'] = [];
+                ex.group = 'Circulación';
+                state.ejerciciosCustom['Circulación'].push(ex);
+            } else {
+                quedan.push(ex);
+            }
+        });
+        state.ejerciciosCustom.Piernas = quedan;
+    }
+    state._migradoCirculacion = true;
+    save();
+}
+
 // Convierte la plantillaSemanal actual en sesiones del ciclo (migración suave)
 function migrarPlantillaACiclo() {
     if (state.ciclo.sesiones.length > 0) return; // ya migrado
@@ -552,7 +599,7 @@ function migrarPlantillaACiclo() {
             let tipo = 'Mixta';
             const tieneEmpuje = grupos.some(g => ['Pecho','Hombros','Tríceps'].includes(g));
             const tieneTiron = grupos.some(g => ['Espalda','Bíceps'].includes(g));
-            const soloCardio = grupos.every(g => ['Cardio','Piernas','Core'].includes(g));
+            const soloCardio = grupos.every(g => ['Cardio','Piernas','Circulación','Core'].includes(g));
             if (tieneEmpuje && !tieneTiron) tipo = 'Empuje';
             else if (tieneTiron && !tieneEmpuje) tipo = 'Tirón';
             else if (soloCardio) tipo = 'Cardio y movilidad';
@@ -745,11 +792,11 @@ function cancelarTexto() {
 }
 
 function addBloqueDrenaje() {
-    const pool = getEjerciciosDe('Piernas').filter(e => e.tip !== 'Estiramiento' && !state.hoy.find(h => h.name === e.n));
+    const pool = getEjerciciosDe('Circulación').filter(e => e.tip !== 'Estiramiento' && !state.hoy.find(h => h.name === e.n));
     const shuffled = [...pool].sort(() => Math.random() - 0.5).slice(0, 3);
     if (!shuffled.length) { showToast('Ya tienes todo el drenaje añadido'); return; }
     shuffled.forEach(ex => state.hoy.push({
-        name: ex.n, group: 'Piernas', t: T_S, tip: ex.tip,
+        name: ex.n, group: 'Circulación', t: T_S, tip: ex.tip,
         series: '', reps: '', peso: '', nota: '', done: false,
         recSeries: ex.recSeries || '', recReps: ex.recReps || '', usaBanda: false
     }));
@@ -1370,7 +1417,7 @@ function finalizarSesion() {
     document.getElementById('finalizarModal').style.display = 'flex';
 }
 function getEstiramientosDeCierre() {
-    const grupos = [...new Set(state.hoy.map(e => e.group))].filter(g => g !== 'Cardio' && g !== 'Piernas');
+    const grupos = [...new Set(state.hoy.map(e => e.group))].filter(g => g !== 'Cardio' && g !== 'Piernas' && g !== 'Circulación');
     const seleccion = [];
     // 1-2 estiramientos del propio grupo entrenado
     grupos.forEach(g => {
@@ -1381,9 +1428,9 @@ function getEstiramientosDeCierre() {
         });
     });
     // Siempre cierra con drenaje
-    const drenaje = getEjerciciosDe('Piernas').find(e => e.n === 'Piernas elevadas en la pared');
+    const drenaje = getEjerciciosDe('Circulación').find(e => e.n === 'Piernas elevadas en la pared');
     const final = seleccion.slice(0, 4);
-    if (drenaje) final.push({...drenaje, group: 'Piernas'});
+    if (drenaje) final.push({...drenaje, group: 'Circulación'});
     return final.map(ex => ({
         name: ex.n, group: ex.group, t: T_S,
         tip: ex.tip || 'Estiramiento', series: '', reps: '', peso: '',
