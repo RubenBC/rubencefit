@@ -1,5 +1,6 @@
 :root {
     --primary: #6750A4;
+    --muscle-base: #C7C9D9;
     --primary-light: #EADDFF;
 
     --bg: #F6F2FA;
@@ -1513,6 +1514,7 @@ body.dark-mode .tmr-input { border-color: #49454F; }
    MODO OSCURO
 ========================================================= */
 body.dark-mode {
+    --muscle-base: #5A5A6E;
     --primary: #D0BCFF;
     --primary-light: #2D2640;
     --bg: #1C1B1F;
@@ -2606,8 +2608,8 @@ body.dark-mode .day-badge-done { background: #0a1f0a; color: #81C784; }
    v4.9 — SILUETA MUSCULAR EN TARJETAS DE GRUPO
 ========================================================= */
 .body-svg {
-    width: 42px;
-    height: 63px;
+    width: 46px;
+    height: 56px;
     display: block;
     margin: 0 auto 6px;
 }
