@@ -4,6 +4,13 @@ Aplicación personal de entrenamiento. A partir de la v1.0 sale de fase beta.
 
 ---
 
+## v4.9
+
+- Las tarjetas de grupo en la Biblioteca muestran ahora una mini silueta del cuerpo humano con el grupo muscular correspondiente resaltado en rojo, en lugar del icono genérico. Dibujada en SVG (ligera, sin imágenes externas)
+- Cada grupo resalta su zona: pecho, espalda, hombros, bíceps, tríceps, core, piernas (muslos), circulación (pantorrillas) y cardio (zona central)
+
+---
+
 ## v4.8 — Piernas y Circulación separados
 
 - El antiguo grupo "Piernas" (que mezclaba fuerza y drenaje) se divide en dos grupos independientes:
