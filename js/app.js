@@ -345,10 +345,48 @@ function renderGroups() {
     renderDestino();
     document.getElementById('groupGrid').innerHTML = GRUPOS.map(g => {
         return `<div class="group-card" onclick="showExercises('${g}')">
-            <span class="material-symbols-outlined">${db[g].icon}</span>
+            ${bodySVG(MUSCULO_MAP[g] || [])}
             <div style="font-weight:bold;">${g}</div>
         </div>`;
     }).join('');
+}
+
+// Mapa grupo → zonas musculares a resaltar en la silueta
+const MUSCULO_MAP = {
+    'Pecho': ['Pecho'], 'Espalda': ['Espalda'], 'Hombros': ['Hombros'],
+    'Bíceps': ['Bíceps'], 'Tríceps': ['Tríceps'], 'Core': ['Core'],
+    'Piernas': ['Piernas'], 'Circulación': ['Circulación'], 'Cardio': ['Cardio']
+};
+
+// Silueta humana esquemática; resalta en rojo las zonas activas
+function bodySVG(activeGroups) {
+    const on = (g) => activeGroups.includes(g);
+    const C = '#e74c3c';
+    const base = '#454555';
+    const f = (g) => on(g) ? C : base;
+    return `<svg viewBox="0 0 100 128" xmlns="http://www.w3.org/2000/svg" class="body-svg">
+        <circle cx="50" cy="12" r="8" fill="#2e2e3a"/>
+        <rect x="46" y="19" width="8" height="5" fill="#2e2e3a"/>
+        <path d="M34 26 Q50 22 66 26 L64 64 Q50 68 36 64 Z" fill="#2e2e3a"/>
+        <path d="M34 27 Q26 30 24 38 L21 58 Q20 64 24 64 L28 58 L32 40 Z" fill="#2e2e3a"/>
+        <path d="M66 27 Q74 30 76 38 L79 58 Q80 64 76 64 L72 58 L68 40 Z" fill="#2e2e3a"/>
+        <path d="M37 65 L36 110 Q36 116 42 116 L45 112 L47 68 Z" fill="#2e2e3a"/>
+        <path d="M63 65 L64 110 Q64 116 58 116 L55 112 L53 68 Z" fill="#2e2e3a"/>
+        ${on('Cardio') ? `<circle cx="50" cy="40" r="5" fill="${C}"/>` : ''}
+        <ellipse cx="33" cy="30" rx="6" ry="4.5" fill="${f('Hombros')}"/>
+        <ellipse cx="67" cy="30" rx="6" ry="4.5" fill="${f('Hombros')}"/>
+        <path d="M38 30 Q50 28 62 30 L61 42 Q50 45 39 42 Z" fill="${f('Pecho')}"/>
+        <rect x="39" y="29" width="22" height="4" rx="2" fill="${f('Espalda')}"/>
+        <ellipse cx="27" cy="42" rx="3.5" ry="6" fill="${f('Bíceps')}"/>
+        <ellipse cx="73" cy="42" rx="3.5" ry="6" fill="${f('Bíceps')}"/>
+        <ellipse cx="24" cy="54" rx="3" ry="6" fill="${f('Tríceps')}"/>
+        <ellipse cx="76" cy="54" rx="3" ry="6" fill="${f('Tríceps')}"/>
+        <rect x="42" y="45" width="16" height="19" rx="3" fill="${f('Core')}"/>
+        <path d="M38 66 L37 92 L45 92 L46 68 Z" fill="${f('Piernas')}"/>
+        <path d="M62 66 L63 92 L55 92 L54 68 Z" fill="${f('Piernas')}"/>
+        <ellipse cx="40" cy="104" rx="3.5" ry="7" fill="${f('Circulación')}"/>
+        <ellipse cx="60" cy="104" rx="3.5" ry="7" fill="${f('Circulación')}"/>
+    </svg>`;
 }
 
 function showExercises(group) {
