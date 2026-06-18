@@ -2601,3 +2601,14 @@ body.dark-mode .day-badge-done { background: #0a1f0a; color: #81C784; }
     color: var(--primary);
 }
 .biblioteca-destino b { color: var(--primary); }
+
+/* =========================================================
+   v4.9 — SILUETA MUSCULAR EN TARJETAS DE GRUPO
+========================================================= */
+.body-svg {
+    width: 42px;
+    height: 63px;
+    display: block;
+    margin: 0 auto 6px;
+}
+.group-card .body-svg { flex-shrink: 0; }
