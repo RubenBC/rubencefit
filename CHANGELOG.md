@@ -4,6 +4,15 @@ Aplicación personal de entrenamiento. A partir de la v1.0 sale de fase beta.
 
 ---
 
+## v5.1 — Puntuación recalibrada
+
+- Los puntos de sesión, semana y mes se recalibran a una escala más manejable e intuitiva (antes una sola sesión podía dar 300+; ahora ronda 25-30)
+- Unificado el criterio: la puntuación de los totales y el mapa de intensidad del calendario usan ahora la misma escala coherente
+- Referencia con la nueva escala: semana buena 75-100 puntos (3 sesiones de fuerza), muy buena 100-120 (4 sesiones)
+- Los datos históricos no se pierden; solo se muestran en la nueva escala
+
+---
+
 ## v5.0 — Siluetas musculares mejoradas
 
 - Las siluetas de las tarjetas de grupo se rediseñan con más contraste y mejor anatomía
