@@ -1808,11 +1808,11 @@ function getSessionPoints(sesion) {
     let pts = 0;
     if (!sesion.ejercicios) return 0;
     sesion.ejercicios.forEach(ex => {
-        if (ex.group === 'Cardio') pts += (parseFloat(ex.series)||0)*2;
-        else if (ex.t === T_S) pts += 10;
+        if (ex.group === 'Cardio') pts += Math.max((parseFloat(ex.series)||0) / 5, 0.5);
+        else if (ex.t === T_S) pts += 1;
         else {
             const tipo = getEquipType(ex);
-            const base = ex.t === T_B ? 40 : 30;
+            const base = ex.t === T_B ? 4 : 3;
             const mult = (tipo==='dumbbell'||tipo==='mixed') ? 1 : tipo==='band' ? 0.75 : 0.5;
             pts += base * mult;
         }
