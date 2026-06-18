@@ -358,34 +358,61 @@ const MUSCULO_MAP = {
     'Piernas': ['Piernas'], 'Circulación': ['Circulación'], 'Cardio': ['Cardio']
 };
 
-// Silueta humana esquemática; resalta en rojo las zonas activas
+// Grupos de tren superior: se dibujan solo torso+brazos (sin piernas)
+const GRUPOS_SUPERIOR = ['Pecho','Espalda','Hombros','Bíceps','Tríceps','Core'];
+
+// Silueta muscular; resalta en rojo la zona activa. El color base se adapta al tema vía CSS var.
 function bodySVG(activeGroups) {
     const on = (g) => activeGroups.includes(g);
-    const C = '#e74c3c';
-    const base = '#454555';
+    const C = '#FF3B30';
+    const base = 'var(--muscle-base)';
     const f = (g) => on(g) ? C : base;
-    return `<svg viewBox="0 0 100 128" xmlns="http://www.w3.org/2000/svg" class="body-svg">
-        <circle cx="50" cy="12" r="8" fill="#2e2e3a"/>
-        <rect x="46" y="19" width="8" height="5" fill="#2e2e3a"/>
-        <path d="M34 26 Q50 22 66 26 L64 64 Q50 68 36 64 Z" fill="#2e2e3a"/>
-        <path d="M34 27 Q26 30 24 38 L21 58 Q20 64 24 64 L28 58 L32 40 Z" fill="#2e2e3a"/>
-        <path d="M66 27 Q74 30 76 38 L79 58 Q80 64 76 64 L72 58 L68 40 Z" fill="#2e2e3a"/>
-        <path d="M37 65 L36 110 Q36 116 42 116 L45 112 L47 68 Z" fill="#2e2e3a"/>
-        <path d="M63 65 L64 110 Q64 116 58 116 L55 112 L53 68 Z" fill="#2e2e3a"/>
-        ${on('Cardio') ? `<circle cx="50" cy="40" r="5" fill="${C}"/>` : ''}
-        <ellipse cx="33" cy="30" rx="6" ry="4.5" fill="${f('Hombros')}"/>
-        <ellipse cx="67" cy="30" rx="6" ry="4.5" fill="${f('Hombros')}"/>
-        <path d="M38 30 Q50 28 62 30 L61 42 Q50 45 39 42 Z" fill="${f('Pecho')}"/>
-        <rect x="39" y="29" width="22" height="4" rx="2" fill="${f('Espalda')}"/>
-        <ellipse cx="27" cy="42" rx="3.5" ry="6" fill="${f('Bíceps')}"/>
-        <ellipse cx="73" cy="42" rx="3.5" ry="6" fill="${f('Bíceps')}"/>
-        <ellipse cx="24" cy="54" rx="3" ry="6" fill="${f('Tríceps')}"/>
-        <ellipse cx="76" cy="54" rx="3" ry="6" fill="${f('Tríceps')}"/>
-        <rect x="42" y="45" width="16" height="19" rx="3" fill="${f('Core')}"/>
-        <path d="M38 66 L37 92 L45 92 L46 68 Z" fill="${f('Piernas')}"/>
-        <path d="M62 66 L63 92 L55 92 L54 68 Z" fill="${f('Piernas')}"/>
-        <ellipse cx="40" cy="104" rx="3.5" ry="7" fill="${f('Circulación')}"/>
-        <ellipse cx="60" cy="104" rx="3.5" ry="7" fill="${f('Circulación')}"/>
+    const esSuperior = activeGroups.some(g => GRUPOS_SUPERIOR.includes(g));
+    const esInferior = activeGroups.some(g => ['Piernas','Circulación'].includes(g));
+
+    // Tren superior (torso grande, sin piernas)
+    if (esSuperior || (!esInferior && !on('Cardio'))) {
+        return `<svg viewBox="0 0 100 95" xmlns="http://www.w3.org/2000/svg" class="body-svg">
+            <circle cx="50" cy="14" r="10" fill="${base}"/>
+            <rect x="45" y="23" width="10" height="6" fill="${base}"/>
+            <path d="M30 31 Q50 26 70 31 L67 88 Q50 93 33 88 Z" fill="${base}"/>
+            <path d="M30 32 Q20 36 17 47 L13 76 Q12 83 17 83 L22 76 L27 48 Z" fill="${base}"/>
+            <path d="M70 32 Q80 36 83 47 L87 76 Q88 83 83 83 L78 76 L73 48 Z" fill="${base}"/>
+            <ellipse cx="29" cy="36" rx="8" ry="6" fill="${f('Hombros')}"/>
+            <ellipse cx="71" cy="36" rx="8" ry="6" fill="${f('Hombros')}"/>
+            <path d="M35 37 Q50 34 65 37 L63 54 Q50 58 37 54 Z" fill="${f('Pecho')}"/>
+            <rect x="36" y="35" width="28" height="6" rx="3" fill="${f('Espalda')}"/>
+            <ellipse cx="22" cy="50" rx="3.5" ry="8" fill="${f('Bíceps')}"/>
+            <ellipse cx="78" cy="50" rx="3.5" ry="8" fill="${f('Bíceps')}"/>
+            <ellipse cx="18.5" cy="68" rx="3.2" ry="8" fill="${f('Tríceps')}"/>
+            <ellipse cx="81.5" cy="68" rx="3.2" ry="8" fill="${f('Tríceps')}"/>
+            <rect x="40" y="58" width="20" height="28" rx="4" fill="${f('Core')}"/>
+        </svg>`;
+    }
+    // Cardio: torso con corazón central
+    if (on('Cardio')) {
+        return `<svg viewBox="0 0 100 95" xmlns="http://www.w3.org/2000/svg" class="body-svg">
+            <circle cx="50" cy="14" r="10" fill="${base}"/>
+            <rect x="45" y="23" width="10" height="6" fill="${base}"/>
+            <path d="M30 31 Q50 26 70 31 L67 88 Q50 93 33 88 Z" fill="${base}"/>
+            <path d="M30 32 Q20 36 17 47 L13 76 Q12 83 17 83 L22 76 L27 48 Z" fill="${base}"/>
+            <path d="M70 32 Q80 36 83 47 L87 76 Q88 83 83 83 L78 76 L73 48 Z" fill="${base}"/>
+            <path d="M50 62 l-8-8 a5 5 0 0 1 8-3 a5 5 0 0 1 8 3 z" fill="${C}"/>
+        </svg>`;
+    }
+    // Piernas / Circulación (cuerpo completo)
+    return `<svg viewBox="0 0 100 115" xmlns="http://www.w3.org/2000/svg" class="body-svg">
+        <circle cx="50" cy="10" r="7" fill="${base}"/>
+        <rect x="46" y="16" width="8" height="4" fill="${base}"/>
+        <path d="M35 22 Q50 18 65 22 L63 56 Q50 60 37 56 Z" fill="${base}"/>
+        <path d="M35 23 Q27 26 25 34 L22 52 Q21 57 25 57 L29 51 L33 33 Z" fill="${base}"/>
+        <path d="M65 23 Q73 26 75 34 L78 52 Q79 57 75 57 L71 51 L67 33 Z" fill="${base}"/>
+        <path d="M38 57 L37 104 Q37 110 43 110 L46 106 L48 60 Z" fill="${base}"/>
+        <path d="M62 57 L63 104 Q63 110 57 110 L54 106 L52 60 Z" fill="${base}"/>
+        <path d="M40 60 L39 84 L46 84 L47 62 Z" fill="${f('Piernas')}"/>
+        <path d="M60 60 L61 84 L54 84 L53 62 Z" fill="${f('Piernas')}"/>
+        <ellipse cx="42" cy="97" rx="3.5" ry="8" fill="${f('Circulación')}"/>
+        <ellipse cx="58" cy="97" rx="3.5" ry="8" fill="${f('Circulación')}"/>
     </svg>`;
 }
 
