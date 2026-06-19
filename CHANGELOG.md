@@ -4,6 +4,15 @@ Aplicación personal de entrenamiento. A partir de la v1.0 sale de fase beta.
 
 ---
 
+## v5.2 — Exportar/importar rutina actualizado al ciclo
+
+- Corregido: exportar la rutina guardaba los antiguos días de la semana e ignoraba el ciclo. Ahora exporta tu ciclo completo (sesiones A-B-C-D, posición actual y bloque)
+- Importar una rutina carga el ciclo directamente. Si el archivo es de una versión antigua (días de la semana) o un backup completo, se convierte automáticamente a sesiones del ciclo
+- Los ejercicios personalizados se siguen fusionando sin perder los que ya tengas
+- Compatibilidad mantenida con archivos antiguos
+
+---
+
 ## v5.1 — Puntuación recalibrada
 
 - Los puntos de sesión, semana y mes se recalibran a una escala más manejable e intuitiva (antes una sola sesión podía dar 300+; ahora ronda 25-30)
