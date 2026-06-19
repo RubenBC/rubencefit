@@ -1654,13 +1654,12 @@ function exportarDatos() {
 // ── Exportar/Importar SOLO la rutina semanal (local, sin tocar historial ni nube) ──
 function exportarRutina() {
     const rutina = {
-        rutinaVersion: 1,
+        rutinaVersion: 2,
         appVersion: 'Rubencefit',
         tipo: 'rutina',
         fecha: new Date().toLocaleDateString(),
         hora: new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}),
-        plantillaSemanal: state.plantillaSemanal || {},
-        semana: state.semana || {},
+        ciclo: state.ciclo || null,
         ejerciciosCustom: state.ejerciciosCustom || {},
         ejerciciosEditados: state.ejerciciosEditados || {}
     };
@@ -1681,25 +1680,27 @@ function importarRutina(event) {
     reader.onload = (e) => {
         try {
             const datos = JSON.parse(e.target.result);
-            // Aceptar archivos de rutina, o extraer la rutina de un backup completo
-            const esRutina = datos.tipo === 'rutina' || datos.rutinaVersion !== undefined;
-            const esBackup = datos.state && datos.state.plantillaSemanal;
-            if (!esRutina && !esBackup) throw new Error('No es un archivo de rutina válido');
-
-            const fuente = esRutina ? datos : datos.state;
-            const nDias = Object.values(fuente.plantillaSemanal || {}).filter(d => d && d.length).length;
+            const fuente = datos.state ? datos.state : datos;
             const fechaInfo = datos.fecha ? `del ${datos.fecha}` : '';
 
-            pedirConfirmacion(`¿Cargar esta rutina ${fechaInfo}? Tiene ${nDias} días planificados. Tu historial y progresos NO se tocan, solo se reemplaza la planificación semanal.`, () => {
-                state.plantillaSemanal = fuente.plantillaSemanal || {};
-                state.semana = fuente.semana || {};
+            // Determinar qué trae el archivo
+            const tieneCiclo = fuente.ciclo && fuente.ciclo.sesiones && fuente.ciclo.sesiones.length;
+            const tienePlantilla = fuente.plantillaSemanal && Object.values(fuente.plantillaSemanal).some(d => d && d.length);
+            if (!tieneCiclo && !tienePlantilla) throw new Error('Sin rutina válida');
+
+            const nSesiones = tieneCiclo
+                ? fuente.ciclo.sesiones.length
+                : Object.values(fuente.plantillaSemanal).filter(d => d && d.length).length;
+            const queTrae = tieneCiclo ? `${nSesiones} sesiones del ciclo` : `${nSesiones} días (se convertirán a sesiones del ciclo)`;
+
+            pedirConfirmacion(`¿Cargar esta rutina ${fechaInfo}? Tiene ${queTrae}. Tu historial y progresos NO se tocan, solo se reemplaza la planificación.`, () => {
                 // Fusionar ejercicios custom (no perder los que ya tienes)
                 const customNuevo = fuente.ejerciciosCustom || {};
                 if (!state.ejerciciosCustom) state.ejerciciosCustom = {};
                 Object.keys(customNuevo).forEach(grupo => {
                     if (!state.ejerciciosCustom[grupo]) state.ejerciciosCustom[grupo] = [];
                     customNuevo[grupo].forEach(ex => {
-                        if (!state.ejerciciosCustom[grupo].find(e => (e.name||e.n) === (ex.name||ex.n))) {
+                        if (!state.ejerciciosCustom[grupo].find(en => (en.name||en.n) === (ex.name||ex.n))) {
                             state.ejerciciosCustom[grupo].push(ex);
                         }
                     });
@@ -1707,9 +1708,21 @@ function importarRutina(event) {
                 if (fuente.ejerciciosEditados) {
                     state.ejerciciosEditados = {...(state.ejerciciosEditados||{}), ...fuente.ejerciciosEditados};
                 }
+
+                if (tieneCiclo) {
+                    // Formato nuevo (v2): cargar el ciclo directamente
+                    state.ciclo = JSON.parse(JSON.stringify(fuente.ciclo));
+                } else {
+                    // Formato viejo (v1) o backup con días: convertir a ciclo
+                    state.plantillaSemanal = JSON.parse(JSON.stringify(fuente.plantillaSemanal));
+                    state.semana = fuente.semana ? JSON.parse(JSON.stringify(fuente.semana)) : {};
+                    state.ciclo = { sesiones: [], posicion: 0, bloque: 'fuerza', bloqueInicio: null };
+                    migrarPlantillaACiclo();
+                }
+                migrarPiernasACirculacion();
                 save();
                 showPage('semanaPage');
-                showToast(`✓ Rutina cargada (${nDias} días)`);
+                showToast(`✓ Rutina cargada (${state.ciclo.sesiones.length} sesiones)`);
             }, 'Cargar rutina');
         } catch(err) {
             showToast('❌ Archivo de rutina no válido');
