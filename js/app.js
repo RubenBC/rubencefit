@@ -1814,8 +1814,9 @@ function exportarRutina() {
 
 function importarRutina(event) {
     const file = event.target.files[0];
-    if (!file) return;
+    if (!file) { showToast('No se seleccionó ningún archivo', '#e74c3c'); return; }
     const reader = new FileReader();
+    reader.onerror = () => showToast('❌ No se pudo leer el archivo', '#e74c3c');
     reader.onload = (e) => {
         try {
             const datos = JSON.parse(e.target.result);
@@ -1832,6 +1833,7 @@ function importarRutina(event) {
                 : Object.values(fuente.plantillaSemanal).filter(d => d && d.length).length;
             const queTrae = tieneCiclo ? `${nSesiones} sesiones del ciclo` : `${nSesiones} días (se convertirán a sesiones del ciclo)`;
 
+            cerrarAjustesModal();
             pedirConfirmacion(`¿Cargar esta rutina ${fechaInfo}? Tiene ${queTrae}. Tu historial y progresos NO se tocan, solo se reemplaza la planificación.`, () => {
                 // Fusionar ejercicios custom (no perder los que ya tienes)
                 const customNuevo = fuente.ejerciciosCustom || {};
@@ -1864,7 +1866,7 @@ function importarRutina(event) {
                 showToast(`✓ Rutina cargada (${state.ciclo.sesiones.length} sesiones)`);
             }, 'Cargar rutina');
         } catch(err) {
-            showToast('❌ Archivo de rutina no válido');
+            showToast('❌ ' + (err.message === 'Sin rutina válida' ? 'El archivo no contiene una rutina' : 'Archivo no válido o dañado'), '#e74c3c');
         }
         event.target.value = '';
     };
@@ -1874,6 +1876,7 @@ function importarRutina(event) {
 function importarDatos(event) {
     const file = event.target.files[0];
     if (!file) return;
+    cerrarAjustesModal();
     const reader = new FileReader();
     reader.onload = (e) => {
         try {
@@ -1887,6 +1890,7 @@ function importarDatos(event) {
                 const stateRestaurado = aplicarMigraciones(datos);
                 Object.assign(state, stateRestaurado);
                 save();
+                cerrarAjustesModal();
                 showPage('historialPage');
                 showToast(`✓ Restauradas ${sesiones} sesiones`);
             }, 'Restaurar');
