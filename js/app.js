@@ -201,6 +201,9 @@ if (!state.ciclo) {
 if (state.ciclo.posicion === undefined) state.ciclo.posicion = 0;
 if (!state.ciclo.bloque) state.ciclo.bloque = 'fuerza';
 
+// Registro de medidas corporales: array de { fecha, peso, cintura, cadera, pecho, brazo, muslo }
+if (!state.medidas) state.medidas = [];
+
 let swInterval = null;
 let bibliotecaDia = (() => { const d = new Date().getDay(); return DIAS_LOGICA[d === 0 ? 6 : d - 1]; })();
 let diasEditando = new Set();
@@ -319,6 +322,7 @@ function showPage(id, btn, slideDir) {
     if(id === 'rutinaPage') { if(bibliotecaDia === 'hoy') {} renderGroups(); }
     if(id === 'hoyPage') renderToday();
     if(id === 'semanaPage') { migrarPlantillaACiclo(); migrarPiernasACirculacion(); renderCiclo(); }
+    if(id === 'cuerpoPage') renderCuerpo();
     if(id === 'historialPage') renderHistory();
 }
 
@@ -1235,6 +1239,141 @@ function getAvisoEquilibrio() {
     const pl = (n, sing, plur) => `${n} ${n === 1 ? sing : plur}`;
     if (empuje > tiron) return { texto: `Llevas ${pl(empuje,'empuje','empujes')} y ${pl(tiron,'tirón','tirones')} este mes. Prioriza tirón para equilibrar (mejor para tu postura).`, tipo: 'tiron' };
     return { texto: `Llevas ${pl(tiron,'tirón','tirones')} y ${pl(empuje,'empuje','empujes')} este mes. Prioriza empuje para equilibrar.`, tipo: 'empuje' };
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// SECCIÓN CUERPO — Medidas corporales (v6.0)
+// ══════════════════════════════════════════════════════════════════════════════
+const MEDIDAS_DEF = [
+    { key: 'peso',    label: 'Peso',    unidad: 'kg', color: '#6750A4' },
+    { key: 'cintura', label: 'Cintura', unidad: 'cm', color: '#E65100' },
+    { key: 'cadera',  label: 'Cadera',  unidad: 'cm', color: '#43A047' },
+    { key: 'pecho',   label: 'Pecho',   unidad: 'cm', color: '#1E88E5' },
+    { key: 'brazo',   label: 'Brazo',   unidad: 'cm', color: '#8E24AA' },
+    { key: 'muslo',   label: 'Muslo',   unidad: 'cm', color: '#00897B' }
+];
+
+function abrirRegistroMedidas() {
+    // Prefijar con el último valor conocido de cada medida como placeholder
+    const ultimo = {};
+    state.medidas.forEach(m => MEDIDAS_DEF.forEach(d => { if (m[d.key] != null) ultimo[d.key] = m[d.key]; }));
+    document.getElementById('medidasInputs').innerHTML = MEDIDAS_DEF.map(d => `
+        <div class="input-group" style="margin-bottom:12px;">
+            <label>${d.label} (${d.unidad})</label>
+            <input type="number" step="0.1" inputmode="decimal" id="medida_${d.key}"
+                placeholder="${ultimo[d.key] != null ? ultimo[d.key] : '—'}"
+                style="width:100%;padding:12px;border-radius:10px;border:1px solid var(--outline);background:var(--surface2);color:var(--text);font-size:15px;box-sizing:border-box;">
+        </div>`).join('');
+    document.getElementById('medidasModal').style.display = 'flex';
+}
+function cerrarRegistroMedidas() {
+    document.getElementById('medidasModal').style.display = 'none';
+}
+function guardarMedidas() {
+    const registro = { fecha: new Date().toLocaleDateString() };
+    let algo = false;
+    MEDIDAS_DEF.forEach(d => {
+        const v = parseFloat(document.getElementById('medida_' + d.key).value);
+        if (!isNaN(v) && v > 0) { registro[d.key] = v; algo = true; }
+    });
+    if (!algo) { showToast('Rellena al menos un valor', '#e74c3c'); return; }
+    // Si ya hay registro de hoy, lo actualizamos (merge)
+    const hoy = new Date().toLocaleDateString();
+    const existente = state.medidas.find(m => m.fecha === hoy);
+    if (existente) Object.assign(existente, registro);
+    else state.medidas.unshift(registro);
+    // Ordenar por fecha (más reciente primero)
+    state.medidas.sort((a, b) => parseFechaDMY(b.fecha) - parseFechaDMY(a.fecha));
+    save();
+    syncToSupabase();
+    cerrarRegistroMedidas();
+    renderCuerpo();
+    showToast('✓ Medidas guardadas');
+}
+
+function borrarMedida(fecha) {
+    pedirConfirmacion(`¿Borrar el registro del ${fecha}?`, () => {
+        state.medidas = state.medidas.filter(m => m.fecha !== fecha);
+        save(); syncToSupabase(); renderCuerpo();
+        showToast('Registro borrado');
+    }, 'Borrar');
+}
+
+// Mini gráfica SVG de evolución de una medida
+function sparkline(datos, color) {
+    // datos: array de {x: timestamp, y: valor} ordenado ascendente
+    if (datos.length < 2) return '<div class="spark-vacio">Necesitas 2+ registros para ver la evolución</div>';
+    const W = 300, H = 70, pad = 6;
+    const xs = datos.map(d => d.x), ys = datos.map(d => d.y);
+    const minX = Math.min(...xs), maxX = Math.max(...xs);
+    const minY = Math.min(...ys), maxY = Math.max(...ys);
+    const rangeX = maxX - minX || 1, rangeY = maxY - minY || 1;
+    const px = (x) => pad + ((x - minX) / rangeX) * (W - 2*pad);
+    const py = (y) => H - pad - ((y - minY) / rangeY) * (H - 2*pad);
+    const pts = datos.map(d => `${px(d.x).toFixed(1)},${py(d.y).toFixed(1)}`).join(' ');
+    const dots = datos.map(d => `<circle cx="${px(d.x).toFixed(1)}" cy="${py(d.y).toFixed(1)}" r="2.5" fill="${color}"/>`).join('');
+    return `<svg viewBox="0 0 ${W} ${H}" class="spark-svg" preserveAspectRatio="none">
+        <polyline points="${pts}" fill="none" stroke="${color}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+        ${dots}
+    </svg>`;
+}
+
+function renderCuerpo() {
+    const cont = document.getElementById('cuerpoContent');
+    if (!cont) return;
+    if (!state.medidas.length) {
+        cont.innerHTML = `
+            <div class="hoy-empty">
+                <p class="hoy-empty-msg">Aún no has registrado medidas. Empieza hoy para ver tu evolución con el tiempo.</p>
+                <button class="hoy-empty-btn hoy-empty-primary" onclick="abrirRegistroMedidas()">
+                    <span class="material-symbols-outlined">add</span>
+                    <span>Registrar mi primera medida</span>
+                </button>
+            </div>`;
+        return;
+    }
+    // Orden ascendente por fecha para las gráficas
+    const asc = [...state.medidas].sort((a, b) => parseFechaDMY(a.fecha) - parseFechaDMY(b.fecha));
+    let html = '';
+    // Tarjetas de cada medida con su última cifra, cambio y mini-gráfica
+    MEDIDAS_DEF.forEach(d => {
+        const serie = asc.filter(m => m[d.key] != null).map(m => ({ x: parseFechaDMY(m.fecha).getTime(), y: m[d.key], fecha: m.fecha }));
+        if (!serie.length) return;
+        const ultimo = serie[serie.length - 1];
+        const primero = serie[0];
+        const cambio = ultimo.y - primero.y;
+        const signo = cambio > 0 ? '+' : '';
+        const cambioColor = (d.key === 'peso' || d.key === 'cintura')
+            ? (cambio < 0 ? '#43A047' : cambio > 0 ? '#E65100' : 'var(--text2)')  // bajar es bueno en peso/cintura
+            : 'var(--text2)';
+        const cambioTxt = serie.length > 1 ? `<span style="color:${cambioColor};font-size:12px;font-weight:600;">${signo}${cambio.toFixed(1)} ${d.unidad}</span>` : '';
+        html += `
+        <div class="medida-card">
+            <div class="medida-head">
+                <span class="medida-label" style="color:${d.color};">${d.label}</span>
+                <div class="medida-valores">
+                    <span class="medida-actual">${ultimo.y} <small>${d.unidad}</small></span>
+                    ${cambioTxt}
+                </div>
+            </div>
+            ${sparkline(serie, d.color)}
+        </div>`;
+    });
+    // Historial de registros
+    html += '<div class="medida-historial"><div class="medida-hist-titulo">Registros</div>';
+    state.medidas.forEach(m => {
+        const vals = MEDIDAS_DEF.filter(d => m[d.key] != null).map(d => `${d.label.toLowerCase()} ${m[d.key]}${d.unidad}`).join(' · ');
+        html += `
+        <div class="medida-hist-row">
+            <div class="medida-hist-info">
+                <span class="medida-hist-fecha">${m.fecha}</span>
+                <span class="medida-hist-vals">${vals}</span>
+            </div>
+            <button class="medida-hist-del" onclick="borrarMedida('${m.fecha}')"><span class="material-symbols-outlined">delete</span></button>
+        </div>`;
+    });
+    html += '</div>';
+    cont.innerHTML = html;
 }
 
 // Compatibilidad: renderWeek antiguo ahora redirige al ciclo
