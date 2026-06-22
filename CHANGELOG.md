@@ -4,6 +4,21 @@ Aplicación personal de entrenamiento. A partir de la v1.0 sale de fase beta.
 
 ---
 
+## v6.0 — Nueva sección Cuerpo (medidas corporales)
+
+Primera parte del seguimiento para recomposición corporal:
+
+- Nueva pestaña "Cuerpo" para registrar peso y medidas (cintura, cadera, pecho, brazo, muslo). Rellenas solo las que quieras
+- Cada medida muestra su valor actual, el cambio total desde el primer registro y una mini-gráfica de evolución
+- En peso y cintura, bajar se marca en verde (progreso hacia recomposición)
+- Historial de todos los registros, con opción de borrar
+- Los datos se guardan en local y se sincronizan con la nube como el resto
+- Un registro por día (si registras dos veces el mismo día, se actualiza)
+
+Próximamente: pantalla de dieta como referencia personalizada.
+
+---
+
 ## v5.2 — Exportar/importar rutina actualizado al ciclo
 
 - Corregido: exportar la rutina guardaba los antiguos días de la semana e ignoraba el ciclo. Ahora exporta tu ciclo completo (sesiones A-B-C-D, posición actual y bloque)
