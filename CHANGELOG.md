@@ -4,6 +4,22 @@ Aplicación personal de entrenamiento. A partir de la v1.0 sale de fase beta.
 
 ---
 
+## v6.1 — Arreglo: importar rutina
+
+- Corregido un fallo por el que importar una rutina no mostraba el mensaje de confirmación (el modal de Ajustes quedaba por encima tapándolo) y la rutina no se cargaba
+- Ahora el modal de Ajustes se cierra antes de pedir confirmación, y la importación funciona con archivos de rutina antiguos (días de la semana, se convierten al ciclo) y nuevos (ciclo)
+- Mensajes de error claros si el archivo no es válido o no contiene una rutina, para que nunca falle en silencio
+
+---
+
+## v6.1 — Arreglo: importar rutina/backup no daba feedback
+
+- Corregido: al importar una rutina o un backup, el menú de Ajustes se quedaba abierto tapando la pantalla, así que aunque la importación funcionaba, no se veía el resultado ni el mensaje de confirmación (parecía que no pasaba nada)
+- Ahora el menú de Ajustes se cierra al seleccionar el archivo, se ve la confirmación, y al terminar se muestra la pantalla correspondiente con su aviso
+- Aplica tanto a "Importar rutina" como a "Importar backup completo"
+
+---
+
 ## v6.0 — Nueva sección Cuerpo (medidas corporales)
 
 Primera parte del seguimiento para recomposición corporal:
