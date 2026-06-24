@@ -4,6 +4,16 @@ Aplicación personal de entrenamiento. A partir de la v1.0 sale de fase beta.
 
 ---
 
+## v6.2 — Arreglos en Hoy y eliminación de Cuerpo
+
+- Información del ejercicio: ahora funciona también con ejercicios de rutinas importadas (antes no mostraba nada si el ejercicio no estaba en la base). Muestra la nota/explicación que traiga el ejercicio
+- Menú de ejercicio simplificado (Información, Cambiar, Quitar): se quitaron los botones de descanso que recargaban el menú y hacían que "Quitar" quedara cortado
+- La casilla de nota de cada ejercicio empieza vacía. La explicación que trae la rutina (RIR, técnica) pasa a verse en "Información", no en el campo de notas
+- Series, reps y peso muestran como referencia (placeholder) lo que hiciste la última vez en ese ejercicio
+- Eliminada la pestaña Cuerpo y todo el seguimiento de medidas corporales
+
+---
+
 ## v6.1 — Arreglo: importar rutina
 
 - Corregido un fallo por el que importar una rutina no mostraba el mensaje de confirmación (el modal de Ajustes quedaba por encima tapándolo) y la rutina no se cargaba
