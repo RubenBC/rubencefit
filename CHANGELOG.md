@@ -4,6 +4,14 @@ Aplicación personal de entrenamiento. A partir de la v1.0 sale de fase beta.
 
 ---
 
+## v6.3 — Ejercicios de barra de dominadas
+
+- Añadidos al grupo Espalda de la biblioteca cuatro ejercicios para barra de dominadas: Dominada estricta, Dominada asistida con goma, Dominada negativa y Colgarse de la barra (dead hang)
+- Cada uno con instrucciones adaptadas: progresión sin lastre y aviso de no usar lastre ni tirones bruscos en barras de presión (por seguridad de la sujeción)
+- Cubren el trabajo de tirón vertical que faltaba en la biblioteca
+
+---
+
 ## v6.2 — Arreglos en Hoy y eliminación de Cuerpo
 
 - Información del ejercicio: ahora funciona también con ejercicios de rutinas importadas (antes no mostraba nada si el ejercicio no estaba en la base). Muestra la nota/explicación que traiga el ejercicio
