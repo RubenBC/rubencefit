@@ -4,6 +4,14 @@ Aplicación personal de entrenamiento. A partir de la v1.0 sale de fase beta.
 
 ---
 
+## v6.4 — Más ejercicios de barra
+
+- Nuevas variantes de dominada en la biblioteca: Dominada supina (chin-up) y Dominada neutra, para alternar agarres y cuidar el hombro
+- Core colgado en barra: Elevación de rodillas colgado y Elevación de piernas colgado (en el grupo Core)
+- Ya son 8 ejercicios de barra de dominadas en total (6 de espalda, 2 de core)
+
+---
+
 ## v6.3 — Ejercicios de barra de dominadas
 
 - Añadidos al grupo Espalda de la biblioteca cuatro ejercicios para barra de dominadas: Dominada estricta, Dominada asistida con goma, Dominada negativa y Colgarse de la barra (dead hang)
