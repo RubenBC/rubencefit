@@ -2615,3 +2615,45 @@ body.dark-mode .day-badge-done { background: #0a1f0a; color: #81C784; }
 }
 .group-card .body-svg { flex-shrink: 0; }
 
+
+/* =========================================================
+   v7.0 — IDs ESTABLES Y VINCULACIÓN DE EJERCICIOS
+========================================================= */
+.ex-vincular {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--surface2);
+    border: 1px dashed var(--outline);
+    border-radius: 10px;
+    padding: 10px 12px;
+    margin-bottom: 8px;
+    font-size: 12px;
+    color: var(--text2);
+    cursor: pointer;
+}
+.ex-vincular .material-symbols-outlined { font-size: 16px; color: var(--primary); flex-shrink: 0; }
+.ex-vincular:active { background: var(--primary-light); }
+
+/* =========================================================
+   v7.1 — PESO ACTUAL EN BIBLIOTECA
+========================================================= */
+.biblio-peso {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 10px;
+    padding: 8px 10px;
+    background: var(--surface2);
+    border-radius: 8px;
+    font-size: 12px;
+}
+.biblio-peso .material-symbols-outlined { font-size: 15px; color: var(--primary); }
+.biblio-peso-label { color: var(--text2); }
+.biblio-peso-val { font-weight: 700; color: var(--text); }
+.biblio-peso-vacio { color: var(--text2); font-style: italic; }
+.biblio-peso-edit {
+    margin-left: auto; background: none; border: none;
+    color: var(--primary); cursor: pointer; padding: 2px; display: flex;
+}
+.biblio-peso-edit .material-symbols-outlined { font-size: 16px; }
