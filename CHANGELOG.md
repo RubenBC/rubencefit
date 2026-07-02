@@ -4,6 +4,26 @@ Aplicación personal de entrenamiento. A partir de la v1.0 sale de fase beta.
 
 ---
 
+## v7.1 — Peso actual editable desde la Biblioteca
+
+- Cada ejercicio de fuerza muestra en la Biblioteca su "peso actual" (el más reciente que registraste): peso, series y reps
+- Puedes editarlo ahí mismo con el lápiz, por si te equivocaste al registrarlo en Hoy. Editarlo corrige tu último registro (no crea un valor aparte ni duplica sesiones)
+- Si editas el peso de un ejercicio que aún no habías registrado, se crea una entrada para que quede guardado
+- La pantalla de Progresión de peso ahora lista TODOS los ejercicios con peso guardado, aunque solo tengan un registro (marcados como "1er registro"); los que tienen dos o más muestran su progresión anterior → actual
+- El peso se registra al guardar la sesión de Hoy, como hasta ahora
+
+---
+
+## v7.0 — IDs estables: no perder el peso al renombrar ejercicios
+
+- Cada ejercicio de la biblioteca tiene ahora un identificador único que no cambia aunque edites su nombre
+- La búsqueda de "última vez" (peso, series, reps) usa ese identificador primero; si no lo encuentra, sigue buscando por nombre como antes, así que nada se rompe con tu historial ya existente
+- Nuevo: cuando un ejercicio no tiene marca anterior, aparece un aviso "¿Es el mismo ejercicio que otro que ya hiciste?" — lo tocas, eliges de una lista de ejercicios similares con historial, y a partir de ahí recuperas tu progreso aunque el nombre haya cambiado
+- Los ejercicios personalizados nuevos también reciben su id estable automáticamente
+- Nada cambia para ejercicios que no has renombrado; esto solo ayuda cuando el nombre varía entre rutinas
+
+---
+
 ## v6.4 — Más ejercicios de barra
 
 - Nuevas variantes de dominada en la biblioteca: Dominada supina (chin-up) y Dominada neutra, para alternar agarres y cuidar el hombro

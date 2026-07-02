@@ -24,7 +24,7 @@
         <p class="splash-by">Diseñada y desarrollada por</p>
         <p class="splash-author">Rubén Bejarano Checa</p>
         <p class="splash-ai">Creada con asistencia de inteligencia artificial</p>
-        <p class="splash-version">v6.4</p>
+        <p class="splash-version">v7.1</p>
     </div>
 </div>
 
@@ -439,6 +439,33 @@
         <div style="display:flex;gap:10px;">
             <button onclick="cancelarTexto()" style="flex:1;background:var(--surface2);color:var(--text2);border:none;border-radius:12px;padding:12px;font-size:14px;font-weight:600;cursor:pointer;">Cancelar</button>
             <button onclick="confirmarTexto()" style="flex:1;background:var(--primary);color:white;border:none;border-radius:12px;padding:12px;font-size:14px;font-weight:bold;cursor:pointer;">Guardar</button>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL VINCULAR EJERCICIO -->
+<div id="vincularModal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:999999;align-items:flex-end;justify-content:center;" onclick="if(event.target===this)cerrarVincularEjercicio()">
+    <div class="day-modal-sheet" style="padding:24px 20px 40px;width:100%;max-width:600px;">
+        <div style="width:32px;height:4px;background:var(--outline);border-radius:2px;margin:0 auto 20px;"></div>
+        <h3 style="margin:0 0 4px;font-size:18px;">¿Mismo ejercicio que...?</h3>
+        <p style="margin:0 0 16px;font-size:13px;color:var(--text2);">Si es el mismo movimiento con otro nombre, vincúlalo para ver tu progreso anterior.</p>
+        <div id="vincularLista" style="display:flex;flex-direction:column;gap:8px;"></div>
+    </div>
+</div>
+
+<!-- MODAL EDITAR PESO DESDE BIBLIOTECA -->
+<div id="editPesoModal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:999999;align-items:center;justify-content:center;padding:24px;" onclick="if(event.target===this)cerrarEditarPeso()">
+    <div style="background:var(--surface);border-radius:16px;padding:22px 20px;max-width:360px;width:100%;">
+        <h3 id="editPesoTitulo" style="margin:0 0 4px;font-size:16px;">Editar peso</h3>
+        <p style="margin:0 0 16px;font-size:12px;color:var(--text2);">Corrige tu último registro de este ejercicio.</p>
+        <div style="display:flex;gap:10px;margin-bottom:16px;">
+            <div class="input-group" style="flex:1;"><label>Peso (kg)</label><input id="editPesoPeso" type="number" step="0.5" inputmode="decimal" style="width:100%;padding:11px;border-radius:10px;border:1px solid var(--outline);background:var(--surface2);color:var(--text);font-size:15px;box-sizing:border-box;"></div>
+            <div class="input-group" style="width:64px;"><label>Series</label><input id="editPesoSeries" type="text" inputmode="numeric" style="width:100%;padding:11px;border-radius:10px;border:1px solid var(--outline);background:var(--surface2);color:var(--text);font-size:15px;box-sizing:border-box;"></div>
+            <div class="input-group" style="width:76px;"><label>Reps</label><input id="editPesoReps" type="text" style="width:100%;padding:11px;border-radius:10px;border:1px solid var(--outline);background:var(--surface2);color:var(--text);font-size:15px;box-sizing:border-box;"></div>
+        </div>
+        <div style="display:flex;gap:10px;">
+            <button onclick="cerrarEditarPeso()" style="flex:1;background:var(--surface2);color:var(--text2);border:none;border-radius:12px;padding:12px;font-size:14px;font-weight:600;cursor:pointer;">Cancelar</button>
+            <button onclick="guardarPesoBiblioteca()" style="flex:1;background:var(--primary);color:white;border:none;border-radius:12px;padding:12px;font-size:14px;font-weight:bold;cursor:pointer;">Guardar</button>
         </div>
     </div>
 </div>
