@@ -4,6 +4,30 @@ Aplicación personal de entrenamiento. A partir de la v1.0 sale de fase beta.
 
 ---
 
+## v7.2 — Robustez: auditoría completa
+
+Revisión de fiabilidad a fondo, con arreglos en cadena:
+
+**Protección de datos**
+- Si los datos guardados se corrompen, la app ya no muere en blanco: recupera automáticamente la última copia buena (nueva copia de seguridad local automática en cada carga)
+- Si el almacenamiento del móvil se llena, el guardado avisa en vez de fallar en silencio
+- La sincronización ya no puede machacar sesiones locales: al bajar datos de la nube, fusiona el historial y conserva las sesiones que solo existan en el móvil
+- Borrar una sesión del historial ahora es posible desde el calendario (modal del día) y borra por identidad (fecha+hora), nunca por posición
+
+**Sincronización**
+- Debounce de 3 segundos: varios guardados seguidos se agrupan en una sola subida a la nube
+- Nuevo estado visual "pendiente de subir" (nube amarilla) cuando hay cambios locales sin sincronizar, persistente hasta que la subida tenga éxito
+
+**Otros**
+- Los iconos (Material Symbols) se cachean para funcionar sin conexión
+- Las migraciones de datos corren una sola vez al arrancar, no en cada cambio de pestaña
+- Nombres de ejercicio con apóstrofe ya no rompen los botones de la Biblioteca
+- Validación de peso (0-300 kg) en los campos numéricos
+- Vibración sutil al marcar un ejercicio como hecho
+- Los errores al importar rutina muestran el motivo real
+
+---
+
 ## v7.1 — Peso actual editable desde la Biblioteca
 
 - Cada ejercicio de fuerza muestra en la Biblioteca su "peso actual" (el más reciente que registraste): peso, series y reps
