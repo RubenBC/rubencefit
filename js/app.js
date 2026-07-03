@@ -180,7 +180,35 @@ const P_PUSH = ["Pecho", "Hombros", "Tríceps"];
 const P_PULL = ["Espalda", "Bíceps"];
 const P_LEGS = ["Piernas", "Circulación", "Core"];
 
-let state = JSON.parse(localStorage.getItem('iron_log_v8.6')) || {
+// Carga del estado con protección: si el JSON está corrupto, intenta recuperar
+// la última copia buena y nunca deja la app muerta
+function cargarEstadoSeguro() {
+    const RAW_KEY = 'iron_log_v8.6';
+    const BAK_KEY = 'iron_log_backup';
+    try {
+        const raw = localStorage.getItem(RAW_KEY);
+        if (raw) {
+            const parsed = JSON.parse(raw);
+            // Copia de seguridad silenciosa de la última carga buena
+            try { localStorage.setItem(BAK_KEY, raw); } catch(e) {}
+            return parsed;
+        }
+    } catch(e) {
+        // JSON corrupto: intentar la copia de seguridad
+        try {
+            const bak = localStorage.getItem(BAK_KEY);
+            if (bak) {
+                const parsed = JSON.parse(bak);
+                setTimeout(() => { try { showToast('⚠️ Datos recuperados de la última copia buena'); } catch(_) {} }, 1500);
+                return parsed;
+            }
+        } catch(e2) {}
+        setTimeout(() => { try { showToast('⚠️ No se pudieron leer los datos guardados'); } catch(_) {} }, 1500);
+    }
+    return null;
+}
+
+let state = cargarEstadoSeguro() || {
     hoy: [], historial: [], activeTab: 'rutinaPage',
     semana: { "Lunes": [], "Martes": [], "Miercoles": [], "Jueves": [], "Viernes": [], "Sabado": [], "Domingo": [] },
     plantillaSemanal: {},
@@ -289,11 +317,24 @@ function toggleDone(i) {
     state.hoy[i].done = !state.hoy[i].done;
     expandedDone.delete(i);
     openExMenu = null;
-    if (state.hoy[i].done && !state.sesionStartTime) startSesionStopwatch();
+    if (state.hoy[i].done) {
+        if (!state.sesionStartTime) startSesionStopwatch();
+        if (navigator.vibrate) navigator.vibrate(40); // feedback háptico sutil al completar
+    }
     save(); renderToday();
 }
 
-function save() { localStorage.setItem('iron_log_v8.6', JSON.stringify(state)); updateCounter(); analyzeRoutine(); }
+function save() {
+    _cambiosSinSync = true;
+    try {
+        localStorage.setItem('iron_log_v8.6', JSON.stringify(state));
+    } catch(e) {
+        // Cuota superada u otro error de almacenamiento: avisar SIEMPRE, nunca fallar en silencio
+        try { showToast('⚠️ No se pudo guardar: almacenamiento lleno. Exporta un backup y borra historial antiguo.', '#e74c3c'); } catch(_) {}
+        console.error('save() falló:', e);
+    }
+    updateCounter(); analyzeRoutine();
+}
 function updateCounter() { const el = document.getElementById('exerciseCounter'); if(el) el.innerText = state.hoy.length; }
 
 function analyzeRoutine() {
@@ -322,13 +363,13 @@ function showPage(id, btn, slideDir) {
     if(btn) btn.classList.add('active'); else { const b = document.getElementById('btn-'+id.replace('Page','')); if(b) b.classList.add('active'); }
     state.activeTab = id; save();
     setTimerExpanded(id === 'hoyPage');
-    if (id === 'hoyPage') { migrarPlantillaACiclo(); migrarPiernasACirculacion(); sincronizarHoyConCiclo(); }
+    if (id === 'hoyPage') sincronizarHoyConCiclo();
     if (id === 'hoyPage' && state.sesionStartTime) startSesionStopwatch();
     else if (id !== 'hoyPage') stopSesionStopwatch();
     updateStopwatchVisibility();
     if(id === 'rutinaPage') { if(bibliotecaDia === 'hoy') {} renderGroups(); }
     if(id === 'hoyPage') renderToday();
-    if(id === 'semanaPage') { migrarPlantillaACiclo(); migrarPiernasACirculacion(); renderCiclo(); }
+    if(id === 'semanaPage') renderCiclo();
     if(id === 'historialPage') renderHistory();
 }
 
@@ -436,6 +477,7 @@ function showExercises(group) {
     document.getElementById('exerciseList').innerHTML = ejercicios.map((ex, idx) => {
         const esCustom = !db[group]?.data?.find(e => e.n === ex.n);
         const nombre = ex.n || ex.name;
+        const nEsc = nombre.replace(/'/g, "\\'").replace(/"/g, '&quot;');
         const tagClass = ex.t === T_B ? 'tag-basico' : ex.t === T_A ? 'tag-aisla' : 'tag-salud';
         const esCardio = group === 'Cardio', esSalud = ex.t === T_S;
         const pesoAct = getPesoActual({ name: nombre, id: ex.id, group });
@@ -444,7 +486,7 @@ function showExercises(group) {
                 <span class="material-symbols-outlined">fitness_center</span>
                 <span class="biblio-peso-label">Peso actual:</span>
                 ${pesoAct ? `<span class="biblio-peso-val">${pesoAct.peso} kg · ${pesoAct.series||'?'}×${pesoAct.reps||'?'}</span>` : '<span class="biblio-peso-vacio">sin registrar</span>'}
-                <button class="biblio-peso-edit" onclick="editarPesoBiblioteca('${nombre.replace(/'/g,"\\'")}','${group}')"><span class="material-symbols-outlined">edit</span></button>
+                <button class="biblio-peso-edit" onclick="editarPesoBiblioteca('${nEsc}','${group}')"><span class="material-symbols-outlined">edit</span></button>
             </div>`;
         return `
         <div class="routine-card">
@@ -457,14 +499,14 @@ function showExercises(group) {
                 <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
                     <span class="tag ${tagClass}">${ex.t}</span>
                     <div style="display:flex;gap:4px;margin-top:4px;">
-                        ${ex.info ? `<button class="btn-ex-info" onclick="abrirInfoEjercicio('${nombre}','${group}')"><span class="material-symbols-outlined" style="font-size:16px;">info</span></button>` : ''}
-                        <button class="btn-ex-edit" onclick="abrirEditarEjercicio('${nombre}','${group}',${esCustom})"><span class="material-symbols-outlined" style="font-size:16px;">edit</span></button>
-                        ${esCustom ? `<button class="btn-ex-del" onclick="eliminarCustom('${nombre}','${group}')"><span class="material-symbols-outlined" style="font-size:16px;">delete</span></button>` : ''}
+                        ${ex.info ? `<button class="btn-ex-info" onclick="abrirInfoEjercicio('${nEsc}','${group}')"><span class="material-symbols-outlined" style="font-size:16px;">info</span></button>` : ''}
+                        <button class="btn-ex-edit" onclick="abrirEditarEjercicio('${nEsc}','${group}',${esCustom})"><span class="material-symbols-outlined" style="font-size:16px;">edit</span></button>
+                        ${esCustom ? `<button class="btn-ex-del" onclick="eliminarCustom('${nEsc}','${group}')"><span class="material-symbols-outlined" style="font-size:16px;">delete</span></button>` : ''}
                     </div>
                 </div>
             </div>
             ${pesoRow}
-            <button onclick="addToDay('${nombre}','${group}','${ex.t}','${ex.tip}')" style="background:var(--primary);color:white;border:none;padding:10px;border-radius:8px;margin-top:12px;width:100%;">AÑADIR A ${label}</button>
+            <button onclick="addToDay('${nEsc}','${group}','${ex.t}','${ex.tip}')" style="background:var(--primary);color:white;border:none;padding:10px;border-radius:8px;margin-top:12px;width:100%;">AÑADIR A ${label}</button>
         </div>`;
     }).join('') + `
     <div style="margin-top:8px;">
@@ -795,6 +837,7 @@ function guardarPesoBiblioteca() {
     const series = document.getElementById('editPesoSeries').value.trim();
     const reps = document.getElementById('editPesoReps').value.trim();
     if (!peso && !series && !reps) { showToast('Pon al menos un valor', '#e74c3c'); return; }
+    if (peso && (isNaN(parseFloat(peso)) || parseFloat(peso) < 0 || parseFloat(peso) > 300)) { showToast('Peso no válido (0-300 kg)', '#e74c3c'); return; }
     // Buscar el registro más reciente de este ejercicio en el historial y corregirlo
     let corregido = false;
     for (const sesion of state.historial) {
@@ -887,7 +930,7 @@ function buildMetricsHtml(ex, i) {
             <div class="stats-grid">
                 <div class="input-group"><label>Series</label><input type="number" placeholder="${phS}" value="${ex.series}" onchange="updateEx(${i}, 'series', this.value)" ${ro} class="${rc}"></div>
                 <div class="input-group"><label>Reps</label><input type="number" placeholder="${phR}" value="${ex.reps}" onchange="updateEx(${i}, 'reps', this.value)" ${ro} class="${rc}"></div>
-                <div class="input-group"><label>Peso (kg)</label><input type="number" placeholder="${phP||'0'}" value="${ex.peso}" onchange="updateEx(${i}, 'peso', this.value)" ${ro} class="${rc}"></div>
+                <div class="input-group"><label>Peso (kg)</label><input type="number" min="0" max="300" placeholder="${phP||'0'}" value="${ex.peso}" onchange="updateEx(${i}, 'peso', this.value)" ${ro} class="${rc}"></div>
             </div>`;
     }
 
@@ -1773,7 +1816,21 @@ function mostrarToastBackup() {
     setTimeout(() => toast?.remove(), 8000);
 }
 
-function borrarHistorialItem(index) { pedirConfirmacion("¿Borrar esta sesión del historial?", () => { state.historial.splice(index, 1); save(); renderHistory(); }, "Borrar"); }
+// Borra una sesión por identidad (fecha+hora), no por índice: seguro aunque el render esté desactualizado
+function borrarSesionHistorial(fecha, hora) {
+    pedirConfirmacion(`¿Borrar la sesión del ${fecha}${hora ? ' a las '+hora : ''}? Esta acción no se puede deshacer.`, () => {
+        const antes = state.historial.length;
+        state.historial = state.historial.filter(s => !(s.fecha === fecha && (s.hora||'') === (hora||'')));
+        if (state.historial.length < antes) {
+            save(); syncToSupabase();
+            document.getElementById('dayModal').style.display = 'none';
+            renderHistory();
+            showToast('Sesión borrada');
+        } else {
+            showToast('No se encontró la sesión', '#e74c3c');
+        }
+    }, 'Borrar');
+}
 
 // ── Versión del esquema de backup ───────────────────────────────────────────
 // Incrementar cada vez que se añadan/quiten campos en state o se renombren ejercicios
@@ -1907,13 +1964,15 @@ function importarRutina(event) {
                     state.ciclo = { sesiones: [], posicion: 0, bloque: 'fuerza', bloqueInicio: null };
                     migrarPlantillaACiclo();
                 }
+                state._migradoCirculacion = false; // los ejercicios importados pueden necesitar la migración
                 migrarPiernasACirculacion();
                 save();
                 showPage('semanaPage');
                 showToast(`✓ Rutina cargada (${state.ciclo.sesiones.length} sesiones)`);
             }, 'Cargar rutina');
         } catch(err) {
-            showToast('❌ ' + (err.message === 'Sin rutina válida' ? 'El archivo no contiene una rutina' : 'Archivo no válido o dañado'), '#e74c3c');
+            console.error('importarRutina:', err);
+            showToast('❌ ' + (err.message === 'Sin rutina válida' ? 'El archivo no contiene una rutina' : 'Archivo no válido o dañado (' + err.message.slice(0,40) + ')'), '#e74c3c');
         }
         event.target.value = '';
     };
@@ -2160,6 +2219,12 @@ function openDayModal(ds, d, month, year) {
     sessions.forEach(s => {
         if (s.nota && s.nota.trim())
             body += `<div style="margin-top:12px;padding:10px 12px;background:#F6F2FA;border-radius:10px;font-size:13px;color:#49454F;font-style:italic;">"${s.nota}"</div>`;
+    });
+    // Botón de borrar por sesión (por identidad fecha+hora)
+    sessions.forEach(s => {
+        body += `<button class="day-modal-borrar" onclick="borrarSesionHistorial('${s.fecha}','${(s.hora||'').replace(/'/g,"\\'")}')">
+            <span class="material-symbols-outlined">delete</span> Borrar sesión${s.hora ? ' de las '+s.hora : ''}
+        </button>`;
     });
     document.getElementById('dayModalBody').innerHTML = body;
     document.getElementById('dayModal').style.display = 'flex';
@@ -2598,17 +2663,24 @@ function getDeviceId() {
     return id;
 }
 
+let _syncDebounce = null;
 async function syncToSupabase() {
+    // Debounce: agrupa guardados seguidos en una sola subida (3 s)
+    if (_syncDebounce) clearTimeout(_syncDebounce);
+    _syncDebounce = setTimeout(_syncAhora, 3000);
+    setSyncIcon('sync');
+}
+async function _syncAhora() {
+    _syncDebounce = null;
     try {
-        setSyncIcon('sync');
         const res = await fetch(`${SUPABASE_URL}/rest/v1/ironlog_sync`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Prefer': 'resolution=merge-duplicates' },
             body: JSON.stringify({ device_id: getDeviceId(), state_data: state, updated_at: new Date().toISOString() })
         });
-        setSyncIcon(res.ok ? 'ok' : 'error');
-        showToast(res.ok ? '☁️ Guardado en la nube' : '❌ Error al sincronizar');
-    } catch(e) { setSyncIcon('error'); showToast('❌ Sin conexión'); }
+        if (res.ok) { _cambiosSinSync = false; setSyncIcon('ok'); showToast('☁️ Guardado en la nube'); }
+        else { setSyncIcon('pendiente'); showToast('❌ Error al sincronizar — cambios pendientes de subir'); }
+    } catch(e) { setSyncIcon('pendiente'); showToast('❌ Sin conexión — tus datos están en el móvil, se subirán cuando sincronices'); }
 }
 
 async function loadFromSupabase() {
@@ -2621,23 +2693,41 @@ async function loadFromSupabase() {
         const remoteUpdated = new Date(data[0].updated_at);
         const localUpdated  = new Date(state.lastSync || 0);
         if (remoteUpdated > localUpdated) {
-            Object.assign(state, data[0].state_data);
+            // Protección: no machacar sesiones locales que el remoto no tenga.
+            // Fusionar historial: unión por (fecha+hora), conservando ambos lados.
+            const remoto = data[0].state_data;
+            const clave = (s) => `${s.fecha}|${s.hora||''}|${s.resumen ? s.resumen.slice(0,40) : ''}`;
+            const vistos = new Set((remoto.historial || []).map(clave));
+            const soloLocales = (state.historial || []).filter(s => !vistos.has(clave(s)));
+            Object.assign(state, remoto);
+            if (soloLocales.length) {
+                state.historial = [...soloLocales, ...(state.historial || [])];
+                // Reordenar por fecha desc
+                state.historial.sort((a, b) => {
+                    const fa = parseFechaDMY(a.fecha) || 0, fb = parseFechaDMY(b.fecha) || 0;
+                    return fb - fa;
+                });
+                showToast(`☁️ Sincronizado (conservadas ${soloLocales.length} sesiones locales)`);
+            } else {
+                showToast('☁️ Datos sincronizados desde la nube');
+            }
             state.lastSync = data[0].updated_at;
             save(); showPage(state.activeTab || 'rutinaPage');
-            showToast('☁️ Datos sincronizados desde la nube');
         }
     } catch(e) {}
 }
 
+let _cambiosSinSync = false;
 function setSyncIcon(status) {
     const btn = document.getElementById('syncIcon');
     if (!btn) return;
     const span = btn.querySelector('span');
     if (!span) return;
-    const icons = { sync: 'sync', ok: 'cloud_done', error: 'cloud_off' };
-    const colors = { sync: 'var(--text2)', ok: '#43A047', error: '#E53935' };
-    span.innerText = icons[status];
-    btn.style.color = colors[status];
+    // 'pendiente': hay cambios locales que aún no están en la nube (persistente hasta sync ok)
+    const icons = { sync: 'sync', ok: 'cloud_done', error: 'cloud_off', pendiente: 'cloud_upload' };
+    const colors = { sync: 'var(--text2)', ok: '#43A047', error: '#E53935', pendiente: '#F9A825' };
+    span.innerText = icons[status] || icons.ok;
+    btn.style.color = colors[status] || colors.ok;
     if (status === 'sync') span.classList.add('spin'); else span.classList.remove('spin');
 }
 
@@ -2771,3 +2861,6 @@ window.onload = () => {
     loadFromSupabase();
     } catch(e) { console.error('Init error:', e); }
 };
+
+// Migraciones de datos: una sola vez al arrancar (tienen guardas internas)
+try { migrarPlantillaACiclo(); migrarPiernasACirculacion(); } catch(e) { console.error('Migración falló:', e); }
