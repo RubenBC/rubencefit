@@ -4,6 +4,15 @@ Aplicación personal de entrenamiento. A partir de la v1.0 sale de fase beta.
 
 ---
 
+## v7.3 — Arreglos en estadísticas
+
+- "Sesiones por grupo" ahora se calcula por mes natural (día 1 a fin de mes) en vez de una ventana móvil de 30 días. Se reinicia automáticamente cada mes
+- Corregidos 3 diálogos de información que no hacían nada al pulsarlos: Tendencia semanal, Cardio total y Ejercicios linfáticos semana
+- Añadida información también a "Progresión de peso" y "Sesiones por grupo" (antes no explicaban nada al tocarlas)
+- "Último entreno" ahora muestra también el día y mes de esa sesión, no solo los días transcurridos (ej. "3 días (2 jul)")
+
+---
+
 ## v7.2 — Robustez: auditoría completa
 
 Revisión de fiabilidad a fondo, con arreglos en cadena:
