@@ -2302,8 +2302,38 @@ const STAT_INFO = {
     },
     mas_descuidado: {
         titulo: "Grupo Más Descuidado ⚠️",
-        desc: "El grupo muscular con menos ejercicios registrados en los últimos 30 días (excluye Cardio).",
-        consejo: "Si aparece el mismo grupo semana tras semana, considera añadirlo a un día más de tu planificación. Un desequilibrio sostenido puede generar compensaciones posturales o debilidades asimétricas."
+        desc: "El grupo muscular con menos ejercicios registrados este mes (excluye Cardio).",
+        consejo: "Si aparece el mismo grupo mes tras mes, considera añadirlo a un día más de tu planificación. Un desequilibrio sostenido puede generar compensaciones posturales o debilidades asimétricas."
+    },
+    tendencia: {
+        titulo: "Tendencia Semanal 📈",
+        desc: "Compara tu número de sesiones de esta semana con la semana anterior, para ver si tu ritmo sube, baja o se mantiene.",
+        consejo: "Una tendencia estable o creciente es lo saludable. Una caída puntual por trabajo o descanso no es preocupante; lo es si se repite varias semanas seguidas."
+    },
+    dias_descanso: {
+        titulo: "Último Entreno ⏱",
+        desc: "Días transcurridos desde tu última sesión registrada, con la fecha exacta.",
+        consejo: "2-3 días entre sesiones del mismo grupo es razonable para recuperar. Si pasan más de 5-6 días sin ningún entreno, es buen momento para retomar con una sesión suave."
+    },
+    cardio_total: {
+        titulo: "Cardio Total 🚴",
+        desc: "Minutos de cardio acumulados en todo tu historial, desde que empezaste a registrar.",
+        consejo: "Es tu contador histórico completo. Sirve para ver el volumen total acumulado, más que para tomar decisiones día a día — para eso mejor mira el semanal o el mensual."
+    },
+    linfaticos_semana: {
+        titulo: "Ejercicios Linfáticos Esta Semana 🦵",
+        desc: "Número de ejercicios de drenaje y circulación (grupo Circulación) que has hecho en los últimos 7 días.",
+        consejo: "Para tu linfedema, lo ideal es no dejar pasar más de 2-3 días sin trabajo de drenaje. Si el indicador está en rojo, prioriza añadir bombas de tobillo o piernas en la pared en tu próxima sesión."
+    },
+    grupos_mes: {
+        titulo: "Sesiones por Grupo — Este Mes 📊",
+        desc: "Cuántas sesiones distintas has tocado cada grupo muscular desde el día 1 del mes en curso. Se reinicia automáticamente cada mes.",
+        consejo: "Un reparto equilibrado entre grupos indica una rutina bien distribuida. Si un grupo se queda muy por debajo del resto, revisa el 'Grupo más descuidado' de la tarjeta de constancia."
+    },
+    progresion_peso: {
+        titulo: "Progresión de Peso 📈",
+        desc: "Todos los ejercicios de fuerza con algún peso registrado: el primero que anotaste y el más reciente, con la diferencia entre ambos.",
+        consejo: "No te preocupes por los que solo tienen '1er registro' — es normal al empezar un ejercicio nuevo. La progresión real se ve con el tiempo, sesión a sesión."
     }
 };
 
@@ -2374,12 +2404,24 @@ function updateStats() {
     cardioTotal = Math.round(cardioTotal);
     const ultimaFecha = state.historial[0]?.fecha;
     let diasDescanso = 0;
-    if (ultimaFecha){const p=ultimaFecha.split('/');const u=new Date(p[2],p[1]-1,p[0]);diasDescanso=Math.floor((today-u)/(1000*60*60*24));}
+    let ultimaFechaLabel = '';
+    if (ultimaFecha){
+        const u = parseFechaDMY(ultimaFecha);
+        if (u) {
+            diasDescanso=Math.floor((today-u)/(1000*60*60*24));
+            const MESES_ABR = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+            ultimaFechaLabel = `${u.getDate()} ${MESES_ABR[u.getMonth()]}`;
+        }
+    }
     const diasColor = diasDescanso>=3?'var(--danger)':diasDescanso>=2?'#E65100':'var(--primary)';
-    const last30=[];for(let i=0;i<30;i++){const d=new Date(today);d.setDate(today.getDate()-i);last30.push(d.toLocaleDateString());}
+    // Mes natural (día 1 a fin de mes), se resetea automáticamente el día 1
+    const esMismoMes = (fechaStr) => {
+        const f = parseFechaDMY(fechaStr);
+        return f && f.getMonth() === today.getMonth() && f.getFullYear() === today.getFullYear();
+    };
     const gruposSesiones={};
     GRUPOS.filter(g=>g!=='Cardio').forEach(g=>gruposSesiones[g]=0);
-    state.historial.filter(h=>last30.includes(h.fecha)).forEach(s=>{const gs=new Set();if(s.ejercicios)s.ejercicios.forEach(ex=>{if(gruposSesiones[ex.group]!==undefined)gs.add(ex.group);});gs.forEach(g=>gruposSesiones[g]++);});
+    state.historial.filter(h=>esMismoMes(h.fecha)).forEach(s=>{const gs=new Set();if(s.ejercicios)s.ejercicios.forEach(ex=>{if(gruposSesiones[ex.group]!==undefined)gs.add(ex.group);});gs.forEach(g=>gruposSesiones[g]++);});
     const maxGrupo=Math.max(...Object.values(gruposSesiones),1);
     // Material You — chips con barra tonal
     const GRUPO_COLORS = ['#6750A4','#B5838D','#E07A5F','#3D405B','#81B29A','#F2CC8F','#118AB2','#06D6A0'];
@@ -2466,7 +2508,7 @@ function updateStats() {
             <div class="stat-box stat-tappable" onclick="abrirInfoStat('racha_max',event)"><span class="stat-label">🏆 Racha máxima</span><span class="stat-val">${maxRacha}<small>días</small></span></div>
             <div class="stat-box stat-tappable" onclick="abrirInfoStat('descansos',event)"><span class="stat-label">😴 Descansos semana</span><span class="stat-val">${descSemana}<small>días</small></span></div>
             <div class="stat-box stat-tappable" onclick="abrirInfoStat('tendencia',event)" style="grid-column:1/span 2;"><span class="stat-label">📈 Tendencia semanal</span><div style="display:flex;align-items:center;gap:8px;margin-top:6px;"><span style="font-size:28px;font-weight:900;color:${tendenciaColor};">${tendenciaIcon}</span><span style="font-size:13px;color:${tendenciaColor};font-weight:600;line-height:1.4;">${tendenciaSem}</span></div></div>
-            <div class="stat-box stat-tappable" onclick="abrirInfoStat('dias_descanso',event)" style="grid-column:1/span 2;"><span class="stat-label">⏱ Último entreno</span><span class="stat-val" style="color:${diasColor};">${diasDescanso}<small>días</small></span></div>
+            <div class="stat-box stat-tappable" onclick="abrirInfoStat('dias_descanso',event)" style="grid-column:1/span 2;"><span class="stat-label">⏱ Último entreno</span><div style="display:flex;align-items:baseline;gap:6px;margin-top:2px;"><span class="stat-val" style="color:${diasColor};">${diasDescanso}<small>días</small></span>${ultimaFechaLabel ? `<span style="font-size:12px;color:var(--text2);font-weight:600;">(${ultimaFechaLabel})</span>` : ''}</div></div>
         `) +
         card('cardio', '🚴 Cardio y drenaje', `${cardioSemana}/${CARDIO_OBJETIVO} min sem.`, `
             <div class="stat-box" style="grid-column:1/span 2;">
@@ -2484,11 +2526,13 @@ function updateStats() {
             <div class="stat-box stat-tappable" onclick="abrirInfoStat('linfaticos_semana',event)"><span class="stat-label">🦵 Linfáticos semana <span class="stat-info-hint" style="color:${linfColor};">${linfLabel}</span></span><span class="stat-val">${linfCount}<small>ej.</small></span></div>
         `) +
         card('progresion', '📈 Progresión de peso', `${progresionEjs.length} ejercicios`, `
+            <div class="stat-box-header-tap" onclick="abrirInfoStat('progresion_peso',event)"><span class="material-symbols-outlined" style="font-size:15px;">info</span> ¿Qué es esto?</div>
             <div style="grid-column:1/span 2;">
                 ${progresionHTML}
             </div>
         `) +
-        card('grupos', '📊 Sesiones por grupo — 30 días', '30 días', `
+        card('grupos', '📊 Sesiones por grupo — este mes', 'mes', `
+            <div class="stat-box-header-tap" onclick="abrirInfoStat('grupos_mes',event)"><span class="material-symbols-outlined" style="font-size:15px;">info</span> ¿Qué es esto?</div>
             <div style="grid-column:1/span 2;padding:4px 0;">
                 <div class="myu-groups-container myu-groups-large">${gruposBars}</div>
             </div>
