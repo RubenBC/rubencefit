@@ -4,6 +4,15 @@ Aplicación personal de entrenamiento. A partir de la v1.0 sale de fase beta.
 
 ---
 
+## v7.4 — Validación al marcar ejercicio como hecho
+
+- Ya no se puede marcar un ejercicio como hecho sin haber rellenado a mano sus datos: series, reps y peso (en ejercicios con mancuernas), series y reps (peso corporal y gomas), o minutos (cardio)
+- Si falta algo, aviso en rojo indicando exactamente qué campos faltan, con vibración de error
+- Desmarcar un ejercicio ya hecho sigue funcionando siempre
+- Objetivo: registro fiel de cada sesión — el placeholder muestra tu última marca como referencia, pero el dato del día lo confirmas tú
+
+---
+
 ## v7.3 — Arreglos en estadísticas
 
 - "Sesiones por grupo" ahora se calcula por mes natural (día 1 a fin de mes) en vez de una ventana móvil de 30 días. Se reinicia automáticamente cada mes
