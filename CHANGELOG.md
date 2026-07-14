@@ -4,6 +4,32 @@ Aplicación personal de entrenamiento. A partir de la v1.0 sale de fase beta.
 
 ---
 
+## v8.0 — Simplificación interna
+
+Limpieza a fondo del código sin perder ninguna función en uso:
+
+- Eliminadas 10 funciones muertas que ya nada llamaba (restos del sistema de días de la semana, alias duplicados, el descanso rápido que se quitó del menú en v6.2)
+- Fusionadas las funciones duplicadas de "última marca" (getPesoActual y getUltimaSesionEjercicio eran casi idénticas; ahora son una)
+- La intensidad del calendario ahora reutiliza directamente el cálculo de puntos (un solo sitio que mantener si se recalibra)
+- Eliminado el modal "Cómo se calculan los puntos", que además mostraba los valores ANTIGUOS de antes de la recalibración v5.1. El botón ℹ del calendario abre ahora un diálogo con los valores correctos y los baremos semanales
+- Eliminado el tipo de equipamiento "Mancuernas / Gomas" (mixto) con su botón de cambio: ningún ejercicio de la biblioteca ni de la rutina lo usaba. Los 2 registros antiguos del historial que lo usaban se tratan ahora como mancuernas (misma puntuación, mismos campos)
+- La guía de la Biblioteca se conserva
+
+Resultado: ~130 líneas menos y menos casos especiales, mismas funciones.
+
+---
+
+## v7.5 — Corrección de las marcas grises (placeholders)
+
+Revisión de las referencias en gris que muestran tu última marca en cada campo:
+
+- Cardio: el campo "Tiempo (min)" mostraba la intensidad o el rango recomendado en vez de los minutos de la última vez. Corregido: ahora muestra los minutos reales de tu última sesión
+- Gomas: el campo "Dureza banda" mostraba siempre "Ligera/Media/Fuerte" genérico. Ahora muestra la dureza que usaste la última vez (ej. "Verde")
+- Ejercicios mixtos (Mancuernas/Gomas): no mostraban ninguna marca anterior (placeholders fijos en 0). Ahora muestran series, reps y peso/dureza de la última vez, y el campo de peso tiene la misma validación 0-300 que el resto
+- Mancuernas y peso corporal ya funcionaban bien: última marca primero, recomendación de la rutina si aún no hay historial
+
+---
+
 ## v7.4 — Validación al marcar ejercicio como hecho
 
 - Ya no se puede marcar un ejercicio como hecho sin haber rellenado a mano sus datos: series, reps y peso (en ejercicios con mancuernas), series y reps (peso corporal y gomas), o minutos (cardio)
