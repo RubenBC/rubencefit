@@ -324,7 +324,7 @@ function toggleDone(i) {
         } else {
             if (!String(ex.series||'').trim()) falta.push('series');
             if (!String(ex.reps||'').trim()) falta.push('reps');
-            if ((tipo === 'dumbbell' || tipo === 'mixed') && !String(ex.peso||'').trim()) falta.push('peso');
+            if ((tipo === 'dumbbell') && !String(ex.peso||'').trim()) falta.push('peso');
         }
         if (falta.length) {
             showToast(`⚠️ Rellena ${falta.join(', ')} antes de marcarlo como hecho`, '#e74c3c');
@@ -637,11 +637,6 @@ function showToast(msg, color) {
     setTimeout(() => toast.remove(), 1200);
 }
 
-function getHoyNombre() {
-    const d = new Date();
-    return DIAS_LOGICA[d.getDay() === 0 ? 6 : d.getDay() - 1];
-}
-
 // ══════════════════════════════════════════════════════════════════════════════
 // MOTOR DEL CICLO (Fase 1)
 // ══════════════════════════════════════════════════════════════════════════════
@@ -787,14 +782,11 @@ function addToDay(name, group, type, tip) {
     save(); showToast("¡Añadido a Hoy! ✓");
 }
 
-function addToToday(name, group, type, tip) { addToDay(name, group, type, tip); }
-
 // ── Lógica de tipo de equipamiento ──────────────────────────────────────────
-// Devuelve: 'cardio' | 'bodyweight' | 'band' | 'dumbbell' | 'mixed'
+// Devuelve: 'cardio' | 'bodyweight' | 'band' | 'dumbbell'
 function getEquipType(ex) {
     if (ex.group === "Cardio") return 'cardio';
     const tip = (ex.tip || '').trim();
-    if (tip === "Mancuernas / Gomas") return 'mixed';
     if (tip.includes("Mancuernas"))   return 'dumbbell';
     if (tip.includes("Gomas") || tip.includes("Banda")) return 'band';
     if (tip.includes("Bicicleta"))    return 'cardio';
@@ -816,17 +808,6 @@ function encontrarEjEnSesion(sesion, exActual) {
         if (porAlias) return porAlias;
     }
     return sesion.ejercicios.find(e => e.name === exActual.name && (e.series || e.reps || e.peso)) || null;
-}
-
-// Peso actual de un ejercicio = su registro más reciente en el historial
-function getPesoActual(exActual) {
-    for (const sesion of state.historial) {
-        const ej = encontrarEjEnSesion(sesion, exActual);
-        if (ej && (ej.peso || ej.reps || ej.series)) {
-            return { peso: ej.peso||'', reps: ej.reps||'', series: ej.series||'', fecha: sesion.fecha };
-        }
-    }
-    return null;
 }
 
 // Editar el peso desde la Biblioteca: corrige el último registro del historial
@@ -884,23 +865,15 @@ function guardarPesoBiblioteca() {
     showToast('✓ Peso actualizado');
 }
 
-function getUltimaMarca(exActual) {
-    const ex = typeof exActual === 'string' ? { name: exActual } : exActual;
-    for (const sesion of state.historial) {
-        const ej = encontrarEjEnSesion(sesion, ex);
-        if (ej && ej.peso) return { peso: ej.peso, reps: ej.reps, fecha: sesion.fecha };
-    }
-    return null;
-}
-
 function getUltimaSesionEjercicio(exActual) {
     const ex = typeof exActual === 'string' ? { name: exActual } : exActual;
     for (const sesion of state.historial) {
         const ej = encontrarEjEnSesion(sesion, ex);
-        if (ej) return { series: ej.series||'', reps: ej.reps||'', peso: ej.peso||'' };
+        if (ej) return { series: ej.series||'', reps: ej.reps||'', peso: ej.peso||'', fecha: sesion.fecha };
     }
     return null;
 }
+const getPesoActual = getUltimaSesionEjercicio; // alias: mismo dato, un solo código
 
 function buildMetricsHtml(ex, i) {
     const tipo = getEquipType(ex);
@@ -914,8 +887,8 @@ function buildMetricsHtml(ex, i) {
         const rc = ex.done ? 'input-done' : '';
         return `
             <div class="stats-grid cardio-grid">
-                <div class="input-group"><label>Tiempo (min)</label><input type="text" placeholder="${phR||'00'}" value="${ex.series}" onchange="updateEx(${i}, 'series', this.value)" ${ro} class="${rc}"></div>
-                <div class="input-group"><label>Intensidad</label><input type="text" placeholder="Baja/Media" value="${ex.reps}" onchange="updateEx(${i}, 'reps', this.value)" ${ro} class="${rc}"></div>
+                <div class="input-group"><label>Tiempo (min)</label><input type="text" placeholder="${phS!=='—'?phS:'00'}" value="${ex.series}" onchange="updateEx(${i}, 'series', this.value)" ${ro} class="${rc}"></div>
+                <div class="input-group"><label>Intensidad</label><input type="text" placeholder="${phR!=='—'?phR:'Baja/Media'}" value="${ex.reps}" onchange="updateEx(${i}, 'reps', this.value)" ${ro} class="${rc}"></div>
             </div>`;
     }
 
@@ -937,7 +910,7 @@ function buildMetricsHtml(ex, i) {
             <div class="stats-grid">
                 <div class="input-group"><label>Series</label><input type="number" placeholder="${phS}" value="${ex.series}" onchange="updateEx(${i}, 'series', this.value)" ${ro} class="${rc}"></div>
                 <div class="input-group"><label>Reps</label><input type="number" placeholder="${phR}" value="${ex.reps}" onchange="updateEx(${i}, 'reps', this.value)" ${ro} class="${rc}"></div>
-                <div class="input-group"><label>🪢 Dureza banda</label><input type="text" placeholder="Ligera/Media/Fuerte" value="${ex.peso}" onchange="updateEx(${i}, 'peso', this.value)" ${ro} class="${rc}"></div>
+                <div class="input-group"><label>🪢 Dureza banda</label><input type="text" placeholder="${phP||'Ligera/Media/Fuerte'}" value="${ex.peso}" onchange="updateEx(${i}, 'peso', this.value)" ${ro} class="${rc}"></div>
             </div>`;
     }
 
@@ -952,34 +925,9 @@ function buildMetricsHtml(ex, i) {
             </div>`;
     }
 
-    if (tipo === 'mixed') {
-        // Mancuernas o gomas — se elige con un pequeño toggle
-        const usaBanda = ex.usaBanda === true;
-        return `
-            <div class="stats-grid">
-                <div class="input-group"><label>Series</label><input type="number" placeholder="0" value="${ex.series}" onchange="updateEx(${i}, 'series', this.value)"></div>
-                <div class="input-group"><label>Reps</label><input type="number" placeholder="0" value="${ex.reps}" onchange="updateEx(${i}, 'reps', this.value)"></div>
-                <div class="input-group">
-                    <label style="display:flex; align-items:center; gap:6px;">
-                        ${usaBanda ? '🪢 Dureza banda' : '⚖️ Peso (kg)'}
-                        <button onclick="toggleBandaMode(${i})" style="background:none; border:1px solid var(--outline); border-radius:6px; padding:2px 6px; font-size:10px; cursor:pointer; color:var(--text2);">cambiar</button>
-                    </label>
-                    ${usaBanda
-                        ? `<input type="text" placeholder="Ligera/Media/Fuerte" value="${ex.peso}" onchange="updateEx(${i}, 'peso', this.value)">`
-                        : `<input type="number" placeholder="0" value="${ex.peso}" onchange="updateEx(${i}, 'peso', this.value)">`
-                    }
-                </div>
-            </div>`;
-    }
-
     return '';
 }
 
-function toggleBandaMode(i) {
-    state.hoy[i].usaBanda = !state.hoy[i].usaBanda;
-    state.hoy[i].peso = '';
-    save(); renderToday();
-}
 
 let openExMenu = null;
 let expandedDone = new Set();
@@ -1335,29 +1283,6 @@ function getAnteriorHtml(ex) {
     return '';
 }
 
-function moverEjercicio(i, dir) {
-    const j = i + dir;
-    if (j < 0 || j >= state.hoy.length) return;
-    [state.hoy[i], state.hoy[j]] = [state.hoy[j], state.hoy[i]];
-    save(); renderToday();
-}
-
-function moverEjercicioDia(dia, i, dir) {
-    const r = state.plantillaSemanal && state.plantillaSemanal[dia];
-    if (!r) return;
-    const j = i + dir;
-    if (j < 0 || j >= r.length) return;
-    [r[i], r[j]] = [r[j], r[i]];
-    save(); renderWeek();
-}
-
-function quitarDeDia(dia, i) {
-    if (!state.plantillaSemanal || !state.plantillaSemanal[dia]) return;
-    state.plantillaSemanal[dia].splice(i, 1);
-    if (state.plantillaSemanal[dia].length === 0) delete state.plantillaSemanal[dia];
-    save(); renderWeek();
-}
-
 function swapExercise(index) {
     const currentEx = state.hoy[index];
     const groupData = db[currentEx.group];
@@ -1376,31 +1301,8 @@ function updateEx(i, field, val) { state.hoy[i][field] = val; save(); }
 function clearHoy() { pedirConfirmacion("¿Limpiar toda la sesión de hoy?", () => { state.hoy = []; resetSesionStopwatch(); save(); renderToday(); }, "Limpiar"); }
 function quitarDeHoy(i) { state.hoy.splice(i, 1); save(); renderToday(); }
 
-function getDayColor(selected) {
-    if (selected.length === 0) return { c: "var(--color-descanso)", s: "Descanso" };
-    const strengthGroups = selected.filter(g => g !== "Cardio");
-    const hasCardio = selected.includes("Cardio");
-    if (strengthGroups.length === 0) return { c: "var(--color-verde)", s: "Solo Cardio" };
-    const hasPush = strengthGroups.some(g => P_PUSH.includes(g));
-    const hasPull = strengthGroups.some(g => P_PULL.includes(g));
-    if (hasPush && hasPull) return { c: "var(--color-rojo)", s: "Conflicto Empuje/Tirón" };
-    const allPush = strengthGroups.every(g => P_PUSH.includes(g));
-    const allPull = strengthGroups.every(g => P_PULL.includes(g));
-    const allLegs = strengthGroups.every(g => P_LEGS.includes(g));
-    if (allPush) return { c: "var(--color-verde)", s: "Sinergia: Empuje" + (hasCardio ? " + C" : "") };
-    if (allPull) return { c: "var(--color-verde)", s: "Sinergia: Tirón" + (hasCardio ? " + C" : "") };
-    if (allLegs) return { c: "var(--color-verde)", s: "Sinergia: Piernas" + (hasCardio ? " + C" : "") };
-    return { c: "var(--color-amarillo)", s: "Mezcla Híbrida" };
-}
-
 let duplicandoDia = null;
 let diasAbiertosSemana = null; // se inicializa con el día actual abierto
-
-function toggleDiaSemana(dia) {
-    if (diasAbiertosSemana.has(dia)) diasAbiertosSemana.delete(dia);
-    else diasAbiertosSemana.add(dia);
-    renderWeek();
-}
 
 // ══════════════════════════════════════════════════════════════════════════════
 // FASE 4 — PERIODIZACIÓN AUTOMÁTICA
@@ -1692,18 +1594,6 @@ function getEstimatedDuration(rutina) {
 }
 
 // Contexto de la rutina generada pendiente de confirmar
-
-
-
-function getUltimosValores(nombre) {
-    for (const s of state.historial) {
-        if (!s.ejercicios) continue;
-        const e = s.ejercicios.find(x => x.name === nombre);
-        if (e && (e.series || e.reps || e.peso))
-            return { series: e.series||'', reps: e.reps||'', peso: e.peso||'', usaBanda: e.usaBanda||false };
-    }
-    return { series: '', reps: '', peso: '', usaBanda: false };
-}
 
 
 
@@ -2044,25 +1934,9 @@ function renderHistory() {
     if (hList) hList.innerHTML = '';
 }
 function getSessionIntensity(sesion) {
+    // Mismo criterio que los puntos; mínimo 1 para que el mapa del calendario siempre pinte algo
     if (!sesion.ejercicios || sesion.ejercicios.length === 0) return 1;
-    let score = 0;
-    sesion.ejercicios.forEach(ex => {
-        const tipo = getEquipType(ex);
-        if (tipo === 'cardio') {
-            score += Math.max((parseFloat(ex.series) || 0) / 5, 0.5);
-        } else if (ex.t === T_B) {
-            if (tipo === 'dumbbell' || tipo === 'mixed') score += 4;
-            else if (tipo === 'band') score += 3;
-            else score += 2; // bodyweight
-        } else if (ex.t === T_A) {
-            if (tipo === 'dumbbell' || tipo === 'mixed') score += 3;
-            else if (tipo === 'band') score += 2;
-            else score += 1.5;
-        } else if (ex.t === T_S) {
-            score += 1;
-        }
-    });
-    return Math.max(score, 1);
+    return Math.max(getSessionPoints(sesion), 1);
 }
 
 // Calcula los puntos de una sola sesión (mismo criterio que el total mensual)
@@ -2075,14 +1949,6 @@ function cerrarAjustesModal() {
     if (m) m.style.display = 'none';
 }
 
-function abrirPuntosModal() {
-    const m = document.getElementById('puntosModal');
-    if (m) m.style.display = 'flex';
-}
-function cerrarPuntosModal() {
-    const m = document.getElementById('puntosModal');
-    if (m) m.style.display = 'none';
-}
 
 function getSessionPoints(sesion) {
     let pts = 0;
@@ -2093,7 +1959,7 @@ function getSessionPoints(sesion) {
         else {
             const tipo = getEquipType(ex);
             const base = ex.t === T_B ? 4 : 3;
-            const mult = (tipo==='dumbbell'||tipo==='mixed') ? 1 : tipo==='band' ? 0.75 : 0.5;
+            const mult = tipo==='dumbbell' ? 1 : tipo==='band' ? 0.75 : 0.5;
             pts += base * mult;
         }
     });
@@ -2150,7 +2016,7 @@ function renderCalendar() {
             <div class="cal-puntos-row">
                 <span class="cal-puntos-chip cal-puntos-mes">&#129293; ${Math.round(totalPuntos)} mes</span>
                 <span class="cal-puntos-chip cal-puntos-sem">&#128293; ${Math.round(puntosSemana)} semana</span>
-                <button class="cal-puntos-info" onclick="abrirPuntosModal()">&#9432;</button>
+                <button class="cal-puntos-info" onclick="abrirInfoStat('puntos',event)">&#9432;</button>
             </div>
         </div>
         <button class="cal-btn" onclick="calNext()" ${isFuture ? 'disabled' : ''}>&#8250;</button>
@@ -2347,6 +2213,11 @@ const STAT_INFO = {
         titulo: "Sesiones por Grupo — Este Mes 📊",
         desc: "Cuántas sesiones distintas has tocado cada grupo muscular desde el día 1 del mes en curso. Se reinicia automáticamente cada mes.",
         consejo: "Un reparto equilibrado entre grupos indica una rutina bien distribuida. Si un grupo se queda muy por debajo del resto, revisa el 'Grupo más descuidado' de la tarjeta de constancia."
+    },
+    puntos: {
+        titulo: "Cómo se calculan los puntos 🤍",
+        desc: "Cada ejercicio registrado suma puntos: básico con mancuernas 4, aislamiento con mancuernas 3, con gomas x0.75, peso corporal x0.5, salud/drenaje 1, y cardio 1 punto por cada 5 minutos. El contador semanal va de lunes a domingo y el mensual del día 1 a fin de mes.",
+        consejo: "Referencia: semana buena 75-100 puntos (3 sesiones de fuerza completas), muy buena 100-120 (4 sesiones). La consistencia semana tras semana vale más que un pico aislado."
     },
     progresion_peso: {
         titulo: "Progresión de Peso 📈",
@@ -2655,15 +2526,6 @@ function startTimer(s) {
     }, 1000);
 }
 
-function descansoRapido(segundos) {
-    setTimerExpanded(true);
-    startTimer(segundos);
-    showToast(`⏱ Descanso de ${segundos}s iniciado`);
-    // Llevar la vista al temporizador arriba
-    const tb = document.querySelector('.topbar');
-    if (tb && tb.scrollIntoView) tb.scrollIntoView({ behavior: 'smooth', block: 'start' });
-}
-
 function startTimerCustom() {
     const inp = document.getElementById('timerCustomInput');
     const val = parseInt(inp ? inp.value : 0, 10);
@@ -2830,7 +2692,7 @@ function onSyncIconPress() {
 }
 
 function handleBackButton() {
-    const modales = ['exInfoModal','editExModal','dayModal','syncModal','finalizarModal','guiaModal','puntosModal','ajustesModal','confirmModal','textoModal','selectorSesionModal','vincularModal','editPesoModal'];
+    const modales = ['exInfoModal','editExModal','dayModal','syncModal','finalizarModal','guiaModal','ajustesModal','confirmModal','textoModal','selectorSesionModal','vincularModal','editPesoModal'];
     for (const id of modales) {
         const el = document.getElementById(id);
         if (el && el.style.display !== 'none' && el.style.display !== '') {
@@ -2889,7 +2751,7 @@ window.addEventListener('popstate', () => {
         if (Math.abs(dx) < 70) return;
         if (Math.abs(dx) < Math.abs(dy) * 1.8) return;
         // No cambiar si hay un modal abierto
-        const modales = ['exInfoModal','editExModal','dayModal','syncModal','finalizarModal','guiaModal','puntosModal','ajustesModal','confirmModal','textoModal','selectorSesionModal','vincularModal','editPesoModal'];
+        const modales = ['exInfoModal','editExModal','dayModal','syncModal','finalizarModal','guiaModal','ajustesModal','confirmModal','textoModal','selectorSesionModal','vincularModal','editPesoModal'];
         for (const id of modales) {
             const m = document.getElementById(id);
             if (m && m.style.display && m.style.display !== 'none') return;
