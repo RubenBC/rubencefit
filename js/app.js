@@ -314,10 +314,28 @@ function updateSessionProgress() {
 }
 
 function toggleDone(i) {
-    state.hoy[i].done = !state.hoy[i].done;
+    const ex = state.hoy[i];
+    // Al MARCAR como hecho: exigir que los campos estén rellenos a mano
+    if (!ex.done) {
+        const tipo = getEquipType(ex);
+        const falta = [];
+        if (tipo === 'cardio') {
+            if (!String(ex.series||'').trim()) falta.push('minutos');
+        } else {
+            if (!String(ex.series||'').trim()) falta.push('series');
+            if (!String(ex.reps||'').trim()) falta.push('reps');
+            if ((tipo === 'dumbbell' || tipo === 'mixed') && !String(ex.peso||'').trim()) falta.push('peso');
+        }
+        if (falta.length) {
+            showToast(`⚠️ Rellena ${falta.join(', ')} antes de marcarlo como hecho`, '#e74c3c');
+            if (navigator.vibrate) navigator.vibrate([60, 40, 60]); // vibración de error
+            return;
+        }
+    }
+    ex.done = !ex.done;
     expandedDone.delete(i);
     openExMenu = null;
-    if (state.hoy[i].done) {
+    if (ex.done) {
         if (!state.sesionStartTime) startSesionStopwatch();
         if (navigator.vibrate) navigator.vibrate(40); // feedback háptico sutil al completar
     }
