@@ -994,7 +994,7 @@ body.dark-mode .cal-puntos-sem {
 
 .cal-grid {
     display: grid;
-    grid-template-columns: repeat(7, 1fr);
+    grid-template-columns: repeat(7, minmax(0, 1fr));
     gap: 4px 2px;
 }
 
@@ -1003,6 +1003,7 @@ body.dark-mode .cal-puntos-sem {
     align-items: center;
     justify-content: center;
     min-height: 52px;
+    min-width: 0;
 }
 
 .cal-future { opacity: 0.25; }
@@ -1025,7 +1026,9 @@ body.dark-mode .cal-puntos-sem {
     justify-content: center;
     color: white;
     font-weight: 600;
-    flex-shrink: 0;
+    flex-shrink: 1;
+    max-width: 90%;
+    max-height: 48px;
     transition: transform 0.15s;
 }
 
@@ -1035,7 +1038,7 @@ body.dark-mode .cal-puntos-sem {
 
 .cal-footer {
     display: grid;
-    grid-template-columns: repeat(7, 1fr);
+    grid-template-columns: repeat(7, minmax(0, 1fr));
     margin-top: 10px;
     border-top: 1px solid var(--outline);
     padding-top: 8px;
